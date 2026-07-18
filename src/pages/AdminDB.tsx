@@ -1,0 +1,702 @@
+import { Navigate, useNavigate } from 'react-router-dom'
+import { useRef, useMemo, useState, useEffect } from 'react'
+import { currentUserRole, logout } from '../auth'
+import { useBooking } from '../BookingContext'
+import { BUSINESS_CONFIG } from '../businessConfig'
+import logo from '../assets/LogoSanatorium.png'
+
+const adminBadgeStyle = (adminStatus: string): React.CSSProperties => {
+  let bg = 'rgba(255, 255, 255, 0.05)'
+  let color = 'var(--text-secondary)'
+
+  if (adminStatus === 'New' || adminStatus === 'Reschedule Requested') {
+    bg = 'rgba(16, 185, 129, 0.15)'
+    color = '#34d399'
+  } else if (adminStatus === 'Needs Action') {
+    bg = 'rgba(234, 179, 8, 0.15)'
+    color = '#facc15'
+  } else if (adminStatus === 'Cancelled') {
+    bg = 'rgba(239, 68, 68, 0.15)'
+    color = '#f87171'
+  }
+
+  return {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '4px 10px',
+    fontSize: '11px',
+    fontWeight: 700,
+    borderRadius: '9999px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    backgroundColor: bg,
+    color: color,
+  }
+}
+
+export default function AdminDB() {
+  const navigate = useNavigate()
+  const {
+    bookings,
+    updateBookingStatus,
+    acknowledgeBooking,
+    declineReschedule,
+    acceptReschedule,
+    resetBookings,
+    updateSessionDetails,
+  } = useBooking()
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
+  const [showAllBookings, setShowAllBookings] = useState(false)
+  const detailsRef = useRef<HTMLDivElement | null>(null)
+  const [statusFilter, setStatusFilter] = useState('All')
+  const [artistFilter, setArtistFilter] = useState('All')
+
+  // Completed Session Details Editor State
+  const [priceChargedInput, setPriceChargedInput] = useState('')
+  const [aftercareInput, setAftercareInput] = useState('')
+  const [internalNotesInput, setInternalNotesInput] = useState('')
+
+  const reviewBookings = bookings.filter(
+    (booking) =>
+      booking.adminStatus === 'New' ||
+      booking.adminStatus === 'Reschedule Requested' ||
+      booking.adminStatus === 'Needs Action'
+  )
+
+  const selectedBooking = useMemo(
+    () => bookings.find((booking) => booking.id === selectedBookingId) || null,
+    [bookings, selectedBookingId]
+  )
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
+
+  if (currentUserRole !== 'admin') {
+    return <Navigate to="/" replace />
+  }
+
+  const visibleBookings = showAllBookings ? bookings : bookings.slice(0, 5)
+
+  const getTodayString = () => {
+    const today = new Date()
+    const year = today.getFullYear()
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const getDisplayStatus = (booking: any) => {
+    if (
+      booking.adminStatus === 'New' ||
+      booking.adminStatus === 'Reschedule Requested' ||
+      booking.adminStatus === 'Needs Action'
+    ) {
+      return 'Pending'
+    }
+
+    if (booking.status === 'Confirmed' && booking.date < getTodayString()) {
+      return 'Completed'
+    }
+
+    if (booking.status === 'Confirmed') {
+      return 'Upcoming'
+    }
+
+    return booking.status
+  }
+
+  const filteredBookings = visibleBookings.filter((booking) => {
+    const displayStatus = getDisplayStatus(booking)
+
+    const matchesStatus = statusFilter === 'All' || displayStatus === statusFilter
+    const matchesArtist = artistFilter === 'All' || booking.artistId === artistFilter
+
+    return matchesStatus && matchesArtist
+  })
+
+  // Synchronize form inputs when the selected completed booking changes
+  useEffect(() => {
+    if (selectedBooking && getDisplayStatus(selectedBooking) === 'Completed') {
+      const matchedService = BUSINESS_CONFIG.services.find((s) => s.name === selectedBooking.service)
+      const defaultPrice = matchedService ? matchedService.price : 0
+
+      setPriceChargedInput(String(selectedBooking.priceCharged ?? defaultPrice))
+      setAftercareInput(selectedBooking.adminNotesForCustomer || '')
+      setInternalNotesInput(selectedBooking.internalAdminNotes || '')
+    }
+  }, [selectedBookingId, selectedBooking])
+
+  // Calculate client analytics LTV and visits dynamically
+  const clientAnalytics = useMemo(() => {
+    if (!selectedBooking) return { visits: 0, ltv: 0 }
+    const clientEmail = selectedBooking.customerEmail
+
+    const completedVisits = bookings.filter(
+      (b) => b.customerEmail === clientEmail && getDisplayStatus(b) === 'Completed'
+    )
+
+    const visits = completedVisits.length
+    const ltv = completedVisits.reduce((sum, b) => sum + (b.priceCharged || 0), 0)
+
+    return { visits, ltv }
+  }, [bookings, selectedBooking])
+
+  const handleSaveSessionDetails = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedBooking) return
+
+    updateSessionDetails(selectedBooking.id, {
+      priceCharged: Number(priceChargedInput) || 0,
+      adminNotesForCustomer: aftercareInput,
+      internalAdminNotes: internalNotesInput,
+    })
+    alert('Session notes and pricing updated successfully!')
+  }
+
+  return (
+    <div
+      style={{
+        minHeight: '100vh',
+        padding: '40px 24px',
+        maxWidth: '1280px',
+        margin: '0 auto',
+      }}
+    >
+      {/* Branding Navigation Header Bar */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '40px',
+          borderBottom: '1px solid var(--border-color)',
+          paddingBottom: '20px',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <img src={logo} alt="Logo" style={{ height: '48px', width: 'auto' }} />
+          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: 'var(--accent-color)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            {BUSINESS_CONFIG.name}
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <button onClick={resetBookings} className="btn btn-danger" style={{ padding: '8px 16px', fontSize: '13px' }}>
+            Reset Data
+          </button>
+          <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '13px' }}>
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontSize: '36px', marginBottom: '4px' }}>Admin Dashboard</h1>
+        <p>Review bookings, statuses, and customer notes for {BUSINESS_CONFIG.name}.</p>
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '2fr 1fr',
+          gap: '24px',
+          alignItems: 'start',
+        }}
+      >
+        {/* Left Side: Bookings list */}
+        <div className="premium-card">
+          <h2 style={{ fontSize: '22px', marginBottom: '20px' }}>All Bookings</h2>
+
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '24px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {['All', 'Pending', 'Upcoming', 'Cancelled', 'Completed'].map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setStatusFilter(filter)}
+                  className="btn"
+                  style={{
+                    padding: '6px 14px',
+                    fontSize: '13px',
+                    borderRadius: '20px',
+                    background: statusFilter === filter ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${statusFilter === filter ? 'var(--accent-color)' : 'var(--border-color)'}`,
+                    color: statusFilter === filter ? '#34d399' : 'var(--text-secondary)',
+                  }}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Artist:
+              </span>
+              <select
+                value={artistFilter}
+                onChange={(e) => setArtistFilter(e.target.value)}
+                className="form-select"
+                style={{ padding: '6px 12px', fontSize: '13px', borderRadius: '18px', width: 'auto', background: 'rgba(255,255,255,0.03)' }}
+              >
+                <option value="All">All Artists</option>
+                {BUSINESS_CONFIG.artists.map((artist) => (
+                  <option key={artist.id} value={artist.id}>
+                    {artist.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          </div>
+
+          {filteredBookings.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {filteredBookings.map((booking, index) => (
+                <div
+                  key={booking.id}
+                  className={getDisplayStatus(booking) === 'Upcoming' ? 'upcoming-card-highlight' : ''}
+                  style={{
+                    padding: '20px 0',
+                    borderBottom:
+                      index !== filteredBookings.length - 1 ? '1px solid var(--border-color)' : 'none',
+                  }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      marginBottom: '12px',
+                      gap: '12px',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    <h3 style={{ fontSize: '18px' }}>{booking.service}</h3>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <span className={`status-badge ${getDisplayStatus(booking).toLowerCase()}`}>
+                        {getDisplayStatus(booking)}
+                      </span>
+                      {booking.adminStatus && booking.adminStatus !== 'Confirmed' && (
+                        <span style={adminBadgeStyle(booking.adminStatus)}>
+                          {booking.adminStatus}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {booking.adminStatus === 'Reschedule Requested' ? (
+                    <div
+                      style={{
+                        padding: '12px 16px',
+                        background: 'rgba(234, 179, 8, 0.05)',
+                        border: '1px solid rgba(234, 179, 8, 0.15)',
+                        borderRadius: '12px',
+                        marginBottom: '12px',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <p style={{ margin: '2px 0' }}>
+                        <strong>Current Slot:</strong> {booking.date} at {booking.time}
+                      </p>
+                      <p style={{ margin: '2px 0', color: '#facc15', fontWeight: 600 }}>
+                        <strong>Requested New Slot:</strong> {booking.requestedDate} at {booking.requestedTime}
+                      </p>
+                    </div>
+                  ) : (
+                    <p style={{ margin: '4px 0', fontSize: '15px' }}>
+                      <strong style={{ color: 'var(--text-secondary)' }}>Appointment:</strong> {booking.date} at{' '}
+                      {booking.time}
+                    </p>
+                  )}
+
+                  <p style={{ margin: '4px 0', fontSize: '15px' }}>
+                    <strong style={{ color: 'var(--text-secondary)' }}>Client:</strong> {booking.customerName} (
+                    {booking.customerEmail})
+                  </p>
+
+                  <p style={{ margin: '4px 0', fontSize: '15px' }}>
+                    <strong style={{ color: 'var(--text-secondary)' }}>Artist:</strong> {booking.artistName || 'None'}
+                    {booking.depositAmount != null && (
+                      <span style={{ marginLeft: '14px' }}>
+                        <strong style={{ color: 'var(--text-secondary)' }}>Deposit:</strong> £{booking.depositAmount.toFixed(2)}
+                      </span>
+                    )}
+                  </p>
+
+                  <div
+                    style={{
+                      display: 'flex',
+                      gap: '8px',
+                      marginTop: '16px',
+                      flexWrap: 'wrap',
+                    }}
+                  >
+                    {booking.status === 'Pending' && (
+                      <button
+                        onClick={() => updateBookingStatus(booking.id, 'Confirmed')}
+                        className="btn btn-primary"
+                        style={{ padding: '8px 16px', fontSize: '13px' }}
+                      >
+                        Confirm
+                      </button>
+                    )}
+
+                    {booking.status === 'Confirmed' && (
+                      <button
+                        onClick={() => {
+                          const confirmed = window.confirm(
+                            `Are you sure you want to cancel ${booking.service} for ${booking.customerName}?`
+                          )
+                          if (!confirmed) return
+
+                          const reason = window.prompt(`Please enter the cancellation reason for ${booking.customerName}:`)
+                          if (reason === null) return // Admin cancelled prompt
+
+                          updateBookingStatus(booking.id, 'Cancelled', reason || 'No reason provided')
+                        }}
+                        className="btn btn-danger"
+                        style={{ padding: '8px 16px', fontSize: '13px' }}
+                      >
+                        Cancel
+                      </button>
+                    )}
+
+                    <button
+                      onClick={() => {
+                        setSelectedBookingId(booking.id)
+                        setTimeout(() => {
+                          detailsRef.current?.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center',
+                          })
+                        }, 0)
+                      }}
+                      className="btn btn-secondary"
+                      style={{ padding: '8px 16px', fontSize: '13px' }}
+                    >
+                      Details
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ color: 'var(--text-secondary)', padding: '20px 0' }}>No bookings found.</p>
+          )}
+
+          {bookings.length > 5 && (
+            <button
+              onClick={() => setShowAllBookings(!showAllBookings)}
+              className="btn btn-secondary"
+              style={{ marginTop: '20px', width: '100%' }}
+            >
+              {showAllBookings ? 'Show Less' : 'Show More'}
+            </button>
+          )}
+        </div>
+
+        {/* Right Side Stack: Queue & Detail Cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* Review Queue */}
+          <div className="premium-card">
+            <h2 style={{ fontSize: '20px', marginBottom: '16px' }}>
+              Action Queue {reviewBookings.length > 0 ? `(${reviewBookings.length})` : ''}
+            </h2>
+
+            {reviewBookings.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {reviewBookings.map((booking, index) => (
+                  <div
+                    key={booking.id}
+                    style={{
+                      paddingBottom: '16px',
+                      borderBottom:
+                        index !== reviewBookings.length - 1 ? '1px solid var(--border-color)' : 'none',
+                    }}
+                  >
+                    <p style={{ fontWeight: 600, fontSize: '15px' }}>{booking.service}</p>
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '4px 0 8px 0' }}>
+                      Client: {booking.customerName}
+                    </p>
+
+                    {booking.adminStatus === 'Reschedule Requested' ? (
+                      <div
+                        style={{
+                          fontSize: '13px',
+                          color: 'var(--text-secondary)',
+                          background: 'rgba(255,255,255,0.02)',
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          border: '1px solid var(--border-color)',
+                          marginBottom: '12px',
+                        }}
+                      >
+                        <p style={{ margin: '2px 0' }}>
+                          <strong>From:</strong> {booking.originalDate || booking.date} at{' '}
+                          {booking.originalTime || booking.time}
+                        </p>
+                        <p style={{ margin: '2px 0', color: '#facc15' }}>
+                          <strong>To:</strong> {booking.requestedDate} at {booking.requestedTime}
+                        </p>
+                      </div>
+                    ) : (
+                      <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+                        Requested: {booking.date} at {booking.time}
+                      </p>
+                    )}
+
+                    <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      <button
+                        onClick={() => {
+                          if (booking.adminStatus === 'Reschedule Requested') {
+                            acceptReschedule(booking.id)
+                          } else if (booking.status === 'Cancelled' && booking.adminStatus === 'Needs Action') {
+                            acknowledgeBooking(booking.id)
+                          } else {
+                            updateBookingStatus(booking.id, 'Confirmed')
+                          }
+                        }}
+                        className="btn btn-primary"
+                        style={{
+                          padding: '6px 12px',
+                          fontSize: '12px',
+                          background:
+                            booking.status === 'Cancelled' && booking.adminStatus === 'Needs Action'
+                              ? 'rgba(234, 179, 8, 0.2)'
+                              : 'var(--accent-color)',
+                          color:
+                            booking.status === 'Cancelled' && booking.adminStatus === 'Needs Action'
+                              ? '#facc15'
+                              : '#ffffff',
+                        }}
+                      >
+                        {booking.adminStatus === 'Reschedule Requested'
+                          ? 'Approve'
+                          : booking.status === 'Cancelled' && booking.adminStatus === 'Needs Action'
+                          ? 'Acknowledge'
+                          : 'Confirm'}
+                      </button>
+                      {booking.adminStatus === 'Reschedule Requested' && (
+                        <button
+                          onClick={() => declineReschedule(booking.id)}
+                          className="btn btn-danger"
+                          style={{ padding: '6px 12px', fontSize: '12px' }}
+                        >
+                          Decline
+                        </button>
+                      )}
+                      <button
+                        onClick={() => {
+                          setSelectedBookingId(booking.id)
+                          setTimeout(() => {
+                            detailsRef.current?.scrollIntoView({
+                              behavior: 'smooth',
+                              block: 'center',
+                            })
+                          }, 0)
+                        }}
+                        className="btn btn-secondary"
+                        style={{ padding: '6px 12px', fontSize: '12px' }}
+                      >
+                        Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>No action items pending.</p>
+            )}
+          </div>
+
+          {/* Booking Details */}
+          <div ref={detailsRef} className="premium-card">
+            <h2 style={{ fontSize: '20px', marginBottom: '16px' }}>Booking Details</h2>
+
+            {selectedBooking ? (
+              <div
+                style={{
+                  fontSize: '15px',
+                  color: 'var(--text-primary)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px',
+                }}
+              >
+                <p>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Client Name:</strong>{' '}
+                  {selectedBooking.customerName}
+                </p>
+                <p>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Client Email:</strong>{' '}
+                  {selectedBooking.customerEmail}
+                </p>
+                <p>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Client Phone:</strong>{' '}
+                  {selectedBooking.customerPhone}
+                </p>
+                <p>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Service Type:</strong>{' '}
+                  {selectedBooking.service}
+                </p>
+                <p>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Scheduled Time:</strong>{' '}
+                  {selectedBooking.date} at {selectedBooking.time}
+                </p>
+                <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Status:</strong>{' '}
+                  <span className={`status-badge ${getDisplayStatus(selectedBooking).toLowerCase()}`}>
+                    {getDisplayStatus(selectedBooking)}
+                  </span>
+                </p>
+                {selectedBooking.artistName && (
+                  <p>
+                    <strong style={{ color: 'var(--text-secondary)' }}>Artist:</strong>{' '}
+                    {selectedBooking.artistName}
+                  </p>
+                )}
+                {selectedBooking.depositAmount != null && (
+                  <p>
+                    <strong style={{ color: 'var(--text-secondary)' }}>Deposit Status:</strong>{' '}
+                    <span style={{ color: selectedBooking.depositPaid ? 'var(--accent-color)' : '#facc15', fontWeight: 600 }}>
+                      £{selectedBooking.depositAmount.toFixed(2)} ({selectedBooking.depositPaid ? 'Authorized & Paid' : 'Unpaid'})
+                    </span>
+                  </p>
+                )}
+                <p>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Client Notes:</strong>{' '}
+                  {selectedBooking.notes || 'No notes added'}
+                </p>
+                {selectedBooking.requestedDate && selectedBooking.requestedTime && (
+                  <p style={{ color: '#facc15', fontStyle: 'italic', fontWeight: 600 }}>
+                    ★ Requested reschedule to: {selectedBooking.requestedDate} at {selectedBooking.requestedTime}
+                  </p>
+                )}
+
+                {/* Cancellation Details */}
+                {selectedBooking.status === 'Cancelled' && (
+                  <div
+                    style={{
+                      borderTop: '1px solid var(--border-color)',
+                      paddingTop: '10px',
+                      marginTop: '4px',
+                    }}
+                  >
+                    <p>
+                      <strong style={{ color: 'var(--text-secondary)' }}>Cancelled By:</strong>{' '}
+                      <span style={{ textTransform: 'capitalize' }}>
+                        {selectedBooking.cancelledBy || 'system'}
+                      </span>
+                    </p>
+                    {selectedBooking.cancellationReason && (
+                      <p>
+                        <strong style={{ color: 'var(--text-secondary)' }}>Cancellation Reason:</strong>{' '}
+                        <span style={{ fontStyle: 'italic', color: 'var(--text-primary)' }}>
+                          "{selectedBooking.cancellationReason}"
+                        </span>
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Client Lifetime Metrics Panel */}
+                <div
+                  style={{
+                    marginTop: '8px',
+                    padding: '14px',
+                    background: 'rgba(16, 185, 129, 0.04)',
+                    border: '1px solid rgba(16, 185, 129, 0.12)',
+                    borderRadius: '12px',
+                    fontSize: '13px',
+                  }}
+                >
+                  <p style={{ fontWeight: 700, color: '#34d399', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    📈 Client Metrics
+                  </p>
+                  <p style={{ margin: '2px 0' }}>
+                    <strong style={{ color: 'var(--text-secondary)' }}>Completed Visits:</strong> {clientAnalytics.visits}
+                  </p>
+                  <p style={{ margin: '2px 0' }}>
+                    <strong style={{ color: 'var(--text-secondary)' }}>Lifetime LTV:</strong> ${clientAnalytics.ltv}
+                  </p>
+                </div>
+
+                {/* Completed Session Details Editor Form */}
+                {getDisplayStatus(selectedBooking) === 'Completed' && (
+                  <form
+                    onSubmit={handleSaveSessionDetails}
+                    style={{
+                      marginTop: '12px',
+                      borderTop: '1px solid var(--border-color)',
+                      paddingTop: '14px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px',
+                    }}
+                  >
+                    <p style={{ fontWeight: 700, fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--accent-color)' }}>
+                      📝 Complete Session Notes
+                    </p>
+
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label className="form-label" style={{ fontSize: '11px' }}>
+                        Price Charged ($)
+                      </label>
+                      <input
+                        type="number"
+                        className="form-input"
+                        value={priceChargedInput}
+                        onChange={(e) => setPriceChargedInput(e.target.value)}
+                        placeholder="e.g. 150"
+                        required
+                        style={{ padding: '8px 12px', fontSize: '14px' }}
+                      />
+                    </div>
+
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label className="form-label" style={{ fontSize: '11px' }}>
+                        Aftercare Instructions (Customer-Facing)
+                      </label>
+                      <textarea
+                        className="form-textarea"
+                        value={aftercareInput}
+                        onChange={(e) => setAftercareInput(e.target.value)}
+                        placeholder="Instructions for customer..."
+                        style={{ minHeight: '60px', padding: '8px 12px', fontSize: '14px', resize: 'vertical' }}
+                      />
+                    </div>
+
+                    <div className="form-group" style={{ marginBottom: 0 }}>
+                      <label className="form-label" style={{ fontSize: '11px' }}>
+                        Internal Notes (Admin-Only)
+                      </label>
+                      <textarea
+                        className="form-textarea"
+                        value={internalNotesInput}
+                        onChange={(e) => setInternalNotesInput(e.target.value)}
+                        placeholder="Staff observations, healing progress, preferences..."
+                        style={{ minHeight: '60px', padding: '8px 12px', fontSize: '14px', resize: 'vertical' }}
+                      />
+                    </div>
+
+                    <button type="submit" className="btn btn-primary" style={{ padding: '8px 14px', fontSize: '13px', alignSelf: 'flex-end' }}>
+                      Save Notes
+                    </button>
+                  </form>
+                )}
+              </div>
+            ) : (
+              <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+                Select a booking from the list or review queue to inspect details.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

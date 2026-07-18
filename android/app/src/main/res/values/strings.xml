@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Reservation Blueprint</string>
+    <string name="title_activity_main">Reservation Blueprint</string>
+    <string name="package_name">com.radoslav.reservationblueprint</string>
+    <string name="custom_url_scheme">com.radoslav.reservationblueprint</string>
+</resources>
