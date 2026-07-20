@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { safeCollection, safeDoc } from './firestoreHelpers'
+import { safeCollection, safeDoc, safeSetDoc } from './firestoreHelpers'
 import { db, isFirebaseEnabled } from './firebase'
 import {
   collection,
@@ -257,7 +257,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanData = JSON.parse(JSON.stringify(bookingWithId))
-        await setDoc(doc(db, 'bookings', bookingWithId.id), cleanData, { merge: true })
+        await safeSetDoc(safeDoc('bookings', bookingWithId.id), cleanData)
       } catch (err) {
         console.error('Failed to add booking to Firestore:', err)
       }
@@ -296,7 +296,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     if (isFirebaseEnabled) {
       try {
-        await setDoc(doc(db, 'notifications', crypto.randomUUID()), newNotif)
+        await safeSetDoc(safeDoc('notifications', crypto.randomUUID()), newNotif)
       } catch (err) {
         console.error('Failed to add notification to Firestore:', err)
       }
