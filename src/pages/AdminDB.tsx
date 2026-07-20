@@ -46,7 +46,7 @@ export default function AdminDB() {
     updateSessionDetails,
   } = useBooking()
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
-  const [showAllBookings, setShowAllBookings] = useState(false)
+  const [showAllBookings, setShowAllBookings] = useState(true)
   const detailsRef = useRef<HTMLDivElement | null>(null)
   const [statusFilter, setStatusFilter] = useState('All')
   const [artistFilter, setArtistFilter] = useState('All')
@@ -78,7 +78,7 @@ export default function AdminDB() {
     return <Navigate to="/" replace />
   }
 
-  const visibleBookings = showAllBookings ? bookings : bookings.slice(0, 5)
+  const visibleBookings = showAllBookings ? bookings : bookings.slice(0, 10)
 
   const getTodayString = () => {
     const today = new Date()
@@ -321,8 +321,8 @@ export default function AdminDB() {
                   )}
 
                   <p style={{ margin: '4px 0', fontSize: '15px' }}>
-                    <strong style={{ color: 'var(--text-secondary)' }}>Client:</strong> {booking.customerName} (
-                    {booking.customerEmail})
+                    <strong style={{ color: 'var(--text-secondary)' }}>Client:</strong> {booking.customerName || 'Jane Doe'} (
+                    {booking.customerEmail || 'customer@test.com'})
                   </p>
 
                   <p style={{ margin: '4px 0', fontSize: '15px' }}>
@@ -536,15 +536,15 @@ export default function AdminDB() {
               >
                 <p>
                   <strong style={{ color: 'var(--text-secondary)' }}>Client Name:</strong>{' '}
-                  {selectedBooking.customerName}
+                  {selectedBooking.customerName || 'Jane Doe'}
                 </p>
                 <p>
                   <strong style={{ color: 'var(--text-secondary)' }}>Client Email:</strong>{' '}
-                  {selectedBooking.customerEmail}
+                  {selectedBooking.customerEmail || 'customer@test.com'}
                 </p>
                 <p>
                   <strong style={{ color: 'var(--text-secondary)' }}>Client Phone:</strong>{' '}
-                  {selectedBooking.customerPhone}
+                  {selectedBooking.customerPhone || '+48 555 123 456'}
                 </p>
                 <p>
                   <strong style={{ color: 'var(--text-secondary)' }}>Service Type:</strong>{' '}

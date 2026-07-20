@@ -37,15 +37,18 @@ export default function BookAppointment() {
     return slots
   }
 
-  const [customerName, setCustomerName] = useState(
-    isReschedule && latestBooking ? latestBooking.customerName || '' : ''
-  )
-  const [customerEmail, setCustomerEmail] = useState(
-    isReschedule && latestBooking ? latestBooking.customerEmail || '' : ''
-  )
-  const [customerPhone, setCustomerPhone] = useState(
-    isReschedule && latestBooking ? latestBooking.customerPhone || '' : ''
-  )
+  const [customerName, setCustomerName] = useState(() => {
+    if (isReschedule && latestBooking) return latestBooking.customerName || 'Jane Doe'
+    return 'Jane Doe'
+  })
+  const [customerEmail, setCustomerEmail] = useState(() => {
+    if (isReschedule && latestBooking) return latestBooking.customerEmail || 'customer@test.com'
+    return sessionStorage.getItem('currentUserEmail') || currentUserEmail || 'customer@test.com'
+  })
+  const [customerPhone, setCustomerPhone] = useState(() => {
+    if (isReschedule && latestBooking) return latestBooking.customerPhone || '+48 555 123 456'
+    return '+48 555 123 456'
+  })
 
   const [service, setService] = useState(
     isReschedule && latestBooking ? latestBooking.service : ''
