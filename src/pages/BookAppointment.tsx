@@ -409,44 +409,88 @@ export default function BookAppointment() {
             </div>
           </div>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '16px',
-            }}
-          >
-            <div className="form-group">
-              <label className="form-label">Service</label>
-              <select
-                value={service}
-                onChange={(e) => setService(e.target.value)}
-                className="form-select"
-                required
-              >
-                <option value="" disabled>Select service</option>
-                {BUSINESS_CONFIG.services.map((srv) => (
-                  <option key={srv.id} value={srv.name}>
-                    {srv.name} (£{srv.price})
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="form-group">
-              <label className="form-label">{BUSINESS_CONFIG.staffLabel}</label>
-              <select
-                value={artistId}
-                onChange={(e) => setArtistId(e.target.value)}
-                className="form-select"
-                required
-              >
-                <option value="" disabled>Select {BUSINESS_CONFIG.staffLabel.toLowerCase()}</option>
-                {BUSINESS_CONFIG.artists.map((art) => (
-                  <option key={art.id} value={art.id}>
-                    {art.name} ({art.specialty})
-                  </option>
-                ))}
-              </select>
+          <div className="form-group">
+            <label className="form-label">Service</label>
+            <select
+              value={service}
+              onChange={(e) => setService(e.target.value)}
+              className="form-select"
+              required
+            >
+              <option value="" disabled>Select service</option>
+              {BUSINESS_CONFIG.services.map((srv) => (
+                <option key={srv.id} value={srv.name}>
+                  {srv.name} (£{srv.price})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '24px' }}>
+            <label className="form-label" style={{ marginBottom: '10px', display: 'block' }}>
+              Select {BUSINESS_CONFIG.staffLabel}
+            </label>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                gap: '12px',
+              }}
+            >
+              {BUSINESS_CONFIG.artists.map((art) => {
+                const isSelected = artistId === art.id
+                return (
+                  <button
+                    key={art.id}
+                    type="button"
+                    onClick={() => setArtistId(art.id)}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      padding: '14px 10px',
+                      borderRadius: '14px',
+                      background: isSelected ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                      border: `2px solid ${isSelected ? 'var(--accent-color)' : 'var(--border-color)'}`,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      textAlign: 'center',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '50%',
+                        background: isSelected ? 'var(--accent-color)' : 'rgba(255, 255, 255, 0.08)',
+                        color: isSelected ? '#ffffff' : 'var(--text-primary)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '22px',
+                        marginBottom: '8px',
+                        boxShadow: isSelected ? '0 0 12px rgba(16, 185, 129, 0.4)' : 'none',
+                      }}
+                    >
+                      {art.avatarUrl ? (
+                        <img
+                          src={art.avatarUrl}
+                          alt={art.name}
+                          style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                        />
+                      ) : (
+                        art.avatarEmoji || '👤'
+                      )}
+                    </div>
+                    <span style={{ fontWeight: 700, fontSize: '14px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>
+                      {art.name}
+                    </span>
+                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px', lineHeight: '1.2' }}>
+                      {art.specialty}
+                    </span>
+                  </button>
+                )
+              })}
             </div>
           </div>
 

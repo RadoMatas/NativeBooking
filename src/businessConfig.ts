@@ -9,6 +9,8 @@ export interface Artist {
   id: string
   name: string
   specialty: string
+  avatarEmoji: string
+  avatarUrl?: string
   workingDays: number[] // days of week: 0=Sunday, 1=Monday... 6=Saturday
 }
 
@@ -57,10 +59,10 @@ export const BUSINESS_CONFIG: BusinessConfig = {
     { id: "piercing", name: "Piercing Session", price: 40, durationMin: 20 }
   ],
   artists: [
-    { id: "marcel", name: "Marcel", specialty: "Black & Grey Realism", workingDays: [1, 2, 3, 4, 5] }, // Mon-Fri
-    { id: "tomek", name: "Tomek", specialty: "Traditional & Neo-Traditional", workingDays: [1, 2, 3, 4] }, // Mon-Thu
-    { id: "konrad", name: "Konrad", specialty: "Geometric & Dotwork", workingDays: [3, 4, 5, 6] }, // Wed-Sat
-    { id: "viktor", name: "Viktor", specialty: "Japanese Realism", workingDays: [5, 6] } // Fri-Sat
+    { id: "marcel", name: "Marcel", specialty: "Black & Grey Realism", avatarEmoji: "🎨", workingDays: [1, 2, 3, 4, 5] },
+    { id: "tomek", name: "Tomek", specialty: "Traditional & Neo-Traditional", avatarEmoji: "✒️", workingDays: [1, 2, 3, 4] },
+    { id: "konrad", name: "Konrad", specialty: "Geometric & Dotwork", avatarEmoji: "📐", workingDays: [3, 4, 5, 6] },
+    { id: "viktor", name: "Viktor", specialty: "Japanese Realism", avatarEmoji: "🐉", workingDays: [5, 6] }
   ],
   staffLabel: "Artist",
   staffLabelPlural: "Artists",

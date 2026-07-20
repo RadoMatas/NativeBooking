@@ -314,9 +314,12 @@ export default function CustomerDB() {
                   : latestBooking.time}
               </p>
               {latestBooking.artistName && (
-                <p>
+                <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong>{' '}
-                  {latestBooking.artistName}
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                    {BUSINESS_CONFIG.artists.find((a) => a.id === latestBooking.artistId || a.name === latestBooking.artistName)?.avatarEmoji || '👤'}{' '}
+                    {latestBooking.artistName}
+                  </span>
                 </p>
               )}
               {latestBooking.depositAmount != null && (
