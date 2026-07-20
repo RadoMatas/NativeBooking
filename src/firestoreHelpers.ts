@@ -1,5 +1,5 @@
 import { collection, doc, setDoc } from 'firebase/firestore';
-
+import { db } from './firebase';
 /**
  * Safely get a Firestore collection reference. Throws if `db` is not initialized.
  */
