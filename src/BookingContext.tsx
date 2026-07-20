@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { safeCollection, safeDoc, safeSetDoc } from './firestoreHelpers'
+import { safeCollection, safeDoc } from './firestoreHelpers'
 import { db, isFirebaseEnabled } from './firebase'
 import {
   collection,
@@ -261,7 +261,10 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error('Failed to add booking to Firestore:', err)
       }
+    } else {
+      console.error('Firebase not enabled – cannot add booking to Firestore')
     }
+
   }
 
   const resetBookings = async () => {

@@ -20,13 +20,3 @@ export const safeDoc = (path: string, id: string) => {
   }
   return doc(db, path, id);
 };
-
-/**
- * Safely write a document with merge semantics.
- */
-export const safeSetDoc = async (ref: any, data: any) => {
-  if (!db) {
-    throw new Error('Firestore not initialized – setDoc aborted');
-  }
-  await setDoc(ref, data, { merge: true });
-};
