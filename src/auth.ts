@@ -144,23 +144,7 @@ export async function loginWithGoogle(): Promise<boolean> {
   }
 }
 
-  if (!isFirebaseEnabled) {
-    // Local fallback mock Google Sign-in
-    currentUserRole = 'customer'
-    currentUserEmail = 'google-customer@test.com'
-    sessionStorage.setItem('currentUserRole', 'customer')
-    sessionStorage.setItem('currentUserEmail', 'google-customer@test.com')
-    return true
-  }
 
-  try {
-    const cred = await signInWithPopup(auth, googleProvider)
-    await syncUserProfile(cred.user)
-    return true
-  } catch (error) {
-    console.error('Firebase Google sign-in failed:', error)
-    return false
-  }
 }
 
 export async function logout() {
