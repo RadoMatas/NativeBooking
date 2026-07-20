@@ -5,7 +5,6 @@ import {
   collection,
   onSnapshot,
   doc,
-  setDoc,
   getDocs,
   writeBatch
 } from 'firebase/firestore'
@@ -313,7 +312,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     if (isFirebaseEnabled) {
       try {
-        await setDoc(doc(db, 'bookings', id), cleanData, { merge: true })
+        await safeSetDoc(safeDoc('bookings', id), cleanData)
       } catch (err) {
         console.error('Failed to update Firestore booking:', err)
       }
@@ -359,7 +358,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanPayload = JSON.parse(JSON.stringify(updatePayload))
-        await setDoc(doc(db, 'bookings', id), cleanPayload, { merge: true })
+        await safeSetDoc(safeDoc('bookings', id), cleanPayload)
       } catch (err) {
         console.error('Failed to update booking status in Firestore:', err)
       }
@@ -392,7 +391,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await setDoc(doc(db, 'bookings', id), cleanUpdates, { merge: true })
+        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
       } catch (err) {
         console.error('Failed to accept reschedule in Firestore:', err)
       }
@@ -425,7 +424,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await setDoc(doc(db, 'bookings', id), cleanUpdates, { merge: true })
+        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
       } catch (err) {
         console.error('Failed to decline reschedule in Firestore:', err)
       }
@@ -523,10 +522,10 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     if (isFirebaseEnabled) {
       try {
-        await setDoc(doc(db, 'bookings', id), {
-          customerNotification: null,
-          customerNotificationType: null,
-        }, { merge: true })
+        await safeSetDoc(safeDoc('bookings', id), {
+            customerNotification: null,
+            customerNotificationType: null,
+          })
       } catch (err) {
         console.error('Failed to clear customer notification in Firestore:', err)
       }
@@ -552,11 +551,11 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     if (isFirebaseEnabled) {
       try {
-        await setDoc(doc(db, 'bookings', id), {
-          priceCharged: details.priceCharged,
-          adminNotesForCustomer: details.adminNotesForCustomer,
-          internalAdminNotes: details.internalAdminNotes,
-        }, { merge: true })
+        await safeSetDoc(safeDoc('bookings', id), {
+           priceCharged: details.priceCharged,
+           adminNotesForCustomer: details.adminNotesForCustomer,
+           internalAdminNotes: details.internalAdminNotes,
+         })
       } catch (err) {
         console.error('Failed to update session details in Firestore:', err)
       }
