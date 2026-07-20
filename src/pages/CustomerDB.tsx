@@ -389,18 +389,57 @@ export default function CustomerDB() {
           marginBottom: '32px',
         }}
       >
-        <div className="premium-card">
-          <h2 style={{ fontSize: '20px', marginBottom: '14px' }}>Preparation Checklist</h2>
-          <ul style={{ paddingLeft: '18px', color: 'var(--text-secondary)', lineHeight: '1.8' }}>
-            {BUSINESS_CONFIG.checklist.map((item, idx) => (
-              <li key={idx}>{item}</li>
-            ))}
-          </ul>
+        <div className="premium-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
+              <h2 style={{ fontSize: '20px', margin: 0 }}>Preparation Checklist</h2>
+              <span style={{ fontSize: '12px', background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', padding: '4px 10px', borderRadius: '9999px', fontWeight: 600 }}>
+                📋 Visit Readiness
+              </span>
+            </div>
+
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+              Follow these quick guidelines before your appointment to ensure a smooth session:
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
+              {BUSINESS_CONFIG.checklist.map((item, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '12px',
+                    padding: '10px 14px',
+                    borderRadius: '10px',
+                    background: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid var(--border-color)',
+                  }}
+                >
+                  <span style={{ color: 'var(--accent-color)', fontWeight: 700, fontSize: '15px' }}>✓</span>
+                  <span style={{ fontSize: '14px', color: 'var(--text-primary)', lineHeight: '1.4' }}>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div
+            style={{
+              padding: '12px 14px',
+              borderRadius: '10px',
+              background: 'rgba(234, 179, 8, 0.05)',
+              border: '1px solid rgba(234, 179, 8, 0.15)',
+              fontSize: '13px',
+              color: '#facc15',
+            }}
+          >
+            <strong>💡 Policy Note:</strong> Free cancellations & rescheduling available up to 24 hours before your session.
+          </div>
         </div>
 
         <div className="premium-card">
           <h2 style={{ fontSize: '20px', marginBottom: '14px' }}>Business Details</h2>
-          <div style={{ color: 'var(--text-secondary)', lineHeight: '1.8' }}>
+          <div style={{ color: 'var(--text-secondary)', lineHeight: '1.8', marginBottom: '16px' }}>
             <p>
               <strong style={{ color: 'var(--text-primary)' }}>Name:</strong> {BUSINESS_CONFIG.name}
             </p>
@@ -411,6 +450,44 @@ export default function CustomerDB() {
               <strong style={{ color: 'var(--text-primary)' }}>Contact:</strong> {BUSINESS_CONFIG.contact}
             </p>
           </div>
+
+          {/* Interactive Google Maps Embed Widget */}
+          <div
+            style={{
+              width: '100%',
+              height: '180px',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '1px solid var(--border-color)',
+              marginBottom: '14px',
+              background: 'rgba(0, 0, 0, 0.2)',
+            }}
+          >
+            <iframe
+              title="Business Location Map"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(BUSINESS_CONFIG.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+            />
+          </div>
+
+          <a
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(BUSINESS_CONFIG.address)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none' }}
+          >
+            <button
+              className="btn btn-secondary"
+              style={{ width: '100%', padding: '10px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            >
+              🗺️ Get Directions / Open in Google Maps
+            </button>
+          </a>
         </div>
       </div>
 
