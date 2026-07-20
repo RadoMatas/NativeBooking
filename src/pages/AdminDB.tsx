@@ -46,7 +46,7 @@ export default function AdminDB() {
     updateSessionDetails,
   } = useBooking()
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
-  const [showAllBookings, setShowAllBookings] = useState(true)
+  const [showAllBookings, setShowAllBookings] = useState(false)
   const detailsRef = useRef<HTMLDivElement | null>(null)
   const [statusFilter, setStatusFilter] = useState('All')
   const [artistFilter, setArtistFilter] = useState('All')
@@ -55,6 +55,10 @@ export default function AdminDB() {
   const [priceChargedInput, setPriceChargedInput] = useState('')
   const [aftercareInput, setAftercareInput] = useState('')
   const [internalNotesInput, setInternalNotesInput] = useState('')
+
+  // Cancellation Modal State
+  const [cancellingBooking, setCancellingBooking] = useState<any | null>(null)
+  const [cancelReasonInput, setCancelReasonInput] = useState('')
 
   const reviewBookings = bookings.filter(
     (booking) =>
@@ -77,8 +81,6 @@ export default function AdminDB() {
   if (activeRole !== 'admin') {
     return <Navigate to="/" replace />
   }
-
-  const visibleBookings = showAllBookings ? bookings : bookings.slice(0, 10)
 
   const getTodayString = () => {
     const today = new Date()
@@ -114,14 +116,24 @@ export default function AdminDB() {
     return booking.status || 'Pending'
   }
 
-  const filteredBookings = visibleBookings.filter((booking) => {
-    const displayStatus = getDisplayStatus(booking)
+  const allMatchingBookings = useMemo(() => {
+    return bookings
+      .filter((booking) => {
+        const displayStatus = getDisplayStatus(booking)
 
-    const matchesStatus = statusFilter === 'All' || displayStatus === statusFilter
-    const matchesArtist = artistFilter === 'All' || booking.artistId === artistFilter
+        const matchesStatus = statusFilter === 'All' || displayStatus === statusFilter
+        const matchesArtist = artistFilter === 'All' || booking.artistId === artistFilter
 
-    return matchesStatus && matchesArtist
-  })
+        return matchesStatus && matchesArtist
+      })
+      .sort((a, b) => {
+        const timeA = new Date(`${a.date}T${a.time || '00:00'}`).getTime()
+        const timeB = new Date(`${b.date}T${b.time || '00:00'}`).getTime()
+        return timeB - timeA
+      })
+  }, [bookings, statusFilter, artistFilter])
+
+  const filteredBookings = showAllBookings ? allMatchingBookings : allMatchingBookings.slice(0, 5)
 
   // Synchronize form inputs when the selected completed booking changes
   useEffect(() => {
@@ -352,18 +364,11 @@ export default function AdminDB() {
                       </button>
                     )}
 
-                    {booking.status === 'Confirmed' && (
+                    {booking.status !== 'Cancelled' && (
                       <button
                         onClick={() => {
-                          const confirmed = window.confirm(
-                            `Are you sure you want to cancel ${booking.service} for ${booking.customerName}?`
-                          )
-                          if (!confirmed) return
-
-                          const reason = window.prompt(`Please enter the cancellation reason for ${booking.customerName}:`)
-                          if (reason === null) return // Admin cancelled prompt
-
-                          updateBookingStatus(booking.id, 'Cancelled', reason || 'No reason provided')
+                          setCancellingBooking(booking)
+                          setCancelReasonInput('')
                         }}
                         className="btn btn-danger"
                         style={{ padding: '8px 16px', fontSize: '13px' }}
@@ -395,13 +400,13 @@ export default function AdminDB() {
             <p style={{ color: 'var(--text-secondary)', padding: '20px 0' }}>No bookings found.</p>
           )}
 
-          {bookings.length > 5 && (
+          {allMatchingBookings.length > 5 && (
             <button
               onClick={() => setShowAllBookings(!showAllBookings)}
               className="btn btn-secondary"
               style={{ marginTop: '20px', width: '100%' }}
             >
-              {showAllBookings ? 'Show Less' : 'Show More'}
+              {showAllBookings ? 'Show Less' : `Show More (${allMatchingBookings.length - 5} more)`}
             </button>
           )}
         </div>
@@ -496,6 +501,19 @@ export default function AdminDB() {
                           Decline
                         </button>
                       )}
+                      {booking.status !== 'Cancelled' && (
+                        <button
+                          onClick={() => {
+                            setCancellingBooking(booking)
+                            setCancelReasonInput('')
+                          }}
+                          className="btn btn-danger"
+                          style={{ padding: '6px 12px', fontSize: '12px' }}
+                        >
+                          Cancel
+                        </button>
+                      )}
+
                       <button
                         onClick={() => {
                           setSelectedBookingId(booking.id)
@@ -583,6 +601,8 @@ export default function AdminDB() {
                     ★ Requested reschedule to: {selectedBooking.requestedDate} at {selectedBooking.requestedTime}
                   </p>
                 )}
+
+
 
                 {/* Cancellation Details */}
                 {selectedBooking.status === 'Cancelled' && (
@@ -703,6 +723,92 @@ export default function AdminDB() {
             )}
           </div>
         </div>
+      {cancellingBooking && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px',
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          <div
+            className="premium-card"
+            style={{
+              maxWidth: '460px',
+              width: '100%',
+              padding: '28px',
+              borderRadius: '16px',
+              backgroundColor: '#1e293b',
+              border: '1px solid #334155',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: '#ffffff' }}>
+              Cancel Appointment
+            </h3>
+            <p style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '20px', lineHeight: '1.5' }}>
+              Are you sure you want to cancel <strong>{cancellingBooking.service}</strong> for{' '}
+              <strong>{cancellingBooking.customerName || 'Client'}</strong>?
+            </p>
+
+            <div className="form-group" style={{ marginBottom: '24px' }}>
+              <label className="form-label" style={{ fontSize: '13px', marginBottom: '6px', display: 'block', color: 'var(--text-secondary)' }}>
+                Reason for Cancellation (Optional)
+              </label>
+              <textarea
+                className="form-textarea"
+                value={cancelReasonInput}
+                onChange={(e) => setCancelReasonInput(e.target.value)}
+                placeholder="e.g. Schedule conflict, client request..."
+                style={{
+                  width: '100%',
+                  minHeight: '80px',
+                  padding: '10px 12px',
+                  fontSize: '14px',
+                  borderRadius: '8px',
+                  resize: 'vertical',
+                  backgroundColor: 'rgba(15, 23, 42, 0.6)',
+                  color: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                }}
+                autoFocus
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setCancellingBooking(null)}
+                className="btn btn-secondary"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Keep Appointment
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  updateBookingStatus(cancellingBooking.id, 'Cancelled', cancelReasonInput || 'No reason provided')
+                  setCancellingBooking(null)
+                }}
+                className="btn btn-danger"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Confirm Cancellation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   )

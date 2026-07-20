@@ -126,6 +126,8 @@ export default function CustomerDB() {
   const [toastMessage, setToastMessage] = useState('')
   const [showToast, setShowToast] = useState(false)
   const [toastVariant, setToastVariant] = useState<'success' | 'warning' | 'error'>('warning')
+  const [showCancelModal, setShowCancelModal] = useState(false)
+  const [cancelReasonInput, setCancelReasonInput] = useState('')
 
   useEffect(() => {
     const bookingWithNotification = customerBookings.find(
@@ -366,20 +368,8 @@ export default function CustomerDB() {
             <button
               className="btn btn-danger"
               onClick={() => {
-                const confirmed = window.confirm(
-                  'Are you sure you want to cancel this meeting?'
-                )
-                if (!confirmed) return
-
-                const reason = window.prompt('Please enter the reason for cancellation:')
-                if (reason === null) return // User cancelled the prompt
-
-                cancelBooking(latestBooking!.id, reason || 'No reason provided')
-                addNotification(
-                  `Customer cancelled: ${latestBooking!.service} on ${latestBooking!.date} at ${
-                    latestBooking!.time
-                  } (Reason: ${reason || 'None'})`
-                )
+                setShowCancelModal(true)
+                setCancelReasonInput('')
               }}
             >
               Cancel Visit
@@ -506,7 +496,97 @@ export default function CustomerDB() {
             ))}
           </div>
         )}
-      </div>
+      {showCancelModal && latestBooking && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px',
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          <div
+            className="premium-card"
+            style={{
+              maxWidth: '460px',
+              width: '100%',
+              padding: '28px',
+              borderRadius: '16px',
+              backgroundColor: '#1e293b',
+              border: '1px solid #334155',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+            }}
+          >
+            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: '#ffffff' }}>
+              Cancel Appointment
+            </h3>
+            <p style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '20px', lineHeight: '1.5' }}>
+              Are you sure you want to cancel your appointment for <strong>{latestBooking.service}</strong> on{' '}
+              <strong>{latestBooking.date}</strong> at <strong>{latestBooking.time}</strong>?
+            </p>
+
+            <div className="form-group" style={{ marginBottom: '24px' }}>
+              <label className="form-label" style={{ fontSize: '13px', marginBottom: '6px', display: 'block', color: 'var(--text-secondary)' }}>
+                Reason for Cancellation (Optional)
+              </label>
+              <textarea
+                className="form-textarea"
+                value={cancelReasonInput}
+                onChange={(e) => setCancelReasonInput(e.target.value)}
+                placeholder="e.g. Work conflict, feeling unwell..."
+                style={{
+                  width: '100%',
+                  minHeight: '80px',
+                  padding: '10px 12px',
+                  fontSize: '14px',
+                  borderRadius: '8px',
+                  resize: 'vertical',
+                  backgroundColor: 'rgba(15, 23, 42, 0.6)',
+                  color: '#ffffff',
+                  border: '1px solid var(--border-color)',
+                }}
+                autoFocus
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => setShowCancelModal(false)}
+                className="btn btn-secondary"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Keep Appointment
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  cancelBooking(latestBooking.id, cancelReasonInput || 'No reason provided')
+                  addNotification(
+                    `Customer cancelled: ${latestBooking.service} on ${latestBooking.date} at ${
+                      latestBooking.time
+                    } (Reason: ${cancelReasonInput || 'None'})`
+                  )
+                  setShowCancelModal(false)
+                }}
+                className="btn btn-danger"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Confirm Cancellation
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
