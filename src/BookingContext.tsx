@@ -153,7 +153,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
   // Real-time Firebase Sync
   useEffect(() => {
-    if (!isFirebaseEnabled) return
+    if (!isFirebaseEnabled || !db) return
 
     const unsubscribeBookings = onSnapshot(
       collection(db, 'bookings'),

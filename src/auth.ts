@@ -154,10 +154,14 @@ async function syncUserProfile(user: FirebaseUser) {
 }
 
 // Observe Firebase state changes and sync role
-if (isFirebaseEnabled) {
-  onAuthStateChanged(auth, async (user) => {
-    if (user && user.email === sessionStorage.getItem('currentUserEmail')) {
-      await syncUserProfile(user)
-    }
-  })
+if (isFirebaseEnabled && auth) {
+  try {
+    onAuthStateChanged(auth, async (user) => {
+      if (user && user.email === sessionStorage.getItem('currentUserEmail')) {
+        await syncUserProfile(user)
+      }
+    })
+  } catch (err) {
+    console.error('Failed to attach onAuthStateChanged listener:', err)
+  }
 }
