@@ -80,12 +80,11 @@ export default function CustomerDB() {
     })
   }
 
-  const activeUserEmail = currentUserEmail || sessionStorage.getItem('currentUserEmail') || 'customer@test.com'
+  const activeUserEmail = currentUserEmail || sessionStorage.getItem('currentUserEmail') || ''
   const customerBookings = bookings.filter(
     (booking) =>
       booking.ownerEmail === activeUserEmail ||
-      booking.customerEmail === activeUserEmail ||
-      booking.ownerEmail === 'customer@test.com'
+      booking.customerEmail === activeUserEmail
   )
 
   const activeBookings = customerBookings.filter((booking) => {
