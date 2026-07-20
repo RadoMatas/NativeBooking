@@ -66,11 +66,84 @@ type BookingContextType = {
 const BookingContext = createContext<BookingContextType | undefined>(undefined)
 
 export function BookingProvider({ children }: { children: React.ReactNode }) {
+  const getPastDate = (daysAgo: number) => {
+    const d = new Date()
+    d.setDate(d.getDate() - daysAgo)
+    return d.toISOString().split('T')[0]
+  }
 
+  const getFutureDate = (daysAhead: number) => {
+    const d = new Date()
+    d.setDate(d.getDate() + daysAhead)
+    return d.toISOString().split('T')[0]
+  }
+
+  const INITIAL_BOOKINGS: Booking[] = [
+    {
+      id: "demo-completed-1",
+      ownerEmail: "customer@test.com",
+      customerName: "Jane Doe",
+      customerEmail: "customer@test.com",
+      customerPhone: "+48 555 123 456",
+      service: "Tattoo Session",
+      date: getPastDate(3),
+      time: "10:00",
+      status: "Confirmed",
+      notes: "First tattoo, wants a small flower on her wrist.",
+      priceCharged: 120,
+      adminNotesForCustomer: "Keep wrapped for 2 hours, wash gently with warm water, apply cream 3x daily.",
+      internalAdminNotes: "Client sat very well. Skin accepted ink easily. Follow up on colors.",
+      artistId: "marcel",
+      artistName: "Marcel",
+      depositAmount: 24,
+      depositPaid: true
+    },
+    {
+      id: "demo-upcoming-1",
+      ownerEmail: "customer@test.com",
+      customerName: "Jane Doe",
+      customerEmail: "customer@test.com",
+      customerPhone: "+48 555 123 456",
+      service: "Laser Removal Session",
+      date: getFutureDate(2),
+      time: "14:00",
+      status: "Confirmed",
+      notes: "Wants to discuss laser fading options.",
+      artistId: "konrad",
+      artistName: "Konrad",
+      depositAmount: 16,
+      depositPaid: true
+    },
+    {
+      id: "demo-pending-1",
+      ownerEmail: "customer@test.com",
+      customerName: "Jane Doe",
+      customerEmail: "customer@test.com",
+      customerPhone: "+48 555 123 456",
+      service: "Permanent Make-up",
+      date: getFutureDate(5),
+      time: "11:00",
+      status: "Pending",
+      notes: "Scheduled session following design approval.",
+      adminStatus: "New",
+      artistId: "marcel",
+      artistName: "Marcel",
+      depositAmount: 40,
+      depositPaid: false
+    }
+  ]
 
   const [bookings, setBookings] = useState<Booking[]>(() => {
     const saved = localStorage.getItem('bookings')
-    return saved ? JSON.parse(saved) : []
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    return INITIAL_BOOKINGS
   })
 
   const [notifications, setNotifications] = useState<AdminNotification[]>(() => {
@@ -84,7 +157,20 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     const unsubscribeBookings = onSnapshot(
       collection(db, 'bookings'),
-      (snapshot) => {
+      async (snapshot) => {
+        if (snapshot.empty) {
+          try {
+            const batch = writeBatch(db)
+            INITIAL_BOOKINGS.forEach((booking) => {
+              batch.set(doc(db, 'bookings', booking.id), booking)
+            })
+            await batch.commit()
+          } catch (err) {
+            console.error('Failed to auto-seed initial bookings to Firestore:', err)
+          }
+          return
+        }
+
         const updatedBookings: Booking[] = []
         snapshot.forEach((doc) => {
           updatedBookings.push(doc.data() as Booking)

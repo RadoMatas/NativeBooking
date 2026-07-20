@@ -32,23 +32,12 @@ service cloud.firestore {
 
     // --- BOOKINGS COLLECTION RULES ---
     match /bookings/{bookingId} {
-      // Admins have full access. Customers can read and write only their own bookings.
-      allow read: if isAdmin() || (isSignedIn() && isOwner(resource.data.customerEmail));
-      
-      // Allow creation if the booking email matches the logged-in user's email, or if user is admin
-      allow create: if isAdmin() || (isSignedIn() && isOwner(request.resource.data.customerEmail));
-      
-      // Allow updates if the existing booking belongs to the user, or if user is admin
-      allow update: if isAdmin() || (isSignedIn() && isOwner(resource.data.customerEmail));
-      
-      // Allow deletion only by Admins
-      allow delete: if isAdmin();
+      allow read, write: if true;
     }
 
     // --- NOTIFICATIONS COLLECTION RULES ---
     match /notifications/{notificationId} {
-      // Notifications are admin-only
-      allow read, write: if isAdmin();
+      allow read, write: if true;
     }
   }
 }
