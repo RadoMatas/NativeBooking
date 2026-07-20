@@ -1,5 +1,4 @@
-import { collection, doc } from 'firebase/firestore';
-import { db } from './firebase';
+import { collection, doc, setDoc } from 'firebase/firestore';
 
 /**
  * Safely get a Firestore collection reference. Throws if `db` is not initialized.
@@ -19,4 +18,14 @@ export const safeDoc = (path: string, id: string) => {
     throw new Error('Firestore not initialized – doc request aborted');
   }
   return doc(db, path, id);
+};
+
+/**
+ * Safely set a document in Firestore. Throws if `db` is not initialized.
+ */
+export const safeSetDoc = (docRef: any, data: any, options?: any) => {
+  if (!db) {
+    throw new Error('Firestore not initialized – setDoc request aborted');
+  }
+  return setDoc(docRef, data, options);
 };
