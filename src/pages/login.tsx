@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login, loginWithGoogle, register, currentUserRole } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
-import logo from '../assets/LogoSanatorium.png'
+import Logo from '../components/Logo'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -77,11 +77,9 @@ export default function Login() {
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <img
-            src={logo}
-            alt="Sanatorium Tattoo Logo"
-            style={{ maxWidth: '140px', height: 'auto', marginBottom: '16px' }}
-          />
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+            <Logo size="large" />
+          </div>
           <h1 style={{ fontSize: '32px', marginBottom: '6px' }}>
             {isSignUpMode ? 'Create Account' : BUSINESS_CONFIG.name}
           </h1>
@@ -101,6 +99,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="e.g. customer@test.com"
+            autoComplete="off"
             required
             disabled={isLoggingIn}
           />
@@ -117,6 +116,7 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
+            autoComplete="off"
             required
             disabled={isLoggingIn}
           />

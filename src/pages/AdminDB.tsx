@@ -3,7 +3,7 @@ import { useRef, useMemo, useState, useEffect } from 'react'
 import { currentUserRole, logout } from '../auth'
 import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
-import logo from '../assets/LogoSanatorium.png'
+import Logo from '../components/Logo'
 
 const adminBadgeStyle = (adminStatus: string): React.CSSProperties => {
   let bg = 'rgba(255, 255, 255, 0.05)'
@@ -73,7 +73,8 @@ export default function AdminDB() {
     navigate('/')
   }
 
-  if (currentUserRole !== 'admin') {
+  const activeRole = currentUserRole || sessionStorage.getItem('currentUserRole')
+  if (activeRole !== 'admin') {
     return <Navigate to="/" replace />
   }
 
@@ -88,6 +89,12 @@ export default function AdminDB() {
   }
 
   const getDisplayStatus = (booking: any) => {
+    if (!booking) return 'Pending'
+
+    if (booking.status === 'Cancelled') {
+      return 'Cancelled'
+    }
+
     if (
       booking.adminStatus === 'New' ||
       booking.adminStatus === 'Reschedule Requested' ||
@@ -96,7 +103,7 @@ export default function AdminDB() {
       return 'Pending'
     }
 
-    if (booking.status === 'Confirmed' && booking.date < getTodayString()) {
+    if (booking.status === 'Confirmed' && booking.date && booking.date < getTodayString()) {
       return 'Completed'
     }
 
@@ -104,7 +111,7 @@ export default function AdminDB() {
       return 'Upcoming'
     }
 
-    return booking.status
+    return booking.status || 'Pending'
   }
 
   const filteredBookings = visibleBookings.filter((booking) => {
@@ -178,7 +185,7 @@ export default function AdminDB() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <img src={logo} alt="Logo" style={{ height: '48px', width: 'auto' }} />
+          <Logo size="small" />
           <span style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: 'var(--accent-color)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {BUSINESS_CONFIG.name}
           </span>
@@ -234,7 +241,7 @@ export default function AdminDB() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Artist:
+                {BUSINESS_CONFIG.staffLabel}:
               </span>
               <select
                 value={artistFilter}
@@ -242,7 +249,7 @@ export default function AdminDB() {
                 className="form-select"
                 style={{ padding: '6px 12px', fontSize: '13px', borderRadius: '18px', width: 'auto', background: 'rgba(255,255,255,0.03)' }}
               >
-                <option value="All">All Artists</option>
+                <option value="All">All {BUSINESS_CONFIG.staffLabelPlural}</option>
                 {BUSINESS_CONFIG.artists.map((artist) => (
                   <option key={artist.id} value={artist.id}>
                     {artist.name}
@@ -319,7 +326,7 @@ export default function AdminDB() {
                   </p>
 
                   <p style={{ margin: '4px 0', fontSize: '15px' }}>
-                    <strong style={{ color: 'var(--text-secondary)' }}>Artist:</strong> {booking.artistName || 'None'}
+                    <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong> {booking.artistName || 'None'}
                     {booking.depositAmount != null && (
                       <span style={{ marginLeft: '14px' }}>
                         <strong style={{ color: 'var(--text-secondary)' }}>Deposit:</strong> £{booking.depositAmount.toFixed(2)}
@@ -555,7 +562,7 @@ export default function AdminDB() {
                 </p>
                 {selectedBooking.artistName && (
                   <p>
-                    <strong style={{ color: 'var(--text-secondary)' }}>Artist:</strong>{' '}
+                    <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong>{' '}
                     {selectedBooking.artistName}
                   </p>
                 )}
@@ -568,7 +575,7 @@ export default function AdminDB() {
                   </p>
                 )}
                 <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Client Notes:</strong>{' '}
+                  <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.notesLabel}:</strong>{' '}
                   {selectedBooking.notes || 'No notes added'}
                 </p>
                 {selectedBooking.requestedDate && selectedBooking.requestedTime && (
@@ -659,7 +666,7 @@ export default function AdminDB() {
 
                     <div className="form-group" style={{ marginBottom: 0 }}>
                       <label className="form-label" style={{ fontSize: '11px' }}>
-                        Aftercare Instructions (Customer-Facing)
+                        {BUSINESS_CONFIG.adminNotesLabel} (Customer-Facing)
                       </label>
                       <textarea
                         className="form-textarea"
@@ -672,13 +679,13 @@ export default function AdminDB() {
 
                     <div className="form-group" style={{ marginBottom: 0 }}>
                       <label className="form-label" style={{ fontSize: '11px' }}>
-                        Internal Notes (Admin-Only)
+                        {BUSINESS_CONFIG.internalNotesLabel} (Admin-Only)
                       </label>
                       <textarea
                         className="form-textarea"
                         value={internalNotesInput}
                         onChange={(e) => setInternalNotesInput(e.target.value)}
-                        placeholder="Staff observations, healing progress, preferences..."
+                        placeholder="Private details, notes, progress..."
                         style={{ minHeight: '60px', padding: '8px 12px', fontSize: '14px', resize: 'vertical' }}
                       />
                     </div>

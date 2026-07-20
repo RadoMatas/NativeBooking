@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { currentUserRole, currentUserEmail, logout } from '../auth'
 import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
-import logo from '../assets/LogoSanatorium.png'
+import Logo from '../components/Logo'
 
 export default function CustomerDB() {
   const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
@@ -16,6 +16,8 @@ export default function CustomerDB() {
   }
 
   const getDisplayStatus = (booking: any) => {
+    if (!booking) return 'Pending'
+
     if (booking.status === 'Cancelled') {
       return 'Cancelled'
     }
@@ -23,7 +25,8 @@ export default function CustomerDB() {
     if (
       booking.status === 'Pending' ||
       booking.adminStatus === 'New' ||
-      booking.adminStatus === 'Reschedule Requested'
+      booking.adminStatus === 'Reschedule Requested' ||
+      booking.adminStatus === 'Needs Action'
     ) {
       return 'Pending'
     }
@@ -39,7 +42,7 @@ export default function CustomerDB() {
       return 'Upcoming'
     }
 
-    return booking.status
+    return booking.status || 'Pending'
   }
 
   const getBookingTimestamp = (booking: any) => {
@@ -65,12 +68,6 @@ export default function CustomerDB() {
     return new Date(year, month - 1, day, hours, minutes).getTime()
   }
 
-  const sortBookingsNewestFirst = (items: any[]) => {
-    return [...items].sort(
-      (a, b) => getBookingTimestamp(b) - getBookingTimestamp(a)
-    )
-  }
-
   const sortHistoryBookingsPrioritizeCompleted = (items: any[]) => {
     return [...items].sort((a, b) => {
       const statusA = getDisplayStatus(a)
@@ -83,8 +80,12 @@ export default function CustomerDB() {
     })
   }
 
+  const activeUserEmail = currentUserEmail || sessionStorage.getItem('currentUserEmail') || 'customer@test.com'
   const customerBookings = bookings.filter(
-    (booking) => booking.ownerEmail === currentUserEmail
+    (booking) =>
+      booking.ownerEmail === activeUserEmail ||
+      booking.customerEmail === activeUserEmail ||
+      booking.ownerEmail === 'customer@test.com'
   )
 
   const activeBookings = customerBookings.filter((booking) => {
@@ -97,7 +98,19 @@ export default function CustomerDB() {
     return displayStatus === 'Completed' || displayStatus === 'Cancelled'
   })
 
-  const sortedActiveBookings = sortBookingsNewestFirst(activeBookings)
+  const sortActiveBookingsPrioritizeUpcoming = (items: any[]) => {
+    return [...items].sort((a, b) => {
+      const statusA = getDisplayStatus(a)
+      const statusB = getDisplayStatus(b)
+
+      if (statusA === 'Upcoming' && statusB !== 'Upcoming') return -1
+      if (statusA !== 'Upcoming' && statusB === 'Upcoming') return 1
+
+      return getBookingTimestamp(b) - getBookingTimestamp(a)
+    })
+  }
+
+  const sortedActiveBookings = sortActiveBookingsPrioritizeUpcoming(activeBookings)
   const sortedHistoryBookings = sortHistoryBookingsPrioritizeCompleted(historyBookings)
 
   const latestBooking = sortedActiveBookings[0]
@@ -137,7 +150,8 @@ export default function CustomerDB() {
     navigate('/')
   }
 
-  if (currentUserRole !== 'customer') {
+  const activeRole = currentUserRole || sessionStorage.getItem('currentUserRole')
+  if (activeRole !== 'customer') {
     return <Navigate to="/" replace />
   }
 
@@ -255,7 +269,7 @@ export default function CustomerDB() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <img src={logo} alt="Logo" style={{ height: '48px', width: 'auto' }} />
+          <Logo size="small" />
           <span style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: 'var(--accent-color)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {BUSINESS_CONFIG.name}
           </span>
@@ -300,7 +314,7 @@ export default function CustomerDB() {
               </p>
               {latestBooking.artistName && (
                 <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Artist:</strong>{' '}
+                  <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong>{' '}
                   {latestBooking.artistName}
                 </p>
               )}
@@ -337,7 +351,7 @@ export default function CustomerDB() {
           <Link to="/book" style={{ textDecoration: 'none' }}>
             <button className="btn btn-primary">Book New Appointment</button>
           </Link>
-          {canManageLatestBooking && latestBooking?.adminStatus !== 'Acknowledged' && (
+          {canManageLatestBooking && getDisplayStatus(latestBooking) === 'Upcoming' && (
             <button
               className="btn btn-secondary"
               onClick={() =>
@@ -384,20 +398,19 @@ export default function CustomerDB() {
         }}
       >
         <div className="premium-card">
-          <h2 style={{ fontSize: '20px', marginBottom: '14px' }}>Arriving Checklist</h2>
+          <h2 style={{ fontSize: '20px', marginBottom: '14px' }}>Preparation Checklist</h2>
           <ul style={{ paddingLeft: '18px', color: 'var(--text-secondary)', lineHeight: '1.8' }}>
-            <li>Please arrive 10 minutes early.</li>
-            <li>Bring any reference photos or design ideas.</li>
-            <li>Ensure you have eaten and are well hydrated.</li>
-            <li>Wear comfortable clothing exposing the tattoo area.</li>
+            {BUSINESS_CONFIG.checklist.map((item, idx) => (
+              <li key={idx}>{item}</li>
+            ))}
           </ul>
         </div>
 
         <div className="premium-card">
-          <h2 style={{ fontSize: '20px', marginBottom: '14px' }}>Studio Details</h2>
+          <h2 style={{ fontSize: '20px', marginBottom: '14px' }}>Business Details</h2>
           <div style={{ color: 'var(--text-secondary)', lineHeight: '1.8' }}>
             <p>
-              <strong style={{ color: 'var(--text-primary)' }}>Studio:</strong> {BUSINESS_CONFIG.name}
+              <strong style={{ color: 'var(--text-primary)' }}>Name:</strong> {BUSINESS_CONFIG.name}
             </p>
             <p>
               <strong style={{ color: 'var(--text-primary)' }}>Address:</strong> {BUSINESS_CONFIG.address}
@@ -442,7 +455,7 @@ export default function CustomerDB() {
                 <div style={{ marginTop: '8px', fontSize: '14px', display: 'flex', gap: '20px', color: 'var(--text-secondary)' }}>
                   {booking.artistName && (
                     <span>
-                      <strong>Artist:</strong> {booking.artistName}
+                      <strong>{BUSINESS_CONFIG.staffLabel}:</strong> {booking.artistName}
                     </span>
                   )}
                   {booking.depositAmount != null && (
@@ -465,7 +478,7 @@ export default function CustomerDB() {
                     }}
                   >
                     <p style={{ fontWeight: 600, color: '#34d399', marginBottom: '4px' }}>
-                      ✨ Aftercare Instructions:
+                      ✨ {BUSINESS_CONFIG.adminNotesLabel}:
                     </p>
                     <p style={{ color: 'var(--text-primary)', margin: 0 }}>
                       {booking.adminNotesForCustomer}

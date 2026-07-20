@@ -24,6 +24,12 @@ export interface BusinessConfig {
   depositPercentage: number // e.g. 20 for 20%
   services: Service[]
   artists: Artist[]
+  staffLabel: string
+  staffLabelPlural: string
+  notesLabel: string
+  adminNotesLabel: string
+  internalNotesLabel: string
+  checklist: string[]
   theme: {
     primaryColor: string
     cardBg: string
@@ -43,7 +49,7 @@ export const BUSINESS_CONFIG: BusinessConfig = {
   closingHour: 20,
   slotInterval: 30,
   closedDays: [0], // Sunday closed
-  depositPercentage: 20, // 20% deposit
+  depositPercentage: 0, // 20% deposit
   services: [
     { id: "tattoo", name: "Tattoo Session", price: 120, durationMin: 60 },
     { id: "permanent", name: "Permanent Make-up", price: 200, durationMin: 120 },
@@ -55,6 +61,17 @@ export const BUSINESS_CONFIG: BusinessConfig = {
     { id: "tomek", name: "Tomek", specialty: "Traditional & Neo-Traditional", workingDays: [1, 2, 3, 4] }, // Mon-Thu
     { id: "konrad", name: "Konrad", specialty: "Geometric & Dotwork", workingDays: [3, 4, 5, 6] }, // Wed-Sat
     { id: "viktor", name: "Viktor", specialty: "Japanese Realism", workingDays: [5, 6] } // Fri-Sat
+  ],
+  staffLabel: "Artist",
+  staffLabelPlural: "Artists",
+  notesLabel: "Special Notes / Requests",
+  adminNotesLabel: "Aftercare Instructions",
+  internalNotesLabel: "Internal Admin Notes",
+  checklist: [
+    "Please arrive 10 minutes early.",
+    "Bring any reference photos or design ideas.",
+    "Ensure you have eaten and are well hydrated.",
+    "Wear comfortable clothing exposing the tattoo area."
   ],
   theme: {
     primaryColor: "#09090b", // zinc 950

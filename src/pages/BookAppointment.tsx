@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { useBooking } from '../BookingContext'
-import { currentUserRole } from '../auth'
+import { currentUserRole, currentUserEmail } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
-import logo from '../assets/LogoSanatorium.png'
+import Logo from '../components/Logo'
 
 export default function BookAppointment() {
   const navigate = useNavigate()
-  if (currentUserRole !== 'customer') {
+  const activeRole = currentUserRole || sessionStorage.getItem('currentUserRole')
+  if (activeRole !== 'customer') {
     return <Navigate to="/" replace />
   }
 
@@ -126,37 +127,21 @@ export default function BookAppointment() {
 
   const dateError = getDateValidationError(date)
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (dateError) {
-      alert(dateError)
-      return
-    }
-
-    setShowCheckout(true)
-  }
-
-  const handleConfirmPayment = () => {
-    if (!cardNumber || !cardExpiry || !cardCvc) {
-      alert('Please fill in card details to complete the payment.')
-      return
-    }
-
+  const processBooking = () => {
     const matchedArtist = BUSINESS_CONFIG.artists.find((a) => a.id === artistId)
 
     if (isReschedule && latestBooking) {
       const bookingData = {
         ...latestBooking,
-        ownerEmail: customerEmail || latestBooking.ownerEmail,
+        ownerEmail: currentUserEmail || customerEmail || latestBooking.ownerEmail,
         customerName,
         customerEmail,
         customerPhone,
         service,
         artistId,
         artistName: matchedArtist ? matchedArtist.name : '',
-        depositAmount,
-        depositPaid: true,
+        depositAmount: latestBooking.depositAmount ?? depositAmount,
+        depositPaid: latestBooking.depositPaid ?? (depositAmount > 0),
         notes,
         status: 'Pending',
         adminStatus: 'Reschedule Requested',
@@ -168,12 +153,13 @@ export default function BookAppointment() {
 
       updateBooking(latestBooking.id, bookingData)
       addNotification(
-        `Customer requested reschedule: ${service} with ${matchedArtist ? matchedArtist.name : 'any artist'} to ${date} at ${time}`
+        `Customer requested reschedule: ${service} with ${matchedArtist ? matchedArtist.name : ('any ' + BUSINESS_CONFIG.staffLabel)} to ${date} at ${time}`
       )
     } else {
+      const activeEmail = sessionStorage.getItem('currentUserEmail') || currentUserEmail || customerEmail || 'customer@test.com'
       const bookingData = {
         id: crypto.randomUUID(),
-        ownerEmail: customerEmail || '',
+        ownerEmail: activeEmail,
         customerName,
         customerEmail,
         customerPhone,
@@ -181,7 +167,7 @@ export default function BookAppointment() {
         artistId,
         artistName: matchedArtist ? matchedArtist.name : '',
         depositAmount,
-        depositPaid: true,
+        depositPaid: depositAmount > 0,
         date,
         time,
         notes,
@@ -190,10 +176,35 @@ export default function BookAppointment() {
       }
 
       addBooking(bookingData)
-      addNotification(`New booking: ${service} with ${matchedArtist ? matchedArtist.name : 'any artist'} on ${date} at ${time}`)
+      addNotification(`New booking: ${service} with ${matchedArtist ? matchedArtist.name : ('any ' + BUSINESS_CONFIG.staffLabel)} on ${date} at ${time}`)
     }
 
     navigate('/dashboard')
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (dateError) {
+      alert(dateError)
+      return
+    }
+
+    // Bypass payment modal if rescheduling OR if deposit is 0%
+    if (isReschedule || BUSINESS_CONFIG.depositPercentage === 0) {
+      processBooking()
+    } else {
+      setShowCheckout(true)
+    }
+  }
+
+  const handleConfirmPayment = () => {
+    if (!cardNumber || !cardExpiry || !cardCvc) {
+      alert('Please fill in card details to complete the payment.')
+      return
+    }
+
+    processBooking()
   }
 
   return (
@@ -250,8 +261,8 @@ export default function BookAppointment() {
               }}
             >
               <p style={{ display: 'flex', justifyContent: 'space-between', margin: '4px 0', fontSize: '15px' }}>
-                <span style={{ color: 'var(--text-secondary)' }}>Artist:</span>
-                <span style={{ fontWeight: 600 }}>{BUSINESS_CONFIG.artists.find((a) => a.id === artistId)?.name || 'Any Artist'}</span>
+                <span style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</span>
+                <span style={{ fontWeight: 600 }}>{BUSINESS_CONFIG.artists.find((a) => a.id === artistId)?.name || ('Any ' + BUSINESS_CONFIG.staffLabel)}</span>
               </p>
               <p style={{ display: 'flex', justifyContent: 'space-between', margin: '4px 0', fontSize: '15px' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Session:</span>
@@ -339,8 +350,8 @@ export default function BookAppointment() {
           maxWidth: '640px',
         }}
       >
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <img src={logo} alt="Logo" style={{ height: '54px', width: 'auto', marginBottom: '8px' }} />
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+          <Logo size="large" />
         </div>
         <h1 style={{ fontSize: '30px', marginBottom: '8px', textAlign: 'center' }}>
           {isReschedule ? 'Reschedule Appointment' : 'Book Appointment'}
@@ -419,14 +430,14 @@ export default function BookAppointment() {
               </select>
             </div>
             <div className="form-group">
-              <label className="form-label">Artist</label>
+              <label className="form-label">{BUSINESS_CONFIG.staffLabel}</label>
               <select
                 value={artistId}
                 onChange={(e) => setArtistId(e.target.value)}
                 className="form-select"
                 required
               >
-                <option value="" disabled>Select artist</option>
+                <option value="" disabled>Select {BUSINESS_CONFIG.staffLabel.toLowerCase()}</option>
                 {BUSINESS_CONFIG.artists.map((art) => (
                   <option key={art.id} value={art.id}>
                     {art.name} ({art.specialty})
@@ -480,7 +491,7 @@ export default function BookAppointment() {
           </div>
 
           {/* Deposit Pricing Display Card */}
-          {service && (
+          {service && !isReschedule && BUSINESS_CONFIG.depositPercentage > 0 && (
             <div
               style={{
                 marginTop: '8px',
@@ -503,11 +514,11 @@ export default function BookAppointment() {
           )}
 
           <div className="form-group">
-            <label className="form-label">Special Notes / Requests</label>
+            <label className="form-label">{BUSINESS_CONFIG.notesLabel}</label>
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Anything we should know before the appointment?"
+              placeholder="Anything we should know?"
               className="form-textarea"
               style={{ minHeight: '100px', resize: 'vertical' }}
             />

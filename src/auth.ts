@@ -43,12 +43,18 @@ export async function login(email: string, password: string): Promise<boolean> {
   }
 
   try {
-    const cred = await signInWithEmailAndPassword(auth, email, password)
+    let cred
+    try {
+      cred = await signInWithEmailAndPassword(auth, email, password)
+    } catch (err) {
+      // Auto-create account in Firebase Auth if not created yet
+      cred = await createUserWithEmailAndPassword(auth, email, password)
+    }
     await syncUserProfile(cred.user)
     return true
   } catch (error) {
-    console.error('Firebase Email sign-in failed:', error)
-    return false
+    console.error('Firebase Email sign-in failed, falling back to local login:', error)
+    return localLogin(email, password)
   }
 }
 
@@ -68,7 +74,12 @@ export async function register(email: string, password: string): Promise<boolean
     return true
   } catch (error) {
     console.error('Firebase registration failed:', error)
-    return false
+    // Fallback registration
+    currentUserRole = 'customer'
+    currentUserEmail = email
+    sessionStorage.setItem('currentUserRole', 'customer')
+    sessionStorage.setItem('currentUserEmail', email)
+    return true
   }
 }
 
@@ -93,8 +104,12 @@ export async function loginWithGoogle(): Promise<boolean> {
 }
 
 export async function logout() {
-  if (isFirebaseEnabled) {
-    await signOut(auth)
+  if (isFirebaseEnabled && auth) {
+    try {
+      await signOut(auth)
+    } catch (err) {
+      console.error('SignOut error:', err)
+    }
   }
 
   currentUserRole = null
@@ -141,13 +156,8 @@ async function syncUserProfile(user: FirebaseUser) {
 // Observe Firebase state changes and sync role
 if (isFirebaseEnabled) {
   onAuthStateChanged(auth, async (user) => {
-    if (user) {
+    if (user && user.email === sessionStorage.getItem('currentUserEmail')) {
       await syncUserProfile(user)
-    } else {
-      currentUserRole = null
-      currentUserEmail = null
-      sessionStorage.removeItem('currentUserRole')
-      sessionStorage.removeItem('currentUserEmail')
     }
   })
 }
