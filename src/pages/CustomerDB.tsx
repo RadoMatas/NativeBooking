@@ -587,6 +587,7 @@ export default function CustomerDB() {
           </div>
         </div>
       )}
+      </div>
     </div>
   )
 }
