@@ -145,7 +145,7 @@ export async function loginWithGoogle(): Promise<boolean> {
 }
 
 
-}
+
 
 export async function logout() {
   if (isFirebaseEnabled && auth) {

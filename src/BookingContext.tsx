@@ -151,8 +151,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   })
 
   // Real-time Firebase Sync
+  // Sync with Firestore when database is initialized
   useEffect(() => {
-    if (!isFirebaseEnabled || !db) return
+    if (!db) return
 
     const unsubscribeBookings = onSnapshot(
       safeCollection('bookings'),
