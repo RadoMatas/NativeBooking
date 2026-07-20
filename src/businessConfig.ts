@@ -81,6 +81,6 @@ export const BUSINESS_CONFIG: BusinessConfig = {
     accentColor: "#10b981",  // emerald green
     accentHover: "#34d399",  // light emerald
     borderRadius: "12px",
-    fontFamily: "'Playfair Display', Georgia, serif"
+    fontFamily: "'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif"
   }
 }

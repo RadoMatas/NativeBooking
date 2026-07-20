@@ -188,6 +188,16 @@ export default function BookAppointment() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
+    if (!service) {
+      alert('Please select a service before proceeding.')
+      return
+    }
+
+    if (!artistId) {
+      alert(`Please select a ${BUSINESS_CONFIG.staffLabel.toLowerCase()} before proceeding.`)
+      return
+    }
+
     if (dateError) {
       alert(dateError)
       return
@@ -365,6 +375,31 @@ export default function BookAppointment() {
             : 'Choose your service, date, time, and add notes if needed.'}
         </p>
 
+        {/* Booking Stepper Indicator */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '8px',
+            marginBottom: '28px',
+            padding: '10px 14px',
+            background: 'rgba(255, 255, 255, 0.02)',
+            borderRadius: '9999px',
+            border: '1px solid var(--border-color)',
+            fontSize: '12px',
+            fontWeight: 600,
+          }}
+        >
+          <span style={{ color: 'var(--accent-color)' }}>① Client & Service</span>
+          <span style={{ color: 'var(--text-secondary)' }}>➔</span>
+          <span style={{ color: artistId && date && time ? 'var(--accent-color)' : 'var(--text-secondary)' }}>
+            ② Slot & {BUSINESS_CONFIG.staffLabel}
+          </span>
+          <span style={{ color: 'var(--text-secondary)' }}>➔</span>
+          <span style={{ color: 'var(--text-secondary)' }}>③ Confirm</span>
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">Full Name</label>
@@ -409,21 +444,61 @@ export default function BookAppointment() {
             </div>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Service</label>
-            <select
-              value={service}
-              onChange={(e) => setService(e.target.value)}
-              className="form-select"
-              required
+          <div className="form-group" style={{ marginBottom: '24px' }}>
+            <label className="form-label" style={{ marginBottom: '10px', display: 'block' }}>
+              Select Service
+            </label>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: '12px',
+              }}
             >
-              <option value="" disabled>Select service</option>
-              {BUSINESS_CONFIG.services.map((srv) => (
-                <option key={srv.id} value={srv.name}>
-                  {srv.name} (£{srv.price})
-                </option>
-              ))}
-            </select>
+              {BUSINESS_CONFIG.services.map((srv) => {
+                const isSelected = service === srv.name
+                return (
+                  <button
+                    key={srv.id}
+                    type="button"
+                    onClick={() => setService(srv.name)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '14px 16px',
+                      borderRadius: '14px',
+                      background: isSelected ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                      border: `2px solid ${isSelected ? 'var(--accent-color)' : 'var(--border-color)'}`,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      textAlign: 'left',
+                    }}
+                  >
+                    <div>
+                      <p style={{ fontWeight: 700, fontSize: '15px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>
+                        {srv.name}
+                      </p>
+                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                        ⏱️ {srv.durationMin} mins
+                      </p>
+                    </div>
+                    <span
+                      style={{
+                        padding: '4px 10px',
+                        borderRadius: '9999px',
+                        background: isSelected ? 'var(--accent-color)' : 'rgba(255, 255, 255, 0.08)',
+                        color: isSelected ? '#ffffff' : 'var(--text-primary)',
+                        fontWeight: 700,
+                        fontSize: '13px',
+                      }}
+                    >
+                      £{srv.price}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           <div className="form-group" style={{ marginBottom: '24px' }}>

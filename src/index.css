@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 :root {
   /* Default Branding Colors - will be overridden dynamically by App.tsx */
@@ -8,8 +7,8 @@
   --accent-color: #10b981;
   --accent-hover: #34d399;
   --border-radius: 12px;
-  --font-family: 'Inter', sans-serif;
-  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
 
   /* Standard Colors */
   --text-primary: #f4f4f5;
@@ -193,7 +192,7 @@ p {
   transform: translateY(-2px);
 }
 
-/* Status Badges */
+/* Status Badges with glowing accents */
 .status-badge {
   display: inline-flex;
   align-items: center;
@@ -203,33 +202,46 @@ p {
   border-radius: 9999px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  backdrop-filter: blur(8px);
 }
 
 .status-badge.pending {
   background-color: var(--status-pending-bg);
   color: var(--status-pending-text);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  box-shadow: 0 0 10px rgba(234, 179, 8, 0.15);
 }
 
 .status-badge.confirmed {
   background-color: var(--status-confirmed-bg);
   color: var(--status-confirmed-text);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
 }
 
 .status-badge.completed {
   background-color: var(--status-completed-bg);
   color: var(--status-completed-text);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
 }
 
 .status-badge.cancelled {
   background-color: var(--status-cancelled-bg);
   color: var(--status-cancelled-text);
+  border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
 .status-badge.upcoming {
-  background-color: rgba(16, 185, 129, 0.15); /* emerald tint */
-  color: #34d399; /* light emerald */
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
   border: 1px solid rgba(16, 185, 129, 0.3);
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
+}
+
+/* Button Active Scale Micro-Interactions */
+button:active, .btn:active {
+  transform: scale(0.97) !important;
 }
 
 .upcoming-card-highlight {
