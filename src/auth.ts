@@ -2,6 +2,7 @@ import { auth, db, isFirebaseEnabled, googleProvider } from './firebase'
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   onAuthStateChanged,
   createUserWithEmailAndPassword
@@ -16,25 +17,7 @@ export let currentUserEmail: string | null =
   sessionStorage.getItem('currentUserEmail') || null
 
 // Local mock login logic (runs if Firebase is disabled)
-function localLogin(email: string, password: string) {
-  if (email === 'admin@test.com' && password === 'admin123') {
-    currentUserRole = 'admin'
-    currentUserEmail = email
-    sessionStorage.setItem('currentUserRole', 'admin')
-    sessionStorage.setItem('currentUserEmail', email)
-    return true
-  }
 
-  if (email === 'customer@test.com' && password === 'cust123') {
-    currentUserRole = 'customer'
-    currentUserEmail = email
-    sessionStorage.setItem('currentUserRole', 'customer')
-    sessionStorage.setItem('currentUserEmail', email)
-    return true
-  }
-
-  return false
-}
 
 // Unified export functions
 export async function login(email: string, password: string): Promise<boolean> {
