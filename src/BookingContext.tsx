@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
+import { safeCollection, safeDoc, safeSetDoc } from './firestoreHelpers'
 import { db, isFirebaseEnabled } from './firebase'
 import {
   collection,
@@ -156,13 +157,13 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (!isFirebaseEnabled || !db) return
 
     const unsubscribeBookings = onSnapshot(
-      collection(db, 'bookings'),
+      safeCollection('bookings'),
       async (snapshot) => {
         if (snapshot.empty) {
           try {
             const batch = writeBatch(db)
             INITIAL_BOOKINGS.forEach((booking) => {
-              batch.set(doc(db, 'bookings', booking.id), booking)
+              batch.set(safeDoc('bookings', booking.id), booking)
             })
             await batch.commit()
           } catch (err) {
@@ -183,7 +184,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     )
 
     const unsubscribeNotifications = onSnapshot(
-      collection(db, 'notifications'),
+      safeCollection('notifications'),
       (snapshot) => {
         const updatedNotifications: AdminNotification[] = []
         snapshot.forEach((doc) => {
