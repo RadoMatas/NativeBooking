@@ -27,5 +27,5 @@ export const safeSetDoc = (docRef: any, data: any, options?: any) => {
   if (!db) {
     throw new Error('Firestore not initialized – setDoc request aborted');
   }
-  return setDoc(docRef, data, options);
+  return setDoc(docRef, data, options ?? { merge: true });
 };
