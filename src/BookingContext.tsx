@@ -4,7 +4,6 @@ import { db, isFirebaseEnabled } from './firebase'
 import {
   collection,
   onSnapshot,
-  doc,
   getDocs,
   writeBatch
 } from 'firebase/firestore'
@@ -453,7 +452,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await setDoc(doc(db, 'bookings', id), cleanUpdates, { merge: true })
+        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
       } catch (err) {
         console.error('Failed to acknowledge booking in Firestore:', err)
       }
@@ -479,7 +478,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await setDoc(doc(db, 'bookings', id), cleanUpdates, { merge: true })
+        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
       } catch (err) {
         console.error('Failed to cancel booking in Firestore:', err)
       }
