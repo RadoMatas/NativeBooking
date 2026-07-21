@@ -220,11 +220,15 @@ export default function BookAppointment() {
     processBooking()
   }
 
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   return (
     <div
       style={{
         minHeight: '100vh',
-        padding: '40px 24px',
+        padding: '24px 16px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

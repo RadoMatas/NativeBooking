@@ -1,11 +1,21 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Login from './pages/login'
 import CustomerDB from './pages/CustomerDB'
 import AdminDB from './pages/AdminDB'
 import BookAppointment from './pages/BookAppointment'
 import { BookingProvider } from './BookingContext'
 import { BUSINESS_CONFIG } from './businessConfig'
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+  }, [pathname])
+
+  return null
+}
 
 function App() {
   useEffect(() => {
@@ -21,6 +31,7 @@ function App() {
   return (
     <BookingProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/dashboard" element={<CustomerDB />} />

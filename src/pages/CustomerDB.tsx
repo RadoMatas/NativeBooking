@@ -131,6 +131,10 @@ export default function CustomerDB() {
   const [cancelReasonInput, setCancelReasonInput] = useState('')
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     const bookingWithNotification = customerBookings.find(
       (booking) => booking.customerNotification != null
     )
@@ -161,7 +165,7 @@ export default function CustomerDB() {
     <div
       style={{
         minHeight: '100vh',
-        padding: '40px 24px',
+        padding: '24px 16px',
         maxWidth: '1200px',
         margin: '0 auto',
       }}

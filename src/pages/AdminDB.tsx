@@ -175,11 +175,15 @@ export default function AdminDB() {
     alert('Session notes and pricing updated successfully!')
   }
 
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
   return (
     <div
       style={{
         minHeight: '100vh',
-        padding: '40px 24px',
+        padding: '24px 16px',
         maxWidth: '1280px',
         margin: '0 auto',
       }}
