@@ -1,7 +1,7 @@
 {
-  "name": "Sanatorium Tattoo Booking",
-  "short_name": "Sanatorium",
-  "description": "Premium booking engine for Sanatorium Tattoo",
+  "name": "NativeBooking Sandbox",
+  "short_name": "NativeBooking",
+  "description": "Premium booking sandbox engine by NativeBooking",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
