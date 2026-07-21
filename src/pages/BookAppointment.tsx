@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useNavigate, Navigate } from 'react-router-dom'
 import { useBooking } from '../BookingContext'
 import { currentUserRole, currentUserEmail } from '../auth'
