@@ -285,10 +285,10 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   }
 
   const resetBookings = async () => {
-    setBookings([])
-    setNotifications([])
     localStorage.removeItem('bookings')
     localStorage.removeItem('notifications')
+    setBookings(INITIAL_BOOKINGS)
+    setNotifications([])
 
     if (isFirebaseEnabled) {
       try {
@@ -570,15 +570,17 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         await safeSetDoc(safeDoc('bookings', id), {
-           priceCharged: details.priceCharged,
-           adminNotesForCustomer: details.adminNotesForCustomer,
-           internalAdminNotes: details.internalAdminNotes,
-         })
+          priceCharged: details.priceCharged,
+          adminNotesForCustomer: details.adminNotesForCustomer,
+          internalAdminNotes: details.internalAdminNotes,
+        })
       } catch (err) {
         console.error('Failed to update session details in Firestore:', err)
       }
     }
   }
+
+
 
   return (
     <BookingContext.Provider

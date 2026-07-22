@@ -8,7 +8,7 @@ import InkTypewriterHeader from '../components/InkTypewriterHeader'
 
 export default function CustomerDB() {
   const navigate = useNavigate()
-  const { bookings, updateBooking, addNotification } = useBooking()
+  const { bookings, updateBooking, addNotification, resetBookings } = useBooking()
   const [activeTechId, setActiveTechId] = useState(BUSINESS_CONFIG.artists[0].id)
 
   // Status Filter State for Technician
@@ -32,7 +32,16 @@ export default function CustomerDB() {
 
   // Filter jobs assigned to the selected technician
   const techJobs = bookings.filter((b) => b.artistId === activeTechId)
-  const unacknowledgedJobs = techJobs.filter((b) => !b.acknowledgedByTech && b.status !== 'Cancelled' && b.adminStatus !== 'Declined by Tech')
+  
+  // FIX: Unacknowledged jobs ONLY counts jobs that are NOT completed and NOT cancelled/declined!
+  const unacknowledgedJobs = techJobs.filter(
+    (b) =>
+      !b.acknowledgedByTech &&
+      b.status !== 'Completed' &&
+      b.adminStatus !== 'Completed' &&
+      b.status !== 'Cancelled' &&
+      b.adminStatus !== 'Declined by Tech'
+  )
 
   const filteredJobs = techJobs.filter((job) => {
     const isCompleted = job.status === 'Completed' || job.adminStatus === 'Completed'
@@ -127,6 +136,9 @@ export default function CustomerDB() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <InkTypewriterHeader text="Technician Route Schedule" />
+          <button onClick={resetBookings} className="btn btn-secondary" style={{ padding: '7px 12px', fontSize: '12px' }}>
+            Reset Blueprint Data 🔄
+          </button>
           <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '7px 12px', fontSize: '12px' }}>
             Logout
           </button>
