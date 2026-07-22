@@ -32,7 +32,7 @@ export default function BookIntroCall() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submittedBooking, setSubmittedBooking] = useState<IntroCallBooking | null>(null)
 
-  const timeSlots = ['10:00', '11:00', '13:00', '14:00', '15:30', '17:00']
+  const timeSlots = ['10:00', '12:00', '14:00', '16:00', '18:00']
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -288,7 +288,7 @@ export default function BookIntroCall() {
                 Powered by NativeBooking Engine
               </span>
               <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', marginBottom: '8px' }}>
-                Schedule a 30-Min Call
+                Schedule a 1-Hour Call
               </h1>
               <p style={{ fontSize: '14px', color: t.textSecondary, lineHeight: '1.5' }}>
                 Select a time slot below. Experience our booking engine in action for your own business consultation.
