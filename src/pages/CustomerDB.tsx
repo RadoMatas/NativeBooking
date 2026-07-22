@@ -848,17 +848,10 @@ export default function CustomerDB() {
           fontSize: '13px',
           color: 'var(--text-secondary)',
           letterSpacing: '0.03em',
+          fontWeight: 600,
         }}
       >
-        Powered by{' '}
-        <a
-          href="https://nativebooking.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{ color: 'var(--accent-color)', textDecoration: 'none', fontWeight: 700 }}
-        >
-          NativeBooking Software ⚡
-        </a>
+        Powered by NativeBooking Software ⚡
       </div>
     </div>
   )

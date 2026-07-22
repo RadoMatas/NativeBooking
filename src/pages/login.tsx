@@ -221,17 +221,10 @@ export default function Login() {
             color: 'var(--text-secondary)',
             textAlign: 'center',
             letterSpacing: '0.03em',
+            fontWeight: 600,
           }}
         >
-          Made by{' '}
-          <a
-            href="https://nativebooking.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: 'var(--accent-color)', textDecoration: 'none', fontWeight: 700 }}
-          >
-            NativeBooking Software ⚡
-          </a>
+          Powered by NativeBooking Software ⚡
         </div>
       </form>
     </div>
