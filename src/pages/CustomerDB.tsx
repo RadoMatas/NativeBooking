@@ -1,280 +1,42 @@
-import { useEffect, useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
-import { currentUserRole, currentUserEmail, logout } from '../auth'
+import { useState } from 'react'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { currentUserRole, logout } from '../auth'
 import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
 
 export default function CustomerDB() {
-  const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
-
-  console.log('currentUserEmail:', currentUserEmail)
-  console.log('all bookings:', bookings)
-
-  const getBookingDateTime = (booking: any) => {
-    return new Date(`${booking.date}T${booking.time}`)
-  }
-
-  const getDisplayStatus = (booking: any) => {
-    if (!booking) return 'Pending'
-
-    if (booking.status === 'Cancelled') {
-      return 'Cancelled'
-    }
-
-    if (
-      booking.status === 'Pending' ||
-      booking.adminStatus === 'New' ||
-      booking.adminStatus === 'Reschedule Requested' ||
-      booking.adminStatus === 'Needs Action'
-    ) {
-      return 'Pending'
-    }
-
-    if (booking.status === 'Confirmed') {
-      const bookingDateTime = getBookingDateTime(booking)
-      const now = new Date()
-
-      if (bookingDateTime < now) {
-        return 'Completed'
-      }
-
-      return 'Upcoming'
-    }
-
-    return booking.status || 'Pending'
-  }
-
-  const getBookingTimestamp = (booking: any) => {
-    const [year, month, day] = booking.date.split('-').map(Number)
-
-    let hours = 0
-    let minutes = 0
-
-    if (booking.time) {
-      const [timePart, modifier] = booking.time.split(' ')
-      const [rawHours, rawMinutes] = timePart.split(':').map(Number)
-
-      hours = rawHours
-      minutes = rawMinutes
-
-      if (modifier === 'AM' && hours === 12) {
-        hours = 0
-      } else if (modifier === 'PM' && hours !== 12) {
-        hours += 12
-      }
-    }
-
-    return new Date(year, month - 1, day, hours, minutes).getTime()
-  }
-
-  const sortHistoryBookingsPrioritizeCompleted = (items: any[]) => {
-    return [...items].sort((a, b) => {
-      const statusA = getDisplayStatus(a)
-      const statusB = getDisplayStatus(b)
-
-      if (statusA === 'Completed' && statusB !== 'Completed') return -1
-      if (statusA !== 'Completed' && statusB === 'Completed') return 1
-
-      return getBookingTimestamp(b) - getBookingTimestamp(a)
-    })
-  }
-
-  const activeUserEmail = currentUserEmail || sessionStorage.getItem('currentUserEmail') || ''
-  const customerBookings = bookings.filter(
-    (booking) =>
-      booking.ownerEmail === activeUserEmail ||
-      booking.customerEmail === activeUserEmail
-  )
-
-  const activeBookings = customerBookings.filter((booking) => {
-    const displayStatus = getDisplayStatus(booking)
-    return displayStatus === 'Pending' || displayStatus === 'Upcoming'
-  })
-
-  const historyBookings = customerBookings.filter((booking) => {
-    const displayStatus = getDisplayStatus(booking)
-    return displayStatus === 'Completed' || displayStatus === 'Cancelled'
-  })
-
-  const sortActiveBookingsPrioritizeUpcoming = (items: any[]) => {
-    return [...items].sort((a, b) => {
-      const statusA = getDisplayStatus(a)
-      const statusB = getDisplayStatus(b)
-
-      if (statusA === 'Upcoming' && statusB !== 'Upcoming') return -1
-      if (statusA !== 'Upcoming' && statusB === 'Upcoming') return 1
-
-      return getBookingTimestamp(b) - getBookingTimestamp(a)
-    })
-  }
-
-  const sortedActiveBookings = sortActiveBookingsPrioritizeUpcoming(activeBookings)
-  const sortedHistoryBookings = sortHistoryBookingsPrioritizeCompleted(historyBookings)
-  const [showAllHistory, setShowAllHistory] = useState(false)
-  const displayedHistoryBookings = showAllHistory
-    ? sortedHistoryBookings
-    : sortedHistoryBookings.slice(0, 3)
-
-  const latestBooking = sortedActiveBookings[0]
-
-  const latestDisplayStatus = latestBooking
-    ? getDisplayStatus(latestBooking)
-    : undefined
-
-  const canManageLatestBooking =
-    latestBooking != null &&
-    (latestDisplayStatus === 'Pending' || latestDisplayStatus === 'Upcoming')
-
   const navigate = useNavigate()
-  const [toastMessage, setToastMessage] = useState('')
-  const [showToast, setShowToast] = useState(false)
-  const [toastVariant, setToastVariant] = useState<'success' | 'warning' | 'error'>('warning')
-  const [showCancelModal, setShowCancelModal] = useState(false)
-  const [cancelReasonInput, setCancelReasonInput] = useState('')
-  
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
-
-  useEffect(() => {
-    const bookingWithNotification = customerBookings.find(
-      (booking) => booking.customerNotification != null
-    )
-
-    if (bookingWithNotification) {
-      const message = bookingWithNotification.customerNotification
-      const variant = bookingWithNotification.customerNotificationType || 'warning'
-
-      setToastMessage(message!)
-      setToastVariant(variant)
-      setShowToast(true)
-
-      clearCustomerNotification(bookingWithNotification.id)
-    }
-  }, [customerBookings, clearCustomerNotification])
+  const { bookings, updateBookingStatus } = useBooking()
+  const [activeTechId, setActiveTechId] = useState(BUSINESS_CONFIG.artists[0].id)
 
   const handleLogout = () => {
     logout()
-    navigate('/')
+    navigate('/login')
   }
 
   const activeRole = currentUserRole || sessionStorage.getItem('currentUserRole')
-  if (activeRole !== 'customer') {
-    return <Navigate to="/" replace />
+  if (!activeRole) {
+    return <Navigate to="/login" replace />
   }
 
-  return (
-    <div
-      style={{
-        minHeight: '100vh',
-        padding: '24px 16px',
-        maxWidth: '1200px',
-        margin: '0 auto',
-      }}
-    >
-      {showToast && toastMessage && (
-        <div
-          role="alert"
-          className="premium-card toast-container"
-          style={{
-            position: 'fixed',
-            top: '24px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '90%',
-            maxWidth: '500px',
-            zIndex: 9999,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: '16px',
-            background: 'rgba(20, 20, 23, 0.95)',
-            borderLeft: `4px solid ${
-              toastVariant === 'success'
-                ? '#4ade80'
-                : toastVariant === 'error'
-                ? '#f87171'
-                : '#facc15'
-            }`,
-            padding: '16px 20px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: 'rgba(255, 255, 255, 0.05)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '18px',
-                fontWeight: 700,
-                color:
-                  toastVariant === 'success'
-                    ? '#4ade80'
-                    : toastVariant === 'error'
-                    ? '#f87171'
-                    : '#facc15',
-              }}
-            >
-              {toastVariant === 'success' ? '✓' : '!'}
-            </div>
-            <div>
-              <p
-                style={{
-                  margin: 0,
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
-                  color: 'var(--text-secondary)',
-                }}
-              >
-                Booking Update
-              </p>
-              <p
-                style={{
-                  margin: '2px 0 0 0',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  color: 'var(--text-primary)',
-                }}
-              >
-                {toastMessage}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => setShowToast(false)}
-            aria-label="Dismiss notification"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-secondary)',
-              cursor: 'pointer',
-              fontSize: '20px',
-              padding: '4px',
-            }}
-          >
-            ×
-          </button>
-        </div>
-      )}
+  const selectedTech = BUSINESS_CONFIG.artists.find((a) => a.id === activeTechId) || BUSINESS_CONFIG.artists[0]
 
-      {/* Branding Navigation Header Bar */}
+  // Filter jobs assigned to the selected technician
+  const techJobs = bookings.filter((b) => b.artistId === activeTechId)
+
+  return (
+    <div className="page-container" style={{ paddingBottom: '60px' }}>
+      {/* ─── HEADER ────────────────────────────────────────────── */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          marginBottom: '28px',
+          marginBottom: '32px',
+          paddingBottom: '20px',
           borderBottom: '1px solid var(--border-color)',
-          paddingBottom: '16px',
           flexWrap: 'wrap',
           gap: '12px',
         }}
@@ -286,572 +48,181 @@ export default function CustomerDB() {
               {BUSINESS_CONFIG.name}
             </span>
             <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
-              📍 {BUSINESS_CONFIG.address}
+              🛠️ Field Worker Schedule Portal
             </span>
           </div>
         </div>
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <InkTypewriterHeader text="Manage Your Booking" />
+          <InkTypewriterHeader text="Field Worker Schedule" />
           <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '7px 12px', fontSize: '12px' }}>
             Logout
           </button>
         </div>
       </div>
 
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '36px', marginBottom: '4px' }}>My Dashboard</h1>
-        <p>View your bookings, check appointment updates, and manage your visits.</p>
-      </div>
-
+      {/* ─── TECHNICIAN SWITCHER (FOR DEMO PURPOSE) ─────────────── */}
       <div
         className="premium-card"
         style={{
-          marginBottom: '32px',
+          marginBottom: '28px',
+          padding: '20px 24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px',
         }}
       >
-        <h2 style={{ fontSize: '20px', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          Current Appointments
+        <div>
+          <span style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent-color)', letterSpacing: '0.08em', display: 'block', marginBottom: '4px' }}>
+            Active Field Technician Profile
+          </span>
+          <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff' }}>
+            {selectedTech.avatarEmoji} {selectedTech.name} — <span style={{ fontSize: '15px', color: 'var(--text-secondary)', fontWeight: 500 }}>{selectedTech.specialty}</span>
+          </h2>
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+            Switch Technician View:
+          </span>
+          <select
+            value={activeTechId}
+            onChange={(e) => setActiveTechId(e.target.value)}
+            className="form-select"
+            style={{ width: 'auto', padding: '8px 14px', fontSize: '14px', background: 'rgba(255,255,255,0.05)' }}
+          >
+            {BUSINESS_CONFIG.artists.map((tech) => (
+              <option key={tech.id} value={tech.id}>
+                {tech.avatarEmoji} {tech.name} ({tech.specialty})
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* ─── DAILY ROUTE & ASSIGNED JOBS ──────────────────────── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff' }}>
+          Your Assigned Field Jobs ({techJobs.length})
         </h2>
 
-        {latestBooking ? (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '24px',
-            }}
-          >
-            {/* Left Column: Next Appointment Details */}
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '15px', color: 'var(--text-primary)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '12px', background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', padding: '4px 10px', borderRadius: '9999px', fontWeight: 600 }}>
-                    🔥 Next Session
-                  </span>
-                </div>
-                <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Service:</strong>{' '}
-                  {latestBooking.service}
-                </p>
-                <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Date:</strong>{' '}
-                  {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedDate
-                    ? latestBooking.requestedDate
-                    : latestBooking.date}
-                </p>
-                <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Time:</strong>{' '}
-                  {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime
-                    ? latestBooking.requestedTime
-                    : latestBooking.time}
-                </p>
-                {latestBooking.artistName && (
-                  <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong>{' '}
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
-                      {BUSINESS_CONFIG.artists.find((a) => a.id === latestBooking.artistId || a.name === latestBooking.artistName)?.avatarEmoji || '👤'}{' '}
-                      {latestBooking.artistName}
-                    </span>
-                  </p>
-                )}
-                {latestBooking.depositAmount != null && (
-                  <p>
-                    <strong style={{ color: 'var(--text-secondary)' }}>Deposit Amount:</strong>{' '}
-                    <span style={{ color: 'var(--accent-color)', fontWeight: 600 }}>
-                      £{latestBooking.depositAmount.toFixed(2)} (Paid)
-                    </span>
-                  </p>
-                )}
-                <p style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Status:</strong>{' '}
-                  <span className={`status-badge ${getDisplayStatus(latestBooking).toLowerCase()}`}>
-                    {getDisplayStatus(latestBooking)}
-                  </span>
-                </p>
-                {latestBooking.adminStatus === 'Reschedule Requested' && (
-                  <p style={{ color: '#facc15', fontWeight: 600, fontSize: '13px', marginTop: '4px' }}>
-                    ★ Requested new slot — awaiting approval
-                  </p>
-                )}
-                <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Notes:</strong>{' '}
-                  {latestBooking.notes || 'No notes added'}
-                </p>
-              </div>
-
-              <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
-                <Link to="/book" style={{ textDecoration: 'none' }}>
-                  <button className="btn btn-primary" style={{ padding: '8px 14px', fontSize: '13px' }}>Book New</button>
-                </Link>
-                {canManageLatestBooking && getDisplayStatus(latestBooking) === 'Upcoming' && (
-                  <button
-                    className="btn btn-secondary"
-                    style={{ padding: '8px 14px', fontSize: '13px' }}
-                    onClick={() =>
-                      navigate('/book', {
-                        state: { isReschedule: true, bookingId: latestBooking.id },
-                      })
-                    }
-                  >
-                    Reschedule
-                  </button>
-                )}
-                {canManageLatestBooking && (
-                  <button
-                    className="btn btn-danger"
-                    style={{ padding: '8px 14px', fontSize: '13px' }}
-                    onClick={() => {
-                      setShowCancelModal(true)
-                      setCancelReasonInput('')
-                    }}
-                  >
-                    Cancel
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Right Column: Dynamic Showcase or Queue List */}
-            <div className="booking-split-container" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-              {sortedActiveBookings.length > 1 ? (
-                // Case B: Show other active sessions list
-                <div>
-                  <h3 style={{ fontSize: '16px', marginBottom: '14px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    ⏳ Other Scheduled Sessions ({sortedActiveBookings.length - 1})
-                  </h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '240px', overflowY: 'auto', paddingRight: '8px' }}>
-                    {sortedActiveBookings.slice(1).map((booking) => {
-                      const matchedArtist = BUSINESS_CONFIG.artists.find((a) => a.id === booking.artistId || a.name === booking.artistName)
-                      return (
-                        <div
-                          key={booking.id}
-                          style={{
-                            padding: '12px',
-                            borderRadius: '10px',
-                            background: 'rgba(255, 255, 255, 0.02)',
-                            border: '1px solid var(--border-color)',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            gap: '10px',
-                          }}
-                        >
-                          <div>
-                            <p style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>{booking.service}</p>
-                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                              📅 {booking.date} at {booking.time}
-                            </p>
-                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              👤 {matchedArtist?.avatarEmoji || '👤'} {booking.artistName}
-                            </p>
-                          </div>
-                          <button
-                            className="btn btn-danger"
-                            style={{ padding: '6px 10px', fontSize: '11px' }}
-                            onClick={() => {
-                              const reason = prompt('Please enter cancellation reason:')
-                              if (reason !== null) {
-                                cancelBooking(booking.id, reason || 'Cancelled by customer')
-                                addNotification(`Customer cancelled booking: ${booking.service} with ${booking.artistName}`)
-                              }
-                            }}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              ) : (
-                // Case A: Show Premium Artist Profile Showcase
-                <div style={{ textAlign: 'center', padding: '10px 0' }}>
-                  {latestBooking.artistName ? (() => {
-                    const artist = BUSINESS_CONFIG.artists.find((a) => a.id === latestBooking.artistId || a.name === latestBooking.artistName)
-                    return (
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <div
-                          style={{
-                            width: '80px',
-                            height: '80px',
-                            borderRadius: '50%',
-                            background: 'rgba(16, 185, 129, 0.08)',
-                            border: '2px solid var(--accent-color)',
-                            color: 'var(--text-primary)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '36px',
-                            marginBottom: '12px',
-                            boxShadow: '0 0 16px rgba(16, 185, 129, 0.2)',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          {artist?.avatarUrl ? (
-                            <img
-                              src={artist.avatarUrl}
-                              alt={artist.name}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                          ) : (
-                            artist?.avatarEmoji || '👤'
-                          )}
-                        </div>
-                        <h3 style={{ fontSize: '17px', margin: '0 0 4px 0', fontWeight: 700, color: 'var(--text-primary)' }}>
-                          Your Artist: {latestBooking.artistName}
-                        </h3>
-                        {artist?.specialty && (
-                          <span style={{ fontSize: '11px', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
-                            ✦ {artist.specialty}
-                          </span>
-                        )}
-                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '12px', maxWidth: '260px', lineHeight: '1.4' }}>
-                          "Excited to work on your design! Make sure to stay hydrated and bring your reference photos."
-                        </p>
-                      </div>
-                    )
-                  })() : (
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <div style={{ fontSize: '40px', marginBottom: '8px' }}>🎨</div>
-                      <h3 style={{ fontSize: '16px', margin: '0 0 4px 0', fontWeight: 700 }}>No Artist Selected</h3>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '240px' }}>
-                        Any available professional artist will be assigned to your service.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
+        {techJobs.length === 0 ? (
+          <div className="premium-card" style={{ textAlign: 'center', padding: '48px 20px' }}>
+            <span style={{ fontSize: '40px', display: 'block', marginBottom: '12px' }}>🛠️</span>
+            <h3 style={{ fontSize: '18px', marginBottom: '6px', color: '#ffffff' }}>No Assigned Jobs Today</h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+              Check back soon or contact dispatch for new job site assignments.
+            </p>
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '32px 0' }}>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '20px' }}>
-              No appointments scheduled right now.
-            </p>
-            <Link to="/book" style={{ textDecoration: 'none' }}>
-              <button className="btn btn-primary" style={{ padding: '10px 20px' }}>Book Your First Appointment</button>
-            </Link>
-          </div>
-        )}
-      </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {techJobs.map((job) => {
+              const isCompleted = job.status === 'Completed' || job.adminStatus === 'Completed'
+              const isInProgress = job.adminStatus === 'In Progress'
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '24px',
-          marginBottom: '32px',
-        }}
-      >
-        <div className="premium-card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
-              <h2 style={{ fontSize: '20px', margin: 0 }}>Preparation Checklist</h2>
-              <span style={{ fontSize: '12px', background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', padding: '4px 10px', borderRadius: '9999px', fontWeight: 600 }}>
-                📋 Visit Readiness
-              </span>
-            </div>
-
-            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-              Follow these quick guidelines before your appointment to ensure a smooth session:
-            </p>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
-              {BUSINESS_CONFIG.checklist.map((item, idx) => (
+              return (
                 <div
-                  key={idx}
+                  key={job.id}
+                  className="premium-card"
                   style={{
+                    padding: '24px 28px',
                     display: 'flex',
-                    alignItems: 'flex-start',
-                    gap: '12px',
-                    padding: '10px 14px',
-                    borderRadius: '10px',
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid var(--border-color)',
+                    flexDirection: 'column',
+                    gap: '16px',
+                    border: isInProgress ? '1px solid #38bdf8' : isCompleted ? '1px solid #34d399' : '1px solid var(--border-color)',
+                    background: isInProgress ? 'rgba(14, 165, 233, 0.08)' : isCompleted ? 'rgba(16, 185, 129, 0.08)' : 'rgba(30, 41, 59, 0.8)',
                   }}
                 >
-                  <span style={{ color: 'var(--accent-color)', fontWeight: 700, fontSize: '15px' }}>✓</span>
-                  <span style={{ fontSize: '14px', color: 'var(--text-primary)', lineHeight: '1.4' }}>{item}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div
-            style={{
-              padding: '12px 14px',
-              borderRadius: '10px',
-              background: 'rgba(234, 179, 8, 0.05)',
-              border: '1px solid rgba(234, 179, 8, 0.15)',
-              fontSize: '13px',
-              color: '#facc15',
-            }}
-          >
-            <strong>💡 Policy Note:</strong> Free cancellations & rescheduling available up to 24 hours before your session.
-          </div>
-        </div>
-
-        <div className="premium-card">
-          <h2 style={{ fontSize: '20px', marginBottom: '14px' }}>Business Details</h2>
-          <div style={{ color: 'var(--text-secondary)', lineHeight: '1.8', marginBottom: '16px' }}>
-            <p>
-              <strong style={{ color: 'var(--text-primary)' }}>Name:</strong> {BUSINESS_CONFIG.name}
-            </p>
-            <p>
-              <strong style={{ color: 'var(--text-primary)' }}>Address:</strong> {BUSINESS_CONFIG.address}
-            </p>
-            <p>
-              <strong style={{ color: 'var(--text-primary)' }}>Contact:</strong> {BUSINESS_CONFIG.contact}
-            </p>
-          </div>
-
-          {/* Interactive Google Maps Embed Widget */}
-          <div
-            style={{
-              width: '100%',
-              height: '180px',
-              borderRadius: '12px',
-              overflow: 'hidden',
-              border: '1px solid var(--border-color)',
-              marginBottom: '14px',
-              background: 'rgba(0, 0, 0, 0.2)',
-            }}
-          >
-            <iframe
-              title="Business Location Map"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://maps.google.com/maps?q=${encodeURIComponent(BUSINESS_CONFIG.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-            />
-          </div>
-
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(BUSINESS_CONFIG.address)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ textDecoration: 'none' }}
-          >
-            <button
-              className="btn btn-secondary"
-              style={{ width: '100%', padding: '10px 14px', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-            >
-              🗺️ Get Directions / Open in Google Maps
-            </button>
-          </a>
-        </div>
-      </div>
-
-      <div className="premium-card">
-        <h2 style={{ fontSize: '20px', marginBottom: '20px' }}>Visit History</h2>
-
-        {sortedHistoryBookings.length === 0 ? (
-          <p style={{ color: 'var(--text-secondary)' }}>No visit history yet.</p>
-        ) : (
-          <>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {displayedHistoryBookings.map((booking, index) => (
-                <div
-                  key={booking.id}
-                  style={{
-                    paddingBottom: '20px',
-                    borderBottom:
-                      index === displayedHistoryBookings.length - 1
-                        ? 'none'
-                        : '1px solid var(--border-color)',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
                     <div>
-                      <p style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{booking.service}</p>
-                      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                        {booking.date} · {booking.time}
-                      </p>
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          letterSpacing: '0.05em',
+                          padding: '4px 12px',
+                          borderRadius: '12px',
+                          background: isCompleted
+                            ? 'rgba(16, 185, 129, 0.15)'
+                            : isInProgress
+                            ? 'rgba(14, 165, 233, 0.15)'
+                            : 'rgba(245, 158, 11, 0.15)',
+                          color: isCompleted ? '#34d399' : isInProgress ? '#38bdf8' : '#f59e0b',
+                          display: 'inline-block',
+                          marginBottom: '8px',
+                        }}
+                      >
+                        {isCompleted ? '✅ Job Completed' : isInProgress ? '▶️ In Progress' : '⏳ Assigned Work Order'}
+                      </span>
+                      <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', margin: 0 }}>
+                        {job.service}
+                      </h3>
                     </div>
-                    <span className={`status-badge ${getDisplayStatus(booking).toLowerCase()}`}>
-                      {getDisplayStatus(booking)}
-                    </span>
+
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff' }}>📅 {job.date}</div>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--accent-color)' }}>🕒 {job.time}</div>
+                    </div>
                   </div>
 
-                  <div style={{ marginTop: '8px', fontSize: '14px', display: 'flex', gap: '20px', color: 'var(--text-secondary)' }}>
-                    {booking.artistName && (
-                      <span>
-                        <strong>{BUSINESS_CONFIG.staffLabel}:</strong> {booking.artistName}
-                      </span>
-                    )}
-                    {booking.depositAmount != null && (
-                      <span>
-                        <strong>Deposit Paid:</strong> £{booking.depositAmount.toFixed(2)}
-                      </span>
-                    )}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '14px' }}>
+                    <div>
+                      <strong style={{ color: 'var(--text-secondary)' }}>Client Name:</strong>{' '}
+                      <span style={{ color: '#ffffff', fontWeight: 700 }}>{job.customerName || 'Client'}</span>
+                    </div>
+                    <div>
+                      <strong style={{ color: 'var(--text-secondary)' }}>Client Phone / WhatsApp:</strong>{' '}
+                      <a href={`tel:${job.customerPhone}`} style={{ color: 'var(--accent-color)', fontWeight: 700, textDecoration: 'underline' }}>
+                        {job.customerPhone || 'Not provided'}
+                      </a>
+                    </div>
                   </div>
 
-                  {/* Show Aftercare Instructions if completed & notes exist */}
-                  {getDisplayStatus(booking) === 'Completed' && booking.adminNotesForCustomer && (
-                    <div
-                      style={{
-                        marginTop: '12px',
-                        padding: '12px 16px',
-                        background: 'rgba(16, 185, 129, 0.05)',
-                        border: '1px solid rgba(16, 185, 129, 0.15)',
-                        borderRadius: '12px',
-                        fontSize: '14px',
-                      }}
-                    >
-                      <p style={{ fontWeight: 600, color: '#34d399', marginBottom: '4px' }}>
-                        ✨ {BUSINESS_CONFIG.adminNotesLabel}:
-                      </p>
-                      <p style={{ color: 'var(--text-primary)', margin: 0 }}>
-                        {booking.adminNotesForCustomer}
-                      </p>
+                  {job.notes && (
+                    <div style={{ background: 'rgba(0,0,0,0.35)', padding: '14px 16px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                      <strong style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
+                        📍 Job Site Address & Instructions:
+                      </strong>
+                      <div style={{ color: '#ffffff', lineHeight: '1.5' }}>
+                        {job.notes}
+                      </div>
                     </div>
                   )}
 
-                  {/* Show Cancellation details if cancelled */}
-                  {booking.status === 'Cancelled' && booking.cancellationReason && (
-                    <div
-                      style={{
-                        marginTop: '12px',
-                        padding: '12px 16px',
-                        background: 'rgba(239, 68, 68, 0.05)',
-                        border: '1px solid rgba(239, 68, 68, 0.1)',
-                        borderRadius: '12px',
-                        fontSize: '14px',
-                      }}
-                    >
-                      <p style={{ color: 'var(--text-secondary)', margin: 0, fontStyle: 'italic' }}>
-                        Cancellation Reason: "{booking.cancellationReason}"
-                      </p>
-                    </div>
-                  )}
+                  {/* Technician Status Action Buttons */}
+                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', paddingTop: '12px', borderTop: '1px solid var(--border-color)' }}>
+                    {!isInProgress && !isCompleted && (
+                      <button
+                        onClick={() => updateBookingStatus(job.id, 'Confirmed', 'In Progress')}
+                        className="btn btn-secondary"
+                        style={{ padding: '10px 18px', fontSize: '13px', color: '#38bdf8', border: '1px solid rgba(14, 165, 233, 0.4)' }}
+                      >
+                        ▶️ Start Job (In Progress)
+                      </button>
+                    )}
+                    {!isCompleted && (
+                      <button
+                        onClick={() => updateBookingStatus(job.id, 'Completed', 'Completed')}
+                        className="btn btn-primary"
+                        style={{ padding: '10px 18px', fontSize: '13px', fontWeight: 700 }}
+                      >
+                        ✅ Mark Job Completed
+                      </button>
+                    )}
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            {/* Show Toggle Button if there are more than 3 bookings */}
-            {sortedHistoryBookings.length > 3 && (
-              <div style={{ textAlign: 'center', marginTop: '24px', borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowAllHistory(!showAllHistory)}
-                  style={{ padding: '8px 20px', fontSize: '13px', borderRadius: '20px' }}
-                >
-                  {showAllHistory ? '▲ Show Less' : `▼ Show More (${sortedHistoryBookings.length - 3} more)`}
-                </button>
-              </div>
-            )}
-          </>
+              )
+            })}
+          </div>
         )}
       </div>
-      {showCancelModal && latestBooking && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.75)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 9999,
-            padding: '20px',
-            backdropFilter: 'blur(4px)',
-          }}
-        >
-          <div
-            className="premium-card"
-            style={{
-              maxWidth: '460px',
-              width: '100%',
-              padding: '28px',
-              borderRadius: '16px',
-              backgroundColor: '#1e293b',
-              border: '1px solid #334155',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
-            }}
-          >
-            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: '#ffffff' }}>
-              Cancel Appointment
-            </h3>
-            <p style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '20px', lineHeight: '1.5' }}>
-              Are you sure you want to cancel your appointment for <strong>{latestBooking.service}</strong> on{' '}
-              <strong>{latestBooking.date}</strong> at <strong>{latestBooking.time}</strong>?
-            </p>
 
-            <div className="form-group" style={{ marginBottom: '24px' }}>
-              <label className="form-label" style={{ fontSize: '13px', marginBottom: '6px', display: 'block', color: 'var(--text-secondary)' }}>
-                Reason for Cancellation (Optional)
-              </label>
-              <textarea
-                className="form-textarea"
-                value={cancelReasonInput}
-                onChange={(e) => setCancelReasonInput(e.target.value)}
-                placeholder="e.g. Work conflict, feeling unwell..."
-                style={{
-                  width: '100%',
-                  minHeight: '80px',
-                  padding: '10px 12px',
-                  fontSize: '14px',
-                  borderRadius: '8px',
-                  resize: 'vertical',
-                  backgroundColor: 'rgba(15, 23, 42, 0.6)',
-                  color: '#ffffff',
-                  border: '1px solid var(--border-color)',
-                }}
-                autoFocus
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                onClick={() => setShowCancelModal(false)}
-                className="btn btn-secondary"
-                style={{ padding: '8px 16px', fontSize: '13px' }}
-              >
-                Keep Appointment
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  cancelBooking(latestBooking.id, cancelReasonInput || 'No reason provided')
-                  addNotification(
-                    `Customer cancelled: ${latestBooking.service} on ${latestBooking.date} at ${
-                      latestBooking.time
-                    } (Reason: ${cancelReasonInput || 'None'})`
-                  )
-                  setShowCancelModal(false)
-                }}
-                className="btn btn-danger"
-                style={{ padding: '8px 16px', fontSize: '13px' }}
-              >
-                Confirm Cancellation
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Sleek NativeBooking Watermark Footer */}
-      <div
-        style={{
-          textAlign: 'center',
-          marginTop: '48px',
-          paddingTop: '20px',
-          borderTop: '1px solid var(--border-color)',
-          fontSize: '13px',
-          color: 'var(--text-secondary)',
-          letterSpacing: '0.03em',
-          fontWeight: 600,
-        }}
-      >
-        Powered by NativeBooking Software ⚡
+      {/* Watermark Footer */}
+      <div style={{ textAlign: 'center', marginTop: '60px', paddingTop: '20px', borderTop: '1px solid var(--border-color)', fontSize: '12px', color: 'var(--text-secondary)' }}>
+        Powered by NativeBooking Contractor Blueprint 🛠️
       </div>
     </div>
   )

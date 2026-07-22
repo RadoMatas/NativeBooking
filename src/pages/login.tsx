@@ -140,7 +140,7 @@ export default function Login() {
                 className="btn btn-primary"
                 style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
               >
-                👤 Try as Customer
+                🛠️ Try as Field Technician
               </button>
               <button
                 type="button"
@@ -149,7 +149,7 @@ export default function Login() {
                 className="btn btn-secondary"
                 style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
               >
-                ⚙️ Try as Admin
+                ⚙️ Try as Dispatch Admin
               </button>
             </div>
           </div>

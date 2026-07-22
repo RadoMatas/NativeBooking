@@ -1,445 +1,569 @@
 import { Navigate, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useRef, useMemo, useState } from 'react'
 import { currentUserRole, logout } from '../auth'
-import {
-  fetchIntroCalls,
-  updateIntroCallStatus,
-  generateGoogleCalendarUrl,
-  type IntroCallBooking,
-} from '../introCallHelpers'
+import { useBooking } from '../BookingContext'
+import { BUSINESS_CONFIG } from '../businessConfig'
+import Logo from '../components/Logo'
+import InkTypewriterHeader from '../components/InkTypewriterHeader'
+
+const adminBadgeStyle = (adminStatus: string): React.CSSProperties => {
+  let bg = 'rgba(255, 255, 255, 0.05)'
+  let color = 'var(--text-secondary)'
+
+  if (adminStatus === 'New' || adminStatus === 'Assigned') {
+    bg = 'rgba(245, 158, 11, 0.15)'
+    color = '#f59e0b'
+  } else if (adminStatus === 'In Progress') {
+    bg = 'rgba(14, 165, 233, 0.15)'
+    color = '#38bdf8'
+  } else if (adminStatus === 'Completed' || adminStatus === 'Invoiced') {
+    bg = 'rgba(16, 185, 129, 0.15)'
+    color = '#34d399'
+  } else if (adminStatus === 'Cancelled') {
+    bg = 'rgba(239, 68, 68, 0.15)'
+    color = '#f87171'
+  }
+
+  return {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '4px 10px',
+    fontSize: '11px',
+    fontWeight: 700,
+    borderRadius: '9999px',
+    textTransform: 'uppercase',
+    letterSpacing: '0.05em',
+    backgroundColor: bg,
+    color: color,
+  }
+}
 
 export default function AdminDB() {
   const navigate = useNavigate()
-  const [introCalls, setIntroCalls] = useState<IntroCallBooking[]>([])
-  const [loadingCalls, setLoadingCalls] = useState(false)
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'declined'>('all')
+  const {
+    bookings,
+    updateBookingStatus,
+    resetBookings,
+    addBooking,
+  } = useBooking()
 
-  const loadCalls = async () => {
-    setLoadingCalls(true)
-    const data = await fetchIntroCalls()
-    setIntroCalls(data)
-    setLoadingCalls(false)
-  }
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
+  const [techFilter, setTechFilter] = useState('All')
+  const [statusFilter, setStatusFilter] = useState('All')
+  const detailsRef = useRef<HTMLDivElement | null>(null)
 
-  useEffect(() => {
-    loadCalls()
-  }, [])
+  // Dispatch Job Modal State
+  const [showDispatchModal, setShowDispatchModal] = useState(false)
+  const [clientName, setClientName] = useState('')
+  const [clientPhone, setClientPhone] = useState('')
+  const [siteAddress, setSiteAddress] = useState('')
+  const [selectedServiceId, setSelectedServiceId] = useState(BUSINESS_CONFIG.services[0].id)
+  const [assignedTechId, setAssignedTechId] = useState(BUSINESS_CONFIG.artists[0].id)
+  const [jobDate, setJobDate] = useState(() => new Date().toISOString().split('T')[0])
+  const [jobTime, setJobTime] = useState('09:00')
+  const [jobNotes, setJobNotes] = useState('')
 
   const handleLogout = () => {
     logout()
-    navigate('/')
+    navigate('/login')
   }
 
   const activeRole = currentUserRole || sessionStorage.getItem('currentUserRole')
   if (activeRole !== 'admin') {
-    return <Navigate to="/" replace />
+    return <Navigate to="/login" replace />
   }
 
-  const handleStatusChange = async (id: string, newStatus: 'confirmed' | 'declined') => {
-    await updateIntroCallStatus(id, newStatus)
+  const filteredBookings = useMemo(() => {
+    return bookings.filter((b) => {
+      const matchTech = techFilter === 'All' || b.artistId === techFilter
+      const matchStatus =
+        statusFilter === 'All' ||
+        (statusFilter === 'Assigned' && (b.status === 'Confirmed' || b.adminStatus === 'Assigned')) ||
+        (statusFilter === 'In Progress' && b.adminStatus === 'In Progress') ||
+        (statusFilter === 'Completed' && b.status === 'Completed') ||
+        (statusFilter === 'Cancelled' && b.status === 'Cancelled')
+      return matchTech && matchStatus
+    })
+  }, [bookings, techFilter, statusFilter])
 
-    const targetCall = introCalls.find((c) => c.id === id)
-    if (targetCall && newStatus === 'confirmed') {
-      try {
-        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            service_id: 'service_jfrd3cr',
-            template_id: 'template_4e7ipi1',
-            user_id: 'SWLupKhyJ1aMBxMI-',
-            template_params: {
-              from_name: 'NativeBooking Team',
-              name: targetCall.name,
-              to_name: targetCall.name,
-              to_email: targetCall.email,
-              from_email: 'info@nativebooking.co',
-              email: targetCall.email,
-              phone: targetCall.phone,
-              industry: targetCall.industry,
-              requested_date: targetCall.date,
-              requested_time: targetCall.timeSlot,
-              message: `Hi ${targetCall.name},\n\nYour discovery call with NativeBooking is CONFIRMED!\n\nDate: ${targetCall.date}\nTime: ${targetCall.timeSlot} CET\n\nWe look forward to speaking with you!`,
-            },
-          }),
-        })
-      } catch (err) {
-        console.warn('Failed to send confirmation email to client:', err)
-      }
+  const selectedBooking = useMemo(
+    () => bookings.find((b) => b.id === selectedBookingId) || null,
+    [bookings, selectedBookingId]
+  )
+
+  const handleDispatchJob = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!clientName || !siteAddress || !clientPhone) {
+      alert('Please enter client name, phone, and job site address.')
+      return
     }
 
-    await loadCalls()
-  }
+    const serviceObj = BUSINESS_CONFIG.services.find((s) => s.id === selectedServiceId)
+    const techObj = BUSINESS_CONFIG.artists.find((a) => a.id === assignedTechId)
 
-  const filteredCalls = introCalls.filter((c) => {
-    if (statusFilter === 'all') return true
-    return c.status === statusFilter
-  })
+    addBooking({
+      id: `job_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+      ownerEmail: 'admin@test.com',
+      customerName: clientName,
+      customerEmail: 'dispatch@contractor.com',
+      customerPhone: clientPhone,
+      service: serviceObj?.name || 'Custom Contractor Service',
+      date: jobDate,
+      time: jobTime,
+      status: 'Confirmed',
+      adminStatus: 'Assigned',
+      notes: `📍 Site Address: ${siteAddress} | Notes: ${jobNotes || 'None'}`,
+      artistId: assignedTechId,
+      artistName: techObj?.name || 'Field Technician',
+      depositAmount: serviceObj?.price || 0,
+      depositPaid: false,
+    })
 
-  const countPending = introCalls.filter((c) => c.status === 'pending').length
-  const countConfirmed = introCalls.filter((c) => c.status === 'confirmed').length
-  const countDeclined = introCalls.filter((c) => c.status === 'declined').length
-
-  const t = {
-    bg: '#09090b',
-    cardBg: 'rgba(20, 20, 23, 0.75)',
-    border: 'rgba(255, 255, 255, 0.08)',
-    accent: '#10b981',
-    textPrimary: '#f4f4f5',
-    textSecondary: '#a1a1aa',
+    setShowDispatchModal(false)
+    setClientName('')
+    setClientPhone('')
+    setSiteAddress('')
+    setJobNotes('')
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: t.bg,
-        color: t.textPrimary,
-        fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-        padding: '32px 24px 80px',
-        background: `radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 45%),
-                     radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.03), transparent 50%),
-                     ${t.bg}`,
-      }}
-    >
-      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        {/* ─── TOP BAR ─────────────────────────────────────────── */}
-        <header
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '40px',
-            paddingBottom: '20px',
-            borderBottom: `1px solid ${t.border}`,
-            flexWrap: 'wrap',
-            gap: '16px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <img
-              src="/logo-icon.jpg"
-              alt="NativeBooking"
-              style={{ height: '40px', width: '40px', borderRadius: '10px', display: 'block' }}
-            />
-            <div>
-              <span style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '0.05em', color: '#ffffff', display: 'block' }}>
-                NATIVEBOOKING
-              </span>
-              <span style={{ fontSize: '12px', color: t.textSecondary, fontWeight: 500 }}>
-                Central Control Hub · Poland
-              </span>
-            </div>
+    <div className="page-container" style={{ paddingBottom: '60px' }}>
+      {/* ─── HEADER ────────────────────────────────────────────── */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '32px',
+          paddingBottom: '20px',
+          borderBottom: '1px solid var(--border-color)',
+          flexWrap: 'wrap',
+          gap: '12px',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+          <Logo size="small" />
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1 }}>
+              {BUSINESS_CONFIG.name}
+            </span>
+            <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
+              📍 {BUSINESS_CONFIG.address}
+            </span>
           </div>
-
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-            <button
-              onClick={() => navigate('/')}
-              className="btn btn-secondary"
-              style={{ padding: '8px 16px', fontSize: '13px', borderRadius: '8px' }}
-            >
-              ← Portal Homepage
-            </button>
-            <button
-              onClick={handleLogout}
-              className="btn btn-secondary"
-              style={{ padding: '8px 16px', fontSize: '13px', borderRadius: '8px', color: '#f87171' }}
-            >
-              Logout
-            </button>
-          </div>
-        </header>
-
-        {/* ─── DASHBOARD HEADER & STATS ──────────────────────── */}
-        <div style={{ marginBottom: '32px' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#ffffff', marginBottom: '6px' }}>
-            Client Discovery Calls
-          </h1>
-          <p style={{ fontSize: '14px', color: t.textSecondary }}>
-            Manage intro call requests submitted via <code>nativebooking.co/book-call</code>.
-          </p>
         </div>
 
-        {/* Stats Row */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '16px',
-            marginBottom: '32px',
-          }}
-        >
-          {[
-            { label: 'Total Requests', count: introCalls.length, color: '#ffffff', bg: 'rgba(255,255,255,0.03)' },
-            { label: 'Pending Review', count: countPending, color: '#facc15', bg: 'rgba(234, 179, 8, 0.1)' },
-            { label: 'Confirmed Calls', count: countConfirmed, color: '#34d399', bg: 'rgba(16, 185, 129, 0.1)' },
-            { label: 'Declined', count: countDeclined, color: '#f87171', bg: 'rgba(239, 68, 68, 0.1)' },
-          ].map((stat, i) => (
-            <div
-              key={i}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+          <InkTypewriterHeader text="Dispatch Control Hub" />
+          <button
+            onClick={() => setShowDispatchModal(true)}
+            className="btn btn-primary"
+            style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 700 }}
+          >
+            + Dispatch New Job Order 🛠️
+          </button>
+          <button onClick={resetBookings} className="btn btn-danger" style={{ padding: '7px 12px', fontSize: '12px' }}>
+            Reset Jobs
+          </button>
+          <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '7px 12px', fontSize: '12px' }}>
+            Logout
+          </button>
+        </div>
+      </div>
+
+      {/* Title */}
+      <div style={{ marginBottom: '28px' }}>
+        <h1 style={{ fontSize: '36px', marginBottom: '4px' }}>Field Service Dispatch Board</h1>
+        <p style={{ color: 'var(--text-secondary)' }}>
+          Manage contractor work orders, site addresses, technician schedules, and job site statuses.
+        </p>
+      </div>
+
+      {/* ─── FILTERS ────────────────────────────────────────────── */}
+      <div
+        className="premium-card"
+        style={{
+          marginBottom: '24px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px',
+          padding: '16px 24px',
+        }}
+      >
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {['All', 'Assigned', 'In Progress', 'Completed', 'Cancelled'].map((f) => (
+            <button
+              key={f}
+              onClick={() => setStatusFilter(f)}
               style={{
-                background: stat.bg,
-                border: `1px solid ${t.border}`,
-                borderRadius: '16px',
-                padding: '20px 24px',
+                padding: '6px 14px',
+                fontSize: '13px',
+                borderRadius: '20px',
+                background: statusFilter === f ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${statusFilter === f ? 'var(--accent-color)' : 'var(--border-color)'}`,
+                color: statusFilter === f ? 'var(--accent-color)' : 'var(--text-secondary)',
+                fontWeight: 600,
+                cursor: 'pointer',
               }}
             >
-              <span style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: t.textSecondary, letterSpacing: '0.05em' }}>
-                {stat.label}
-              </span>
-              <div style={{ fontSize: '32px', fontWeight: 800, color: stat.color, marginTop: '4px' }}>
-                {stat.count}
-              </div>
-            </div>
+              {f}
+            </button>
           ))}
         </div>
 
-        {/* ─── FILTER & ACTION BAR ───────────────────────────── */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '24px',
-            flexWrap: 'wrap',
-            gap: '12px',
-          }}
-        >
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {(['all', 'pending', 'confirmed', 'declined'] as const).map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setStatusFilter(filter)}
-                style={{
-                  padding: '7px 16px',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  borderRadius: '20px',
-                  background: statusFilter === filter ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255,255,255,0.03)',
-                  border: `1px solid ${statusFilter === filter ? t.accent : t.border}`,
-                  color: statusFilter === filter ? '#34d399' : t.textSecondary,
-                  cursor: 'pointer',
-                  textTransform: 'capitalize',
-                  fontFamily: 'inherit',
-                }}
-              >
-                {filter}
-              </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+            Technician:
+          </span>
+          <select
+            value={techFilter}
+            onChange={(e) => setTechFilter(e.target.value)}
+            className="form-select"
+            style={{ width: 'auto', padding: '6px 12px', fontSize: '13px', background: 'rgba(255,255,255,0.05)' }}
+          >
+            <option value="All">All Field Technicians</option>
+            {BUSINESS_CONFIG.artists.map((tech) => (
+              <option key={tech.id} value={tech.id}>
+                {tech.avatarEmoji} {tech.name}
+              </option>
             ))}
-          </div>
-
-          <button
-            onClick={loadCalls}
-            className="btn btn-secondary"
-            style={{ fontSize: '13px', padding: '7px 16px' }}
-          >
-            🔄 Refresh List
-          </button>
+          </select>
         </div>
+      </div>
 
-        {/* ─── CALLS LIST ────────────────────────────────────── */}
-        {loadingCalls ? (
-          <p style={{ color: t.textSecondary, padding: '40px 0', textAlign: 'center' }}>Loading calls...</p>
-        ) : filteredCalls.length === 0 ? (
-          <div
-            style={{
-              textAlign: 'center',
-              padding: '60px 20px',
-              background: t.cardBg,
-              border: `1px solid ${t.border}`,
-              borderRadius: '20px',
-            }}
-          >
-            <span style={{ fontSize: '40px', display: 'block', marginBottom: '12px' }}>📞</span>
-            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '6px', color: '#ffffff' }}>
-              No Call Requests Found
-            </h3>
-            <p style={{ fontSize: '14px', color: t.textSecondary }}>
-              When potential clients request a discovery call from your homepage, they will appear here.
-            </p>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {filteredCalls.map((call) => {
-              const gcalUrl = generateGoogleCalendarUrl(call)
-              return (
-                <div
-                  key={call.id}
-                  style={{
-                    background: t.cardBg,
-                    border: `1px solid ${t.border}`,
-                    borderRadius: '18px',
-                    padding: '24px 28px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '16px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
-                    <div>
-                      <span
-                        style={{
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.05em',
-                          padding: '4px 12px',
-                          borderRadius: '12px',
-                          background:
-                            call.status === 'confirmed'
-                              ? 'rgba(16, 185, 129, 0.15)'
-                              : call.status === 'declined'
-                              ? 'rgba(239, 68, 68, 0.15)'
-                              : 'rgba(234, 179, 8, 0.15)',
-                          color:
-                            call.status === 'confirmed'
-                              ? '#34d399'
-                              : call.status === 'declined'
-                              ? '#f87171'
-                              : '#facc15',
-                          display: 'inline-block',
-                          marginBottom: '8px',
-                        }}
-                      >
-                        {call.status === 'pending' ? '⏳ Pending Review' : call.status === 'confirmed' ? '✅ Confirmed' : '❌ Declined'}
-                      </span>
-                      <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-                        {call.name}
-                      </h3>
-                      <span style={{ fontSize: '13px', color: t.accent, fontWeight: 600 }}>
-                        🏢 {call.industry}
-                      </span>
-                    </div>
+      {/* ─── DISPATCH GRID ──────────────────────────────────────── */}
+      <div className="admin-dashboard-grid">
+        {/* Left: Job Orders List */}
+        <div className="premium-card">
+          <h2 style={{ fontSize: '20px', marginBottom: '16px' }}>
+            Dispatched Jobs ({filteredBookings.length})
+          </h2>
 
-                    {/* Date / Time pill */}
-                    <div
-                      style={{
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.3)',
-                        borderRadius: '14px',
-                        padding: '12px 20px',
-                        textAlign: 'right',
-                      }}
-                    >
-                      <div style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff' }}>📅 {call.date}</div>
-                      <div style={{ fontSize: '14px', fontWeight: 700, color: t.accent }}>🕒 {call.timeSlot} CET</div>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '14px' }}>
-                    <div>
-                      <strong style={{ color: t.textSecondary }}>Email:</strong>{' '}
-                      <a href={`mailto:${call.email}`} style={{ color: t.accent, textDecoration: 'underline' }}>
-                        {call.email}
-                      </a>
-                    </div>
-                    <div>
-                      <strong style={{ color: t.textSecondary }}>Phone / WhatsApp:</strong>{' '}
-                      <a href={`tel:${call.phone}`} style={{ color: '#ffffff', fontWeight: 600 }}>
-                        {call.phone}
-                      </a>
-                    </div>
-                  </div>
-
-                  {call.notes && (
-                    <div
-                      style={{
-                        fontSize: '13px',
-                        background: 'rgba(0,0,0,0.35)',
-                        padding: '14px 16px',
-                        borderRadius: '10px',
-                        border: `1px solid ${t.border}`,
-                        color: t.textPrimary,
-                        lineHeight: '1.5',
-                      }}
-                    >
-                      <strong style={{ color: t.textSecondary, display: 'block', marginBottom: '4px' }}>Project Notes:</strong>
-                      {call.notes}
-                    </div>
-                  )}
-
-                  {/* Action buttons */}
+          {filteredBookings.length === 0 ? (
+            <p style={{ color: 'var(--text-secondary)', padding: '20px 0' }}>No dispatched jobs found matching criteria.</p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {filteredBookings.map((job) => {
+                const isSelected = selectedBookingId === job.id
+                return (
                   <div
+                    key={job.id}
+                    onClick={() => setSelectedBookingId(job.id)}
                     style={{
-                      display: 'flex',
-                      gap: '12px',
-                      flexWrap: 'wrap',
-                      paddingTop: '12px',
-                      borderTop: `1px solid ${t.border}`,
+                      background: isSelected ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255,255,255,0.02)',
+                      border: `1px solid ${isSelected ? 'var(--accent-color)' : 'var(--border-color)'}`,
+                      borderRadius: '14px',
+                      padding: '18px 20px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
                     }}
                   >
-                    {call.status !== 'confirmed' && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+                      <div>
+                        <span style={adminBadgeStyle(job.adminStatus || job.status)}>
+                          {job.adminStatus || job.status}
+                        </span>
+                        <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#ffffff', marginTop: '6px' }}>
+                          {job.service}
+                        </h3>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent-color)' }}>
+                          📅 {job.date}
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                          🕒 {job.time}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <div>
+                        <strong>Client:</strong> {job.customerName || 'Client'} ({job.customerPhone || 'No Phone'})
+                      </div>
+                      <div>
+                        <strong>Technician:</strong> {job.artistName}
+                      </div>
+                      {job.notes && (
+                        <div style={{ color: '#e2e8f0', fontSize: '12px', fontStyle: 'italic', marginTop: '4px' }}>
+                          📍 {job.notes}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Quick Status Control */}
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
                       <button
-                        onClick={() => handleStatusChange(call.id, 'confirmed')}
-                        style={{
-                          background: t.accent,
-                          color: '#ffffff',
-                          border: 'none',
-                          padding: '9px 18px',
-                          borderRadius: '8px',
-                          fontSize: '13px',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          boxShadow: '0 2px 10px rgba(16,185,129,0.25)',
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          updateBookingStatus(job.id, 'Confirmed', 'In Progress')
                         }}
+                        className="btn btn-secondary"
+                        style={{ fontSize: '11px', padding: '4px 10px' }}
                       >
-                        ✅ Accept & Confirm
+                        ▶️ Set In Progress
                       </button>
-                    )}
-                    {call.status !== 'declined' && (
                       <button
-                        onClick={() => handleStatusChange(call.id, 'declined')}
-                        style={{
-                          background: 'rgba(239, 68, 68, 0.1)',
-                          border: '1px solid rgba(239, 68, 68, 0.3)',
-                          color: '#f87171',
-                          padding: '9px 18px',
-                          borderRadius: '8px',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          updateBookingStatus(job.id, 'Completed', 'Completed')
                         }}
+                        className="btn btn-secondary"
+                        style={{ fontSize: '11px', padding: '4px 10px', color: '#34d399' }}
                       >
-                        ❌ Decline Request
+                        ✅ Complete Job
                       </button>
-                    )}
-                    <a href={gcalUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                      <button
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          border: `1px solid ${t.border}`,
-                          color: '#ffffff',
-                          padding: '9px 18px',
-                          borderRadius: '8px',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        📅 Add to Google Calendar (1-Tap)
-                      </button>
-                    </a>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Right: Job Details Inspector */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div ref={detailsRef} className="premium-card">
+            <h2 style={{ fontSize: '20px', marginBottom: '16px' }}>Job Site Details</h2>
+
+            {selectedBooking ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '14px' }}>
+                <div style={{ padding: '14px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                  <span style={adminBadgeStyle(selectedBooking.adminStatus || selectedBooking.status)}>
+                    {selectedBooking.adminStatus || selectedBooking.status}
+                  </span>
+                  <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginTop: '8px' }}>
+                    {selectedBooking.service}
+                  </h3>
+                  <div style={{ fontSize: '13px', color: 'var(--accent-color)', fontWeight: 700, marginTop: '4px' }}>
+                    Est. Value: ${selectedBooking.depositAmount || 0}
                   </div>
                 </div>
-              )
-            })}
-          </div>
-        )}
 
-        {/* Footer */}
+                <div>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Client Name:</strong>{' '}
+                  <span style={{ color: '#ffffff', fontWeight: 700 }}>{selectedBooking.customerName}</span>
+                </div>
+
+                <div>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Client Phone / WhatsApp:</strong>{' '}
+                  <a href={`tel:${selectedBooking.customerPhone}`} style={{ color: 'var(--accent-color)', textDecoration: 'underline' }}>
+                    {selectedBooking.customerPhone || 'Not provided'}
+                  </a>
+                </div>
+
+                <div>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Assigned Technician:</strong>{' '}
+                  <span style={{ color: '#ffffff', fontWeight: 700 }}>{selectedBooking.artistName}</span>
+                </div>
+
+                <div>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Scheduled Time:</strong>{' '}
+                  <span>{selectedBooking.date} at {selectedBooking.time}</span>
+                </div>
+
+                <div style={{ background: 'rgba(0,0,0,0.3)', padding: '14px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
+                  <strong style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
+                    Job Site Specs & Address:
+                  </strong>
+                  <div style={{ color: '#ffffff', lineHeight: '1.5' }}>
+                    {selectedBooking.notes || 'No site specs added.'}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                  <button
+                    onClick={() => updateBookingStatus(selectedBooking.id, 'Completed', 'Completed')}
+                    className="btn btn-primary"
+                    style={{ flex: 1, padding: '10px', fontSize: '13px' }}
+                  >
+                    ✅ Mark Completed
+                  </button>
+                  <button
+                    onClick={() => updateBookingStatus(selectedBooking.id, 'Cancelled', 'Cancelled')}
+                    className="btn btn-danger"
+                    style={{ padding: '10px 14px', fontSize: '13px' }}
+                  >
+                    Cancel Job
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <p style={{ color: 'var(--text-secondary)' }}>Select a job order from the list to view site specs and contact details.</p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ─── DISPATCH NEW JOB MODAL ────────────────────────────── */}
+      {showDispatchModal && (
         <div
           style={{
-            marginTop: '60px',
-            paddingTop: '20px',
-            borderTop: `1px solid ${t.border}`,
-            fontSize: '12px',
-            color: t.textSecondary,
-            textAlign: 'center',
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.8)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px',
+            backdropFilter: 'blur(6px)',
           }}
         >
-          Powered by NativeBooking Central Control ⚡
+          <form
+            onSubmit={handleDispatchJob}
+            className="premium-card"
+            style={{
+              maxWidth: '520px',
+              width: '100%',
+              padding: '32px',
+              borderRadius: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff' }}>
+                + Dispatch New Job Order
+              </h2>
+              <button
+                type="button"
+                onClick={() => setShowDispatchModal(false)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '20px', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                Client Name *
+              </label>
+              <input
+                type="text"
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+                placeholder="e.g. Jan Kowalski"
+                className="form-input"
+                required
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                  Client Phone / WhatsApp *
+                </label>
+                <input
+                  type="tel"
+                  value={clientPhone}
+                  onChange={(e) => setClientPhone(e.target.value)}
+                  placeholder="+48 123 456 789"
+                  className="form-input"
+                  required
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                  Service Type
+                </label>
+                <select
+                  value={selectedServiceId}
+                  onChange={(e) => setSelectedServiceId(e.target.value)}
+                  className="form-select"
+                >
+                  {BUSINESS_CONFIG.services.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} (${s.price})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                Job Site Address *
+              </label>
+              <input
+                type="text"
+                value={siteAddress}
+                onChange={(e) => setSiteAddress(e.target.value)}
+                placeholder="e.g. ul. Lipowa 14 / Apt 5, Warsaw"
+                className="form-input"
+                required
+              />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                  Assign Technician
+                </label>
+                <select
+                  value={assignedTechId}
+                  onChange={(e) => setAssignedTechId(e.target.value)}
+                  className="form-select"
+                >
+                  {BUSINESS_CONFIG.artists.map((tech) => (
+                    <option key={tech.id} value={tech.id}>
+                      {tech.avatarEmoji} {tech.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                  Scheduled Date & Time
+                </label>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  <input
+                    type="date"
+                    value={jobDate}
+                    onChange={(e) => setJobDate(e.target.value)}
+                    className="form-input"
+                    style={{ padding: '8px' }}
+                  />
+                  <select
+                    value={jobTime}
+                    onChange={(e) => setJobTime(e.target.value)}
+                    className="form-select"
+                    style={{ padding: '8px' }}
+                  >
+                    {['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '16:00'].map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                Required Materials & Site Notes (Optional)
+              </label>
+              <textarea
+                rows={2}
+                value={jobNotes}
+                onChange={(e) => setJobNotes(e.target.value)}
+                placeholder="e.g. Bring 2x copper fittings, 10m heavy wiring..."
+                className="form-textarea"
+              />
+            </div>
+
+            <button type="submit" className="btn btn-primary" style={{ padding: '14px', fontSize: '14px', marginTop: '6px' }}>
+              Dispatch Job to Technician 🚀
+            </button>
+          </form>
         </div>
+      )}
+
+      {/* Watermark Footer */}
+      <div style={{ textAlign: 'center', marginTop: '48px', paddingTop: '20px', borderTop: '1px solid var(--border-color)', fontSize: '12px', color: 'var(--text-secondary)' }}>
+        Powered by NativeBooking Contractor Blueprint 🛠️
       </div>
     </div>
   )

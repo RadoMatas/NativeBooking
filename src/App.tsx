@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import PortalHome from './pages/PortalHome'
+import Login from './pages/login'
 import CustomerDB from './pages/CustomerDB'
 import AdminDB from './pages/AdminDB'
 import BookAppointment from './pages/BookAppointment'
@@ -36,8 +36,8 @@ function App() {
       <BrowserRouter>
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<PortalHome />} />
-          <Route path="/login" element={<AdminLogin />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/dashboard" element={<CustomerDB />} />
           <Route path="/admin" element={<AdminDB />} />
