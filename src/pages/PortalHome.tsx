@@ -26,7 +26,7 @@ export default function PortalHome() {
       statusColor: '#0ea5e9',
       statusBg: 'rgba(14, 165, 233, 0.1)',
       description: 'Features a light clinical cream-blue theme, doctor roster lists, client symptom forms, treatment plan logs, and zero-deposit scheduling.',
-      link: 'https://dentist.nativebooking.co',
+      link: 'https://dental.nativebooking.co',
       badge: 'Medical Niche',
     },
     {
