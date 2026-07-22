@@ -11,6 +11,9 @@ export default function CustomerDB() {
   const { bookings, updateBooking, addNotification } = useBooking()
   const [activeTechId, setActiveTechId] = useState(BUSINESS_CONFIG.artists[0].id)
 
+  // Status Filter State for Technician
+  const [statusFilter, setStatusFilter] = useState<'all' | 'unacknowledged' | 'acknowledged' | 'in_progress' | 'completed' | 'declined'>('all')
+
   // Decline Modal State
   const [decliningJob, setDecliningJob] = useState<any | null>(null)
   const [declineReasonText, setDeclineReasonText] = useState('')
@@ -29,7 +32,22 @@ export default function CustomerDB() {
 
   // Filter jobs assigned to the selected technician
   const techJobs = bookings.filter((b) => b.artistId === activeTechId)
-  const unacknowledgedJobs = techJobs.filter((b) => !b.acknowledgedByTech && b.status !== 'Cancelled')
+  const unacknowledgedJobs = techJobs.filter((b) => !b.acknowledgedByTech && b.status !== 'Cancelled' && b.adminStatus !== 'Declined by Tech')
+
+  const filteredJobs = techJobs.filter((job) => {
+    const isCompleted = job.status === 'Completed' || job.adminStatus === 'Completed'
+    const isInProgress = job.adminStatus === 'In Progress'
+    const isAcknowledged = job.acknowledgedByTech || job.adminStatus === 'Acknowledged'
+    const isDeclined = job.adminStatus === 'Declined by Tech' || (job.status === 'Cancelled' && job.declineReason)
+    const isUnack = !job.acknowledgedByTech && !isCompleted && !isDeclined
+
+    if (statusFilter === 'unacknowledged') return isUnack
+    if (statusFilter === 'acknowledged') return isAcknowledged && !isInProgress && !isCompleted
+    if (statusFilter === 'in_progress') return isInProgress
+    if (statusFilter === 'completed') return isCompleted
+    if (statusFilter === 'declined') return isDeclined
+    return true
+  })
 
   const handleAcknowledge = (job: any) => {
     updateBooking(job.id, {
@@ -102,7 +120,7 @@ export default function CustomerDB() {
               {BUSINESS_CONFIG.name}
             </span>
             <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
-              🛠️ Technician Work Schedule Portal
+              🛠️ Field Technician Schedule Portal
             </span>
           </div>
         </div>
@@ -115,29 +133,42 @@ export default function CustomerDB() {
         </div>
       </div>
 
-      {/* ─── UNACKNOWLEDGED JOBS ALERT BANNER ───────────────────── */}
+      {/* ─── INTERACTIVE UNACKNOWLEDGED JOBS ALERT BANNER ──────── */}
       {unacknowledgedJobs.length > 0 && (
         <div
+          onClick={() => setStatusFilter('unacknowledged')}
           style={{
             background: 'rgba(245, 158, 11, 0.15)',
-            border: '1px solid rgba(245, 158, 11, 0.4)',
+            border: '1px solid rgba(245, 158, 11, 0.5)',
             borderRadius: '16px',
             padding: '16px 20px',
             marginBottom: '24px',
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'space-between',
             gap: '14px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(245, 158, 11, 0.15)',
+            transition: 'transform 0.2s ease',
           }}
         >
-          <span style={{ fontSize: '24px' }}>⚠️</span>
-          <div>
-            <strong style={{ color: '#f59e0b', fontSize: '15px', display: 'block' }}>
-              {unacknowledgedJobs.length} Unacknowledged Job Order{unacknowledgedJobs.length > 1 ? 's' : ''} Awaiting Review!
-            </strong>
-            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-              Please review site specs and click "Acknowledge Job" to confirm it in your daily schedule.
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ fontSize: '24px' }}>⚠️</span>
+            <div>
+              <strong style={{ color: '#f59e0b', fontSize: '15px', display: 'block' }}>
+                {unacknowledgedJobs.length} Unacknowledged Job Order{unacknowledgedJobs.length > 1 ? 's' : ''} Require Your Action!
+              </strong>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                Click here to view unacknowledged jobs and confirm them in your schedule.
+              </span>
+            </div>
           </div>
+          <button
+            className="btn btn-primary"
+            style={{ fontSize: '12px', padding: '8px 14px', whiteSpace: 'nowrap' }}
+          >
+            Filter Pending Jobs →
+          </button>
         </div>
       )}
 
@@ -145,7 +176,7 @@ export default function CustomerDB() {
       <div
         className="premium-card"
         style={{
-          marginBottom: '28px',
+          marginBottom: '24px',
           padding: '20px 24px',
           display: 'flex',
           justifyContent: 'space-between',
@@ -182,23 +213,60 @@ export default function CustomerDB() {
         </div>
       </div>
 
+      {/* ─── STATUS FILTER PILLS FOR TECHNICIAN ────────────────── */}
+      <div
+        style={{
+          display: 'flex',
+          gap: '8px',
+          flexWrap: 'wrap',
+          marginBottom: '24px',
+        }}
+      >
+        {[
+          { key: 'all', label: `All Jobs (${techJobs.length})` },
+          { key: 'unacknowledged', label: `⚠️ Unacknowledged (${unacknowledgedJobs.length})` },
+          { key: 'acknowledged', label: '👁️ Acknowledged' },
+          { key: 'in_progress', label: '🚀 In Progress' },
+          { key: 'completed', label: '✅ Completed' },
+          { key: 'declined', label: '🛑 Declined' },
+        ].map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setStatusFilter(f.key as any)}
+            style={{
+              padding: '8px 16px',
+              fontSize: '13px',
+              fontWeight: 700,
+              borderRadius: '20px',
+              background: statusFilter === f.key ? 'rgba(245, 158, 11, 0.18)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${statusFilter === f.key ? 'var(--accent-color)' : 'var(--border-color)'}`,
+              color: statusFilter === f.key ? 'var(--accent-color)' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
       {/* ─── DAILY ROUTE & WORK ORDERS ───────────────────────── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff' }}>
-          Your Assigned Work Orders ({techJobs.length})
+          Work Orders ({filteredJobs.length})
         </h2>
 
-        {techJobs.length === 0 ? (
+        {filteredJobs.length === 0 ? (
           <div className="premium-card" style={{ textAlign: 'center', padding: '48px 20px' }}>
             <span style={{ fontSize: '40px', display: 'block', marginBottom: '12px' }}>🛠️</span>
-            <h3 style={{ fontSize: '18px', marginBottom: '6px', color: '#ffffff' }}>No Assigned Work Orders</h3>
+            <h3 style={{ fontSize: '18px', marginBottom: '6px', color: '#ffffff' }}>No Work Orders Found</h3>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
-              Check back soon or contact dispatch for new job site assignments.
+              No work orders match the selected filter.
             </p>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {techJobs.map((job) => {
+            {filteredJobs.map((job) => {
               const isCompleted = job.status === 'Completed' || job.adminStatus === 'Completed'
               const isInProgress = job.adminStatus === 'In Progress'
               const isAcknowledged = job.acknowledgedByTech || job.adminStatus === 'Acknowledged'

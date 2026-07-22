@@ -50,7 +50,6 @@ export default function AdminDB() {
     updateBookingStatus,
     resetBookings,
     addBooking,
-    notifications,
   } = useBooking()
 
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
@@ -80,6 +79,7 @@ export default function AdminDB() {
     return <Navigate to="/login" replace />
   }
 
+  // Filtered Jobs
   const filteredBookings = useMemo(() => {
     return bookings.filter((b) => {
       const matchTech = techFilter === 'All' || b.artistId === techFilter
@@ -95,6 +95,11 @@ export default function AdminDB() {
       return matchTech && matchStatus
     })
   }, [bookings, techFilter, statusFilter])
+
+  // Urgent Action Items (Declined or Unacknowledged Jobs requiring Admin attention)
+  const urgentDeclinedJobs = useMemo(() => {
+    return bookings.filter((b) => b.adminStatus === 'Declined by Tech' || (b.status === 'Cancelled' && b.declineReason))
+  }, [bookings])
 
   const selectedBooking = useMemo(
     () => bookings.find((b) => b.id === selectedBookingId) || null,
@@ -210,28 +215,66 @@ export default function AdminDB() {
         </div>
       </div>
 
-      {/* ─── ADMIN NOTIFICATION FEED ────────────────────────────── */}
-      {notifications.length > 0 && (
+      {/* ─── INTERACTIVE ADMIN ACTION QUEUE CARD FEED ──────────── */}
+      {urgentDeclinedJobs.length > 0 && (
         <div
           className="premium-card"
           style={{
-            marginBottom: '24px',
-            padding: '16px 20px',
-            border: '1px solid rgba(245, 158, 11, 0.4)',
-            background: 'rgba(245, 158, 11, 0.08)',
+            marginBottom: '28px',
+            padding: '24px',
+            border: '1px solid #f87171',
+            background: 'rgba(239, 68, 68, 0.08)',
+            boxShadow: '0 8px 32px rgba(239, 68, 68, 0.15)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-            <span style={{ fontSize: '18px' }}>🔔</span>
-            <h3 style={{ fontSize: '14px', fontWeight: 800, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              Real-Time Dispatch Activity Feed ({notifications.length})
-            </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '24px' }}>🛑</span>
+              <div>
+                <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#f87171', margin: 0 }}>
+                  Urgent Action Queue ({urgentDeclinedJobs.length})
+                </h3>
+                <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                  Technicians have declined work orders. Review reason and reassign immediately.
+                </span>
+              </div>
+            </div>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '120px', overflowY: 'auto' }}>
-            {notifications.slice(0, 4).map((n, i) => (
-              <div key={i} style={{ fontSize: '13px', color: '#e2e8f0', display: 'flex', justifyContent: 'space-between' }}>
-                <span>{n.message}</span>
-                <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{n.timestamp}</span>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {urgentDeclinedJobs.map((job) => (
+              <div
+                key={job.id}
+                style={{
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  borderRadius: '12px',
+                  padding: '14px 18px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '12px',
+                }}
+              >
+                <div>
+                  <strong style={{ color: '#ffffff', fontSize: '14px', display: 'block' }}>
+                    {job.service} — {job.customerName}
+                  </strong>
+                  <span style={{ fontSize: '13px', color: '#f87171', fontWeight: 600 }}>
+                    Technician {job.artistName} Declined: "{job.declineReason || 'No reason provided'}"
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button
+                    onClick={() => handleReassignClick(job)}
+                    className="btn btn-primary"
+                    style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
+                  >
+                    🔄 Reassign Job Order Now →
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -378,7 +421,7 @@ export default function AdminDB() {
                           className="btn btn-primary"
                           style={{ fontSize: '12px', padding: '5px 12px' }}
                         >
-                          🔄 Reassign Job to Another Tech
+                          🔄 Reassign Job Order
                         </button>
                       )}
                       {job.status !== 'Completed' && !isDeclined && (
