@@ -1,11 +1,14 @@
 export default function PortalHome() {
-  const portalTheme = {
+  const t = {
     bg: '#09090b',
     cardBg: 'rgba(20, 20, 23, 0.6)',
-    borderColor: 'rgba(255, 255, 255, 0.08)',
+    strip: 'rgba(255,255,255,0.025)',
+    border: 'rgba(255, 255, 255, 0.07)',
+    accent: '#10b981',
+    accentSoft: 'rgba(16, 185, 129, 0.1)',
     textPrimary: '#f4f4f5',
     textSecondary: '#a1a1aa',
-    accentColor: '#10b981',
+    textMuted: 'rgba(255,255,255,0.35)',
   }
 
   const industries = [
@@ -15,7 +18,7 @@ export default function PortalHome() {
       status: 'Live Sandbox',
       statusColor: '#10b981',
       statusBg: 'rgba(16, 185, 129, 0.1)',
-      description: 'Features dynamic client split-queues, artist showcase profiles, automated aftercare guidelines, and admin schedule panels.',
+      description: 'Client queue split-view, artist profiles, deposit collection, aftercare notes, and a full admin schedule panel.',
       link: 'https://tattoo.nativebooking.co',
       badge: 'Creative Niche',
     },
@@ -25,7 +28,7 @@ export default function PortalHome() {
       status: 'Live Sandbox',
       statusColor: '#0ea5e9',
       statusBg: 'rgba(14, 165, 233, 0.1)',
-      description: 'Features a light clinical cream-blue theme, doctor roster lists, client symptom forms, treatment plan logs, and zero-deposit scheduling.',
+      description: 'Clean clinical look, doctor roster, symptom intake notes, appointment tracking, and no-deposit scheduling.',
       link: 'https://dental.nativebooking.co',
       badge: 'Medical Niche',
     },
@@ -33,9 +36,9 @@ export default function PortalHome() {
       title: 'Education & Academies',
       icon: '📚',
       status: 'Live Sandbox',
-      statusColor: '#4f46e5',
-      statusBg: 'rgba(79, 70, 229, 0.1)',
-      description: 'Features student course enrollments, class capacity tracking, instructor assignments, and lesson schedules.',
+      statusColor: '#0d9488',
+      statusBg: 'rgba(13, 148, 136, 0.1)',
+      description: 'Course enrollments, instructor assignments, class scheduling, and a student-facing lesson portal.',
       link: 'https://academic.nativebooking.co',
       badge: 'Academic Niche',
     },
@@ -45,224 +48,529 @@ export default function PortalHome() {
       status: 'In Planning',
       statusColor: '#a855f7',
       statusBg: 'rgba(168, 85, 247, 0.1)',
-      description: 'Features dispatcher diagnostic bookings, technician tracking, on-site service reports, and dynamic invoice estimators.',
+      description: 'Job dispatch board, technician assignments, on-site reports, and internal team scheduling — no customer portal needed.',
       link: null,
       badge: 'Contractor Niche',
     },
   ]
 
+  const features = [
+    { icon: '💳', title: 'Payments & Deposits', desc: 'Stripe checkout built in. Collect deposits, authorise cards, and handle refunds — all without leaving the app.' },
+    { icon: '📅', title: 'Smart Scheduling', desc: 'Picks open slots, blocks taken times, and respects your working hours, days off, and staff availability.' },
+    { icon: '👥', title: 'Staff & Roster', desc: 'Each team member gets their own schedule, profile, and service list. Clients pick who they want.' },
+    { icon: '🧑‍💼', title: 'Client Portal', desc: 'Clients log in, see their bookings, request a reschedule, and track the status — no phone call needed.' },
+    { icon: '⚙️', title: 'Admin Control Hub', desc: 'See every booking, approve changes, leave notes on completed sessions, and keep the whole team on track.' },
+  ]
+
+  const pills = [
+    { icon: '🎨', label: 'Custom Branding' },
+    { icon: '🌐', label: 'Your Own Domain' },
+    { icon: '💳', label: 'Payments On/Off' },
+    { icon: '💰', label: 'Deposits On/Off' },
+    { icon: '👥', label: 'Multi-Staff' },
+    { icon: '📱', label: 'Mobile PWA' },
+    { icon: '🔥', label: 'Firebase Database' },
+    { icon: '🎨', label: 'Custom Colors' },
+    { icon: '📧', label: 'Email Notifications' },
+  ]
+
+  const steps = [
+    { num: '01', icon: '🤝', title: 'Discovery', desc: 'We get on a call, talk about how your business runs day to day, and figure out exactly what to build.' },
+    { num: '02', icon: '🔨', title: 'Build', desc: 'We build it. Your name on it, your colors, your domain, your way of working.' },
+    { num: '03', icon: '🚀', title: 'Handover', desc: 'You get everything — the domain, the database, the source code. We stay around if you need us.' },
+  ]
+
+  const scrollToDemo = () => {
+    document.getElementById('demos')?.scrollIntoView({ behavior: 'smooth' })
+  }
+
   return (
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: portalTheme.bg,
-        color: portalTheme.textPrimary,
+        backgroundColor: t.bg,
+        color: t.textPrimary,
         fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-        padding: '80px 24px 40px 24px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        background: `radial-gradient(circle at top right, rgba(16, 185, 129, 0.04), transparent 45%),
-                     radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.03), transparent 45%),
-                     ${portalTheme.bg}`,
+        background: `radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 45%),
+                     radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.03), transparent 50%),
+                     ${t.bg}`,
         backgroundAttachment: 'fixed',
       }}
     >
-      {/* Demo Disclaimer Banner */}
-      <div
+      <style>{`
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        .nb-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .nb-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 16px 48px rgba(16, 185, 129, 0.12) !important;
+          border-color: rgba(16, 185, 129, 0.35) !important;
+        }
+        .nb-pill {
+          transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .nb-pill:hover {
+          background: rgba(16, 185, 129, 0.12) !important;
+          border-color: rgba(16, 185, 129, 0.4) !important;
+          box-shadow: 0 0 16px rgba(16, 185, 129, 0.15);
+        }
+        .nb-demo-card {
+          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .nb-demo-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 20px 56px rgba(0,0,0,0.4) !important;
+        }
+        .nb-step {
+          transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .nb-step:hover {
+          transform: translateY(-4px);
+          border-color: rgba(16, 185, 129, 0.3) !important;
+        }
+        @media (max-width: 640px) {
+          .nb-hero-title { font-size: 32px !important; }
+          .nb-section-title { font-size: 26px !important; }
+        }
+      `}</style>
+
+      {/* ─── NAV ──────────────────────────────────────────────── */}
+      <nav
         style={{
-          position: 'fixed',
-          bottom: '16px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          zIndex: 9999,
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
           display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
-          gap: '8px',
-          padding: '8px 18px',
-          borderRadius: '9999px',
-          background: 'rgba(0, 0, 0, 0.75)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255,255,255,0.12)',
-          fontSize: '12px',
-          color: 'rgba(255,255,255,0.75)',
-          whiteSpace: 'nowrap',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
+          padding: '16px 32px',
+          borderBottom: `1px solid ${t.border}`,
+          background: 'rgba(9, 9, 11, 0.85)',
+          backdropFilter: 'blur(16px)',
         }}
       >
-        <span style={{ fontSize: '14px' }}>⚡</span>
-        <span>Live product demo — all data is simulated for demonstration purposes only.</span>
-      </div>
-
-      {/* SaaS Logo Banner */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
-        <span style={{ fontSize: '32px' }}>⚡</span>
-        <span style={{ fontSize: '26px', fontWeight: 800, letterSpacing: '0.08em', color: '#ffffff' }}>
-          NATIVEBOOKING
-        </span>
-      </div>
-
-      {/* Hero Headline */}
-      <div style={{ textAlign: 'center', maxWidth: '700px', marginBottom: '60px' }}>
-        <h1
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img src="/logo-icon.jpg" alt="NativeBooking" style={{ height: '32px', width: '32px', borderRadius: '8px', display: 'block' }} />
+          <span style={{ fontSize: '17px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>
+            NATIVEBOOKING
+          </span>
+        </div>
+        <a
+          href="mailto:info@nativebooking.co"
           style={{
-            fontSize: '44px',
-            fontWeight: 800,
-            lineHeight: '1.2',
-            letterSpacing: '-0.02em',
-            marginBottom: '16px',
-            color: '#ffffff',
+            fontSize: '13px',
+            fontWeight: 600,
+            color: t.accent,
+            textDecoration: 'none',
+            padding: '7px 16px',
+            border: `1px solid rgba(16,185,129,0.35)`,
+            borderRadius: '8px',
+            transition: 'background 0.2s ease',
           }}
         >
-          Select Your Industry Sandbox
-        </h1>
-        <p
-          style={{
-            fontSize: '16px',
-            color: portalTheme.textSecondary,
-            lineHeight: '1.6',
-            maxWidth: '600px',
-            margin: '0 auto',
-          }}
-        >
-          Test-drive our specialized reservation engines. Every blueprint is fully interactive and features customizable client control hubs, real-time sync, and admin control panels.
-        </p>
-      </div>
+          Contact Us
+        </a>
+      </nav>
 
-      {/* Grid of Sandboxes */}
-      <div
+      {/* ─── HERO ─────────────────────────────────────────────── */}
+      <section
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          maxWidth: '1200px',
-          width: '100%',
-          gap: '24px',
-          marginBottom: '80px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          padding: '100px 24px 90px 24px',
+          animation: 'fadeInUp 0.7s ease both',
         }}
       >
-        {industries.map((ind, idx) => (
-          <div
-            key={idx}
-            className="premium-card"
-            style={{
-              background: portalTheme.cardBg,
-              border: `1px solid ${portalTheme.borderColor}`,
-              borderRadius: '16px',
-              padding: '32px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
-              position: 'relative',
-              overflow: 'hidden',
-            }}
-          >
-            <div>
-              {/* Header Row */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-                <span style={{ fontSize: '42px', lineHeight: '1' }}>{ind.icon}</span>
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '5px 14px',
+            borderRadius: '9999px',
+            border: `1px solid rgba(16,185,129,0.3)`,
+            background: 'rgba(16,185,129,0.07)',
+            fontSize: '12px',
+            fontWeight: 600,
+            color: t.accent,
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+            marginBottom: '28px',
+          }}
+        >
+          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: t.accent, display: 'inline-block' }} />
+          Custom Software for Modern Businesses
+        </div>
+
+        <h1
+          className="nb-hero-title"
+          style={{
+            fontSize: '54px',
+            fontWeight: 800,
+            lineHeight: '1.15',
+            letterSpacing: '-0.025em',
+            color: '#ffffff',
+            maxWidth: '760px',
+            marginBottom: '36px',
+          }}
+        >
+          Reservation Software{' '}
+          <span style={{ color: t.accent }}>Built Around</span>{' '}
+          Your Business
+        </h1>
+
+        <button
+          onClick={scrollToDemo}
+          style={{
+            padding: '14px 32px',
+            fontSize: '15px',
+            fontWeight: 700,
+            borderRadius: '10px',
+            background: t.accent,
+            color: '#ffffff',
+            border: 'none',
+            cursor: 'pointer',
+            boxShadow: '0 4px 20px rgba(16,185,129,0.3)',
+            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+          }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'
+            ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 28px rgba(16,185,129,0.4)'
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'
+            ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 20px rgba(16,185,129,0.3)'
+          }}
+        >
+          Explore Live Demos ↓
+        </button>
+      </section>
+
+      {/* ─── WHAT WE OFFER ────────────────────────────────────── */}
+      <section style={{ padding: '80px 24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+        <div style={{ textAlign: 'center', marginBottom: '52px' }}>
+          <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent, marginBottom: '12px' }}>
+            What We Build
+          </p>
+          <h2 className="nb-section-title" style={{ fontSize: '34px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
+            What's Inside
+          </h2>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+            gap: '20px',
+          }}
+        >
+          {features.map((f, i) => (
+            <div
+              key={i}
+              className="nb-card"
+              style={{
+                background: t.cardBg,
+                border: `1px solid ${t.border}`,
+                borderRadius: '16px',
+                padding: '28px 24px',
+                animation: `fadeInUp 0.6s ease ${i * 0.08}s both`,
+              }}
+            >
+              <div style={{ fontSize: '32px', marginBottom: '16px' }}>{f.icon}</div>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff', marginBottom: '10px' }}>{f.title}</h3>
+              <p style={{ fontSize: '13px', color: t.textSecondary, lineHeight: '1.6' }}>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── TRUST STRIP ──────────────────────────────────────── */}
+      <section
+        style={{
+          background: t.strip,
+          borderTop: `1px solid ${t.border}`,
+          borderBottom: `1px solid ${t.border}`,
+          padding: '56px 24px',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1000px',
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '40px',
+            textAlign: 'center',
+          }}
+        >
+          {[
+            { icon: '📦', title: 'You Own the Code', desc: 'No monthly platform fee. No lock-in. The full source code is yours after delivery.' },
+            { icon: '🎨', title: 'Your Brand, Not Ours', desc: 'Your logo, your colors, your domain. Your clients will never know we built it.' },
+            { icon: '🛠️', title: 'We Stick Around', desc: 'Got a new feature idea? Found a bug? We stay in touch and keep things running.' },
+          ].map((item, i) => (
+            <div key={i}>
+              <div style={{ fontSize: '34px', marginBottom: '14px' }}>{item.icon}</div>
+              <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>{item.title}</h3>
+              <p style={{ fontSize: '13px', color: t.textSecondary, lineHeight: '1.6', maxWidth: '280px', margin: '0 auto' }}>{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── DEMO SANDBOXES ───────────────────────────────────── */}
+      <section id="demos" style={{ padding: '80px 24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+        <div style={{ textAlign: 'center', marginBottom: '52px' }}>
+          <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent, marginBottom: '12px' }}>
+            Live Demos
+          </p>
+          <h2 className="nb-section-title" style={{ fontSize: '34px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
+            Explore Industry Sandboxes
+          </h2>
+          <p style={{ fontSize: '15px', color: t.textSecondary, marginTop: '12px', maxWidth: '560px', margin: '12px auto 0' }}>
+            Click into any live sandbox and test it yourself — book something, log in as admin, see how it all hangs together.
+          </p>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px',
+          }}
+        >
+          {industries.map((ind, idx) => (
+            <div
+              key={idx}
+              className="nb-demo-card"
+              style={{
+                background: t.cardBg,
+                border: `1px solid ${t.border}`,
+                borderRadius: '16px',
+                padding: '32px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+                animation: `fadeInUp 0.6s ease ${idx * 0.1}s both`,
+              }}
+            >
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                  <span style={{ fontSize: '42px', lineHeight: '1' }}>{ind.icon}</span>
+                  <span
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      padding: '4px 10px',
+                      borderRadius: '20px',
+                      backgroundColor: ind.statusBg,
+                      color: ind.statusColor,
+                      border: `1px solid ${ind.statusColor}22`,
+                    }}
+                  >
+                    {ind.link && (
+                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: ind.statusColor, display: 'inline-block', boxShadow: `0 0 6px ${ind.statusColor}` }} />
+                    )}
+                    {ind.status}
+                  </span>
+                </div>
                 <span
                   style={{
                     fontSize: '11px',
-                    fontWeight: 700,
+                    fontWeight: 600,
                     textTransform: 'uppercase',
+                    color: t.accent,
                     letterSpacing: '0.05em',
-                    padding: '4px 10px',
-                    borderRadius: '20px',
-                    backgroundColor: ind.statusBg,
-                    color: ind.statusColor,
-                    border: `1px solid ${ind.statusColor}20`,
+                    display: 'block',
+                    marginBottom: '6px',
                   }}
                 >
-                  {ind.status}
+                  {ind.badge}
                 </span>
+                <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '12px', color: '#ffffff' }}>{ind.title}</h3>
+                <p style={{ fontSize: '14px', lineHeight: '1.55', color: t.textSecondary, marginBottom: '28px' }}>{ind.description}</p>
               </div>
-
-              {/* Title & Badge */}
-              <span
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  color: 'var(--accent-color)',
-                  letterSpacing: '0.05em',
-                  display: 'block',
-                  marginBottom: '6px',
-                }}
-              >
-                {ind.badge}
-              </span>
-              <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '12px', color: '#ffffff' }}>
-                {ind.title}
-              </h3>
-
-              {/* Description */}
-              <p style={{ fontSize: '14px', lineHeight: '1.5', color: portalTheme.textSecondary, marginBottom: '28px' }}>
-                {ind.description}
-              </p>
-            </div>
-
-            {/* Launch Button */}
-            {ind.link ? (
-              <a
-                href={ind.link}
-                style={{ textDecoration: 'none', width: '100%' }}
-              >
+              {ind.link ? (
+                <a href={ind.link} style={{ textDecoration: 'none', width: '100%' }}>
+                  <button
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      fontSize: '14px',
+                      borderRadius: '10px',
+                      background: ind.statusColor,
+                      color: '#ffffff',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontWeight: 700,
+                      boxShadow: `0 4px 16px ${ind.statusColor}30`,
+                      transition: 'opacity 0.2s ease',
+                    }}
+                  >
+                    Launch Live Sandbox ⚡
+                  </button>
+                </a>
+              ) : (
                 <button
-                  className="btn btn-primary"
+                  disabled
                   style={{
                     width: '100%',
                     padding: '12px',
                     fontSize: '14px',
                     borderRadius: '10px',
-                    backgroundColor: ind.statusColor,
-                    color: '#ffffff',
-                    border: 'none',
-                    cursor: 'pointer',
+                    background: 'rgba(255,255,255,0.03)',
+                    color: 'rgba(255,255,255,0.2)',
+                    border: `1px solid ${t.border}`,
+                    cursor: 'not-allowed',
                     fontWeight: 600,
-                    boxShadow: `0 4px 12px ${ind.statusColor}25`,
                   }}
                 >
-                  Launch Live Sandbox ⚡
+                  Blueprint Locked 🔒
                 </button>
-              </a>
-            ) : (
-              <button
-                className="btn btn-secondary"
-                disabled
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  fontSize: '14px',
-                  borderRadius: '10px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                  color: 'rgba(255, 255, 255, 0.2)',
-                  border: `1px solid ${portalTheme.borderColor}`,
-                  cursor: 'not-allowed',
-                  fontWeight: 600,
-                }}
-              >
-                Blueprint Locked 🔒
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
 
-      {/* Footer Branding */}
-      <div
+      {/* ─── CUSTOMIZATION PILLS ──────────────────────────────── */}
+      <section
         style={{
-          borderTop: `1px solid ${portalTheme.borderColor}`,
-          paddingTop: '20px',
-          width: '100%',
-          maxWidth: '1200px',
+          background: t.strip,
+          borderTop: `1px solid ${t.border}`,
+          borderBottom: `1px solid ${t.border}`,
+          padding: '72px 24px',
           textAlign: 'center',
-          fontSize: '13px',
-          color: portalTheme.textSecondary,
         }}
       >
-        NativeBooking Software © 2026. All rights reserved.
-      </div>
+        <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent, marginBottom: '12px' }}>
+          Your Call
+        </p>
+        <h2 className="nb-section-title" style={{ fontSize: '34px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', marginBottom: '14px' }}>
+          You Decide What Goes In
+        </h2>
+        <p style={{ fontSize: '15px', color: t.textSecondary, maxWidth: '520px', margin: '0 auto 44px', lineHeight: '1.6' }}>
+          Not every business works the same way. Pick what you need, skip what you don't.
+        </p>
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
+            justifyContent: 'center',
+            maxWidth: '860px',
+            margin: '0 auto',
+          }}
+        >
+          {pills.map((pill, i) => (
+            <div
+              key={i}
+              className="nb-pill"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 20px',
+                borderRadius: '9999px',
+                background: 'rgba(255,255,255,0.04)',
+                border: `1px solid ${t.border}`,
+                fontSize: '14px',
+                fontWeight: 600,
+                color: t.textPrimary,
+                cursor: 'default',
+                animation: `fadeInUp 0.5s ease ${i * 0.06}s both`,
+              }}
+            >
+              <span>{pill.icon}</span>
+              <span>{pill.label}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── HOW IT WORKS ─────────────────────────────────────── */}
+      <section style={{ padding: '80px 24px', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
+        <div style={{ textAlign: 'center', marginBottom: '52px' }}>
+          <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent, marginBottom: '12px' }}>
+            Process
+          </p>
+          <h2 className="nb-section-title" style={{ fontSize: '34px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
+            How It Works
+          </h2>
+        </div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '24px',
+          }}
+        >
+          {steps.map((s, i) => (
+            <div
+              key={i}
+              className="nb-step"
+              style={{
+                background: t.cardBg,
+                border: `1px solid ${t.border}`,
+                borderRadius: '16px',
+                padding: '32px 28px',
+                animation: `fadeInUp 0.6s ease ${i * 0.1}s both`,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '12px',
+                  fontWeight: 800,
+                  color: t.accent,
+                  letterSpacing: '0.08em',
+                  marginBottom: '16px',
+                }}
+              >
+                {s.num}
+              </div>
+              <div style={{ fontSize: '36px', marginBottom: '16px' }}>{s.icon}</div>
+              <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', marginBottom: '10px' }}>{s.title}</h3>
+              <p style={{ fontSize: '14px', color: t.textSecondary, lineHeight: '1.6' }}>{s.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ─── FOOTER ───────────────────────────────────────────── */}
+      <footer
+        style={{
+          borderTop: `1px solid ${t.border}`,
+          padding: '40px 32px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '16px',
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <img src="/logo-icon.jpg" alt="NativeBooking" style={{ height: '28px', width: '28px', borderRadius: '7px', display: 'block' }} />
+          <span style={{ fontSize: '15px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>NATIVEBOOKING</span>
+        </div>
+        <a
+          href="mailto:info@nativebooking.co"
+          style={{ fontSize: '14px', color: t.accent, textDecoration: 'none', fontWeight: 500 }}
+        >
+          info@nativebooking.co
+        </a>
+        <p style={{ fontSize: '12px', color: t.textMuted, margin: 0 }}>
+          © 2025 NativeBooking. All rights reserved.
+        </p>
+      </footer>
     </div>
   )
 }
