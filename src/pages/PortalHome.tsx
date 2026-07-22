@@ -229,7 +229,7 @@ export default function PortalHome() {
           .nb-logo-img { height: 34px !important; width: 34px !important; }
           .nb-logo-title { font-size: 14px !important; letter-spacing: 0.04em !important; }
           .nb-nav-actions { gap: 8px !important; }
-          .nb-nav-btn { padding: 6px 12px !important; font-size: 12px !important; }
+          .nb-nav-btn { padding: 5px 10px !important; font-size: 11px !important; }
         }
         @media (max-width: 900px) {
           .nb-feature-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -268,19 +268,20 @@ export default function PortalHome() {
             onClick={() => navigate('/book-call')}
             className="nb-nav-btn"
             style={{
-              fontSize: '13px',
+              fontSize: '12px',
               fontWeight: 700,
               color: '#ffffff',
               background: t.accent,
               border: 'none',
               borderRadius: '8px',
-              padding: '7px 16px',
+              padding: '6px 12px',
               cursor: 'pointer',
               boxShadow: '0 2px 10px rgba(16,185,129,0.25)',
               fontFamily: 'inherit',
+              whiteSpace: 'nowrap',
             }}
           >
-            Book Intro Call 📅
+            Intro Call
           </button>
           <a
             href="mailto:info@nativebooking.co"
