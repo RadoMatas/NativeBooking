@@ -32,11 +32,11 @@ export default function PortalHome() {
     {
       title: 'Education & Academies',
       icon: '📚',
-      status: 'In Development',
-      statusColor: '#f59e0b',
-      statusBg: 'rgba(245, 158, 11, 0.1)',
-      description: 'Features student course enrollments, class capacity tracking, instructor assignments, and lesson packages scheduler.',
-      link: null,
+      status: 'Live Sandbox',
+      statusColor: '#4f46e5',
+      statusBg: 'rgba(79, 70, 229, 0.1)',
+      description: 'Features student course enrollments, class capacity tracking, instructor assignments, and lesson schedules.',
+      link: 'https://academic.nativebooking.co',
       badge: 'Academic Niche',
     },
     {
