@@ -22,6 +22,12 @@ export default function CustomerDB() {
   const [completingJob, setCompletingJob] = useState<any | null>(null)
   const [completionReportText, setCompletionReportText] = useState('')
 
+  // Reschedule On-Start Modal State
+  const [rescheduleStartJob, setRescheduleStartJob] = useState<any | null>(null)
+  const [newJobDate, setNewJobDate] = useState('')
+  const [newJobTime, setNewJobTime] = useState('09:00')
+  const [rescheduleNote, setRescheduleNote] = useState('')
+
   const handleLogout = () => {
     logout()
     navigate('/login')
@@ -37,7 +43,7 @@ export default function CustomerDB() {
   // Filter jobs assigned to the selected technician
   const techJobs = bookings.filter((b) => b.artistId === activeTechId)
   
-  // FIX: Unacknowledged jobs ONLY counts jobs that are NOT completed and NOT cancelled/declined!
+  // Unacknowledged jobs ONLY counts jobs that are NOT completed and NOT cancelled/declined!
   const unacknowledgedJobs = techJobs.filter(
     (b) =>
       !b.acknowledgedByTech &&
@@ -72,14 +78,46 @@ export default function CustomerDB() {
     addNotification(`👁️ Technician ${selectedTech.name} ACKNOWLEDGED Job order for ${job.customerName} (${job.service})`)
   }
 
-  const handleStartJob = (job: any) => {
+  // Handle Start Job with Date Verification
+  const handleStartJobClick = (job: any) => {
+    const today = new Date().toISOString().split('T')[0]
+
+    // If job date is NOT today, prompt technician for rescheduling verification!
+    if (job.date !== today) {
+      setRescheduleStartJob(job)
+      setNewJobDate(today)
+      setNewJobTime(job.time || '09:00')
+      setRescheduleNote('Rescheduled on site with customer for early start')
+      return
+    }
+
+    // Standard start for today's job
+    executeStartJob(job, job.date, job.time, null)
+  }
+
+  const executeStartJob = (job: any, date: string, time: string, noteText?: string | null) => {
+    const isRescheduled = date !== job.date || time !== job.time
+    const updatedNotes = noteText
+      ? `${job.notes || ''} | [RESCHEDULED ON SITE]: ${noteText}`
+      : job.notes
+
     updateBooking(job.id, {
       ...job,
+      date: date,
+      time: time,
+      notes: updatedNotes,
       acknowledgedByTech: true,
       adminStatus: 'In Progress',
       status: 'Confirmed',
     })
-    addNotification(`🚀 Technician ${selectedTech.name} STARTED Job on site for ${job.customerName}`)
+
+    if (isRescheduled) {
+      addNotification(`📅 RESCHEDULED & STARTED: Technician ${selectedTech.name} rescheduled Job for ${job.customerName} to ${date} at ${time} and started work on site.`)
+    } else {
+      addNotification(`🚀 Technician ${selectedTech.name} STARTED Job on site for ${job.customerName}`)
+    }
+
+    setRescheduleStartJob(null)
   }
 
   const handleConfirmCompletion = (e: React.FormEvent) => {
@@ -414,7 +452,7 @@ export default function CustomerDB() {
                       <>
                         {!isInProgress && (
                           <button
-                            onClick={() => handleStartJob(job)}
+                            onClick={() => handleStartJobClick(job)}
                             className="btn btn-secondary"
                             style={{ padding: '9px 16px', fontSize: '13px', color: '#38bdf8', border: '1px solid rgba(14, 165, 233, 0.4)' }}
                           >
@@ -447,6 +485,120 @@ export default function CustomerDB() {
           </div>
         )}
       </div>
+
+      {/* ─── RESCHEDULE ON START MODAL ─────────────────────────── */}
+      {rescheduleStartJob && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px',
+            backdropFilter: 'blur(6px)',
+          }}
+        >
+          <div
+            className="premium-card"
+            style={{
+              maxWidth: '500px',
+              width: '100%',
+              padding: '28px',
+              borderRadius: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '24px' }}>📅</span>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#38bdf8', margin: 0 }}>
+                  Reschedule & Start Work Order
+                </h3>
+                <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  Work order is scheduled for <strong>{rescheduleStartJob.date}</strong> (not today).
+                </span>
+              </div>
+            </div>
+
+            <p style={{ fontSize: '14px', color: '#e2e8f0', lineHeight: '1.5' }}>
+              Did you reschedule on site with <strong>{rescheduleStartJob.customerName}</strong>? Select the new date & time to update the dispatch record and start work immediately.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                  New Date *
+                </label>
+                <input
+                  type="date"
+                  value={newJobDate}
+                  onChange={(e) => setNewJobDate(e.target.value)}
+                  className="form-input"
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                  New Time *
+                </label>
+                <select
+                  value={newJobTime}
+                  onChange={(e) => setNewJobTime(e.target.value)}
+                  className="form-select"
+                >
+                  {['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '16:00'].map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                Reschedule Note / Client Consent Reason
+              </label>
+              <input
+                type="text"
+                value={rescheduleNote}
+                onChange={(e) => setRescheduleNote(e.target.value)}
+                placeholder="e.g. Client requested early start today"
+                className="form-input"
+              />
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '6px' }}>
+              <button
+                type="button"
+                onClick={() => executeStartJob(rescheduleStartJob, newJobDate, newJobTime, rescheduleNote)}
+                className="btn btn-primary"
+                style={{ padding: '12px', fontSize: '13px', fontWeight: 700 }}
+              >
+                📅 Confirm Reschedule to {newJobDate} & Start Job On Site 🚀
+              </button>
+              <button
+                type="button"
+                onClick={() => executeStartJob(rescheduleStartJob, rescheduleStartJob.date, rescheduleStartJob.time, null)}
+                className="btn btn-secondary"
+                style={{ padding: '10px', fontSize: '13px' }}
+              >
+                Keep Scheduled Date ({rescheduleStartJob.date}) & Start On Site
+              </button>
+              <button
+                type="button"
+                onClick={() => setRescheduleStartJob(null)}
+                className="btn-link"
+                style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '12px' }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ─── COMPLETION REPORT MODAL ───────────────────────────── */}
       {completingJob && (
