@@ -22,6 +22,7 @@ export type Booking = {
   cancelledBy?: 'customer' | 'admin' | null
   cancellationReason?: string | null
   declineReason?: string | null
+  completionReport?: string | null
   acknowledgedByTech?: boolean | null
   notes?: string | null
   originalDate?: string | null
@@ -155,7 +156,11 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const isLegacy = parsed.some((b: any) => b.id?.includes('demo-') || b.service?.includes('Tattoo') || b.artistId === 'marcel')
+          if (!isLegacy) return parsed
+          localStorage.removeItem('bookings')
+        }
       } catch (e) {
         console.error(e)
       }

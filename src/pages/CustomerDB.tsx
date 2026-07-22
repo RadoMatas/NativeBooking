@@ -18,6 +18,10 @@ export default function CustomerDB() {
   const [decliningJob, setDecliningJob] = useState<any | null>(null)
   const [declineReasonText, setDeclineReasonText] = useState('')
 
+  // Completion Report Modal State
+  const [completingJob, setCompletingJob] = useState<any | null>(null)
+  const [completionReportText, setCompletionReportText] = useState('')
+
   const handleLogout = () => {
     logout()
     navigate('/login')
@@ -78,13 +82,23 @@ export default function CustomerDB() {
     addNotification(`🚀 Technician ${selectedTech.name} STARTED Job on site for ${job.customerName}`)
   }
 
-  const handleCompleteJob = (job: any) => {
-    updateBooking(job.id, {
-      ...job,
+  const handleConfirmCompletion = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!completingJob || !completionReportText.trim()) {
+      alert('Please fill out the completion report before marking the job as completed.')
+      return
+    }
+
+    updateBooking(completingJob.id, {
+      ...completingJob,
       adminStatus: 'Completed',
       status: 'Completed',
+      completionReport: completionReportText,
     })
-    addNotification(`✅ Technician ${selectedTech.name} COMPLETED Job for ${job.customerName}`)
+
+    addNotification(`✅ Technician ${selectedTech.name} COMPLETED Job for ${completingJob.customerName} — Report: "${completionReportText}"`)
+    setCompletingJob(null)
+    setCompletionReportText('')
   }
 
   const handleConfirmDecline = (e: React.FormEvent) => {
@@ -372,6 +386,12 @@ export default function CustomerDB() {
                     </div>
                   )}
 
+                  {job.completionReport && (
+                    <div style={{ background: 'rgba(16, 185, 129, 0.15)', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(16, 185, 129, 0.3)', color: '#34d399', fontSize: '13px' }}>
+                      <strong>Technician Completion Report:</strong> "{job.completionReport}"
+                    </div>
+                  )}
+
                   {job.declineReason && (
                     <div style={{ background: 'rgba(239, 68, 68, 0.15)', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171', fontSize: '13px' }}>
                       <strong>Declined Reason:</strong> "{job.declineReason}"
@@ -402,11 +422,14 @@ export default function CustomerDB() {
                           </button>
                         )}
                         <button
-                          onClick={() => handleCompleteJob(job)}
+                          onClick={() => {
+                            setCompletingJob(job)
+                            setCompletionReportText('')
+                          }}
                           className="btn btn-primary"
                           style={{ padding: '9px 16px', fontSize: '13px', fontWeight: 700 }}
                         >
-                          ✅ Complete Job
+                          ✅ Complete Job & Submit Report
                         </button>
                         <button
                           onClick={() => setDecliningJob(job)}
@@ -424,6 +447,77 @@ export default function CustomerDB() {
           </div>
         )}
       </div>
+
+      {/* ─── COMPLETION REPORT MODAL ───────────────────────────── */}
+      {completingJob && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px',
+            backdropFilter: 'blur(6px)',
+          }}
+        >
+          <form
+            onSubmit={handleConfirmCompletion}
+            className="premium-card"
+            style={{
+              maxWidth: '480px',
+              width: '100%',
+              padding: '28px',
+              borderRadius: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#34d399' }}>
+              ✅ Complete Work Order & Submit Report
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+              Please enter site work notes for <strong>{completingJob.customerName}</strong> ({completingJob.service}). This report will be logged for Admin review.
+            </p>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                Work Performed & Materials Used *
+              </label>
+              <textarea
+                rows={4}
+                value={completionReportText}
+                onChange={(e) => setCompletionReportText(e.target.value)}
+                placeholder="e.g. Replaced compressor relay. Pressure test passed at 4.2 bar. Cleaned filter unit and verified operation..."
+                className="form-textarea"
+                required
+                autoFocus
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setCompletingJob(null)}
+                className="btn btn-secondary"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 700 }}
+              >
+                Submit Report & Mark Completed ✅
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* ─── DECLINE JOB REASON MODAL ──────────────────────────── */}
       {decliningJob && (

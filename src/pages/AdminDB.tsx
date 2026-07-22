@@ -509,6 +509,13 @@ export default function AdminDB() {
                   </div>
                 )}
 
+                {selectedBooking.completionReport && (
+                  <div style={{ background: 'rgba(16,185,129,0.15)', padding: '14px', borderRadius: '10px', border: '1px solid #34d399', color: '#34d399' }}>
+                    <strong style={{ display: 'block', marginBottom: '4px' }}>✅ Technician Work Report:</strong>
+                    "{selectedBooking.completionReport}"
+                  </div>
+                )}
+
                 <div style={{ background: 'rgba(0,0,0,0.3)', padding: '14px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
                   <strong style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
                     Job Site Address & Specs:
