@@ -32,6 +32,7 @@ export interface BusinessConfig {
   adminNotesLabel: string
   internalNotesLabel: string
   checklist: string[]
+  dbPrefix: string
   theme: {
     primaryColor: string
     cardBg: string
@@ -43,43 +44,42 @@ export interface BusinessConfig {
 }
 
 export const BUSINESS_CONFIG: BusinessConfig = {
-  name: "Sanatorium Tattoo",
-  tagline: "Award-Winning Tattoo Studio",
-  address: "8 Drummond St, Edinburgh, EH8 9TU",
-  contact: "+44 7765 899429",
-  openingHour: 11,
+  name: "Apex Language Academy",
+  tagline: "Premium Language Courses & Academic Tutoring",
+  address: "88 Education Way, Suite 100, Dallas, TX 75201",
+  contact: "+1 (214) 555-0152",
+  openingHour: 9,
   closingHour: 20,
   slotInterval: 30,
   closedDays: [0], // Sunday closed
-  depositPercentage: 0, // 20% deposit
+  depositPercentage: 0, // 0% deposit
+  dbPrefix: "academic",
   services: [
-    { id: "tattoo", name: "Tattoo Session", price: 120, durationMin: 60 },
-    { id: "permanent", name: "Permanent Make-up", price: 200, durationMin: 120 },
-    { id: "laser", name: "Laser Removal Session", price: 80, durationMin: 30 },
-    { id: "piercing", name: "Piercing Session", price: 40, durationMin: 20 }
+    { id: "english-gen", name: "English General Course", price: 50, durationMin: 45 },
+    { id: "spanish-int", name: "Spanish Intensive Class", price: 75, durationMin: 60 },
+    { id: "sat-prep", name: "Private SAT Prep Tutoring", price: 90, durationMin: 60 },
+    { id: "french-conv", name: "French Conversation Practice", price: 60, durationMin: 45 }
   ],
   artists: [
-    { id: "marcel", name: "Marcel", specialty: "Black & Grey Realism", avatarEmoji: "🎨", workingDays: [1, 2, 3, 4, 5] },
-    { id: "tomek", name: "Tomek", specialty: "Traditional & Neo-Traditional", avatarEmoji: "✒️", workingDays: [1, 2, 3, 4] },
-    { id: "konrad", name: "Konrad", specialty: "Geometric & Dotwork", avatarEmoji: "📐", workingDays: [3, 4, 5, 6] },
-    { id: "viktor", name: "Viktor", specialty: "Japanese Realism", avatarEmoji: "🐉", workingDays: [5, 6] }
+    { id: "sarah", name: "Prof. Sarah Jenkins", specialty: "English & French Literature", avatarEmoji: "👩‍🏫", workingDays: [1, 2, 3, 4, 5] },
+    { id: "alan", name: "Prof. Alan Sterling", specialty: "Spanish Philology & SAT Mathematics", avatarEmoji: "👨‍🏫", workingDays: [1, 2, 3, 4] }
   ],
-  staffLabel: "Artist",
-  staffLabelPlural: "Artists",
-  notesLabel: "Special Notes / Requests",
-  adminNotesLabel: "Aftercare Instructions",
-  internalNotesLabel: "Internal Admin Notes",
+  staffLabel: "Instructor",
+  staffLabelPlural: "Instructors",
+  notesLabel: "Special Learning Requests / Accommodations",
+  adminNotesLabel: "Homework Assignments & Study Material",
+  internalNotesLabel: "Internal Faculty Assessment Notes",
   checklist: [
-    "Please arrive 10 minutes early.",
-    "Bring any reference photos or design ideas.",
-    "Ensure you have eaten and are well hydrated.",
-    "Wear comfortable clothing exposing the tattoo area."
+    "Download the digital textbook PDF sent to your email.",
+    "Bring a notebook, pen, and your laptop or tablet.",
+    "Complete any pre-assigned reading or homework.",
+    "Join the virtual student portal 5 minutes before class starts (if online)."
   ],
   theme: {
-    primaryColor: "#09090b", // zinc 950
-    cardBg: "rgba(20, 20, 23, 0.8)", // zinc 900 glass
-    accentColor: "#10b981",  // emerald green
-    accentHover: "#34d399",  // light emerald
+    primaryColor: "#fbfbfa", // soft warm cream background
+    cardBg: "rgba(255, 255, 255, 0.85)", // frosted white glass card
+    accentColor: "#4f46e5",  // deep academic indigo
+    accentHover: "#4338ca",  // hover indigo
     borderRadius: "12px",
     fontFamily: "'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif"
   }

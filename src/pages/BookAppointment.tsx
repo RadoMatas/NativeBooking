@@ -109,7 +109,7 @@ export default function BookAppointment() {
     const dayOfWeek = d.getDay() // 0=Sunday, 1=Monday... 6=Saturday
 
     if (BUSINESS_CONFIG.closedDays.includes(dayOfWeek)) {
-      return `The studio is closed on Sundays.`
+      return `We are closed on this day.`
     }
 
     if (artistId) {
@@ -267,8 +267,8 @@ export default function BookAppointment() {
             style={{
               width: '100%',
               maxWidth: '480px',
-              border: '1px solid rgba(16, 185, 129, 0.25)',
-              boxShadow: '0 0 30px rgba(16, 185, 129, 0.15)',
+              border: '1px solid var(--accent-color)',
+              boxShadow: '0 0 30px rgba(79, 70, 229, 0.15)',
             }}
           >
             <h2 style={{ fontSize: '24px', marginBottom: '8px', color: 'var(--accent-color)' }}>

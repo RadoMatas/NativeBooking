@@ -325,7 +325,7 @@ export default function CustomerDB() {
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '15px', color: 'var(--text-primary)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '12px', background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', padding: '4px 10px', borderRadius: '9999px', fontWeight: 600 }}>
+                  <span style={{ fontSize: '12px', border: '1px solid var(--accent-color)', color: 'var(--accent-color)', padding: '3px 10px', borderRadius: '9999px', fontWeight: 600 }}>
                     🔥 Next Session
                   </span>
                 </div>
@@ -483,7 +483,7 @@ export default function CustomerDB() {
                             justifyContent: 'center',
                             fontSize: '36px',
                             marginBottom: '12px',
-                            boxShadow: '0 0 16px rgba(16, 185, 129, 0.2)',
+                            boxShadow: '0 0 16px rgba(79, 70, 229, 0.15)',
                             overflow: 'hidden',
                           }}
                         >
@@ -498,7 +498,7 @@ export default function CustomerDB() {
                           )}
                         </div>
                         <h3 style={{ fontSize: '17px', margin: '0 0 4px 0', fontWeight: 700, color: 'var(--text-primary)' }}>
-                          Your Artist: {latestBooking.artistName}
+                          Your {BUSINESS_CONFIG.staffLabel}: {latestBooking.artistName}
                         </h3>
                         {artist?.specialty && (
                           <span style={{ fontSize: '11px', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
@@ -506,16 +506,16 @@ export default function CustomerDB() {
                           </span>
                         )}
                         <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '12px', maxWidth: '260px', lineHeight: '1.4' }}>
-                          "Excited to work on your design! Make sure to stay hydrated and bring your reference photos."
+                          "Excited to work with you! Please complete your check-in guidelines before we begin."
                         </p>
                       </div>
                     )
                   })() : (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <div style={{ fontSize: '40px', marginBottom: '8px' }}>🎨</div>
-                      <h3 style={{ fontSize: '16px', margin: '0 0 4px 0', fontWeight: 700 }}>No Artist Selected</h3>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '240px' }}>
-                        Any available professional artist will be assigned to your service.
+                      <div style={{ fontSize: '40px', marginBottom: '8px' }}>{BUSINESS_CONFIG.staffLabel === 'Instructor' ? '🏫' : '🎨'}</div>
+                      <h3 style={{ fontSize: '16px', margin: '0 0 4px 0', fontWeight: 700 }}>No {BUSINESS_CONFIG.staffLabel} Assigned</h3>
+                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '240px', textAlign: 'center' }}>
+                        Any available professional {BUSINESS_CONFIG.staffLabel.toLowerCase()} will be assigned to your service.
                       </p>
                     </div>
                   )}
@@ -547,7 +547,7 @@ export default function CustomerDB() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
               <h2 style={{ fontSize: '20px', margin: 0 }}>Preparation Checklist</h2>
-              <span style={{ fontSize: '12px', background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', padding: '4px 10px', borderRadius: '9999px', fontWeight: 600 }}>
+              <span style={{ fontSize: '12px', border: '1px solid var(--accent-color)', color: 'var(--accent-color)', padding: '3px 10px', borderRadius: '9999px', fontWeight: 600 }}>
                 📋 Visit Readiness
               </span>
             </div>

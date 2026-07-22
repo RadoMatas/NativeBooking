@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { safeCollection, safeDoc, safeSetDoc } from './firestoreHelpers'
 import { db, isFirebaseEnabled } from './firebase'
+import { BUSINESS_CONFIG } from './businessConfig'
 import {
   collection,
   onSnapshot,
@@ -83,57 +84,60 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       ownerEmail: "customer@test.com",
       customerName: "Jane Doe",
       customerEmail: "customer@test.com",
-      customerPhone: "+48 555 123 456",
-      service: "Tattoo Session",
+      customerPhone: "+1 (214) 555-0988",
+      service: "English General Course",
       date: getPastDate(3),
       time: "10:00",
       status: "Confirmed",
-      notes: "First tattoo, wants a small flower on her wrist.",
-      priceCharged: 120,
-      adminNotesForCustomer: "Keep wrapped for 2 hours, wash gently with warm water, apply cream 3x daily.",
-      internalAdminNotes: "Client sat very well. Skin accepted ink easily. Follow up on colors.",
-      artistId: "marcel",
-      artistName: "Marcel",
-      depositAmount: 24,
-      depositPaid: true
+      notes: "Enrolling for TOEFL preparation prep assessment.",
+      priceCharged: 50,
+      adminNotesForCustomer: "Completed grammar test with 92%. Assigned workbook Chapter 1-3.",
+      internalAdminNotes: "Upper-Intermediate level student. Strong speech, minor spelling adjustments needed.",
+      artistId: "sarah",
+      artistName: "Prof. Sarah Jenkins",
+      depositAmount: 0,
+      depositPaid: false
     },
     {
       id: "demo-upcoming-1",
       ownerEmail: "customer@test.com",
       customerName: "Jane Doe",
       customerEmail: "customer@test.com",
-      customerPhone: "+48 555 123 456",
-      service: "Laser Removal Session",
+      customerPhone: "+1 (214) 555-0988",
+      service: "Spanish Intensive Class",
       date: getFutureDate(2),
       time: "14:00",
       status: "Confirmed",
-      notes: "Wants to discuss laser fading options.",
-      artistId: "konrad",
-      artistName: "Konrad",
-      depositAmount: 16,
-      depositPaid: true
+      notes: "Needs focus on professional Spanish email conversation vocabulary.",
+      artistId: "alan",
+      artistName: "Prof. Alan Sterling",
+      depositAmount: 0,
+      depositPaid: false
     },
     {
       id: "demo-pending-1",
       ownerEmail: "customer@test.com",
       customerName: "Jane Doe",
       customerEmail: "customer@test.com",
-      customerPhone: "+48 555 123 456",
-      service: "Permanent Make-up",
+      customerPhone: "+1 (214) 555-0988",
+      service: "Private SAT Prep Tutoring",
       date: getFutureDate(5),
       time: "11:00",
       status: "Pending",
-      notes: "Scheduled session following design approval.",
+      notes: "SAT math test practice book review session.",
       adminStatus: "New",
-      artistId: "marcel",
-      artistName: "Marcel",
-      depositAmount: 40,
+      artistId: "alan",
+      artistName: "Prof. Alan Sterling",
+      depositAmount: 0,
       depositPaid: false
     }
   ]
 
+  const bookingsKey = BUSINESS_CONFIG.dbPrefix ? `${BUSINESS_CONFIG.dbPrefix}_bookings` : 'bookings'
+  const notificationsKey = BUSINESS_CONFIG.dbPrefix ? `${BUSINESS_CONFIG.dbPrefix}_notifications` : 'notifications'
+
   const [bookings, setBookings] = useState<Booking[]>(() => {
-    const saved = localStorage.getItem('bookings')
+    const saved = localStorage.getItem(bookingsKey)
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
@@ -146,7 +150,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   })
 
   const [notifications, setNotifications] = useState<AdminNotification[]>(() => {
-    const saved = localStorage.getItem('notifications')
+    const saved = localStorage.getItem(notificationsKey)
     return saved ? JSON.parse(saved) : []
   })
 
@@ -195,7 +199,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
         )
         if (updatedNotifications.length > 0) {
           setNotifications(updatedNotifications)
-          localStorage.setItem('notifications', JSON.stringify(updatedNotifications))
+          localStorage.setItem(notificationsKey, JSON.stringify(updatedNotifications))
         }
       },
       (err) => {
@@ -210,23 +214,23 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    localStorage.setItem('bookings', JSON.stringify(bookings))
+    localStorage.setItem(bookingsKey, JSON.stringify(bookings))
   }, [bookings])
 
   useEffect(() => {
-    localStorage.setItem('notifications', JSON.stringify(notifications))
+    localStorage.setItem(notificationsKey, JSON.stringify(notifications))
   }, [notifications])
 
   useEffect(() => {
     if (isFirebaseEnabled) return
 
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'bookings') {
+      if (event.key === bookingsKey) {
         const updatedBookings = event.newValue ? JSON.parse(event.newValue) : []
         setBookings(updatedBookings)
       }
 
-      if (event.key === 'notifications') {
+      if (event.key === notificationsKey) {
         const updatedNotifications = event.newValue ? JSON.parse(event.newValue) : []
         setNotifications(updatedNotifications)
       }

@@ -255,9 +255,9 @@ export default function AdminDB() {
                     padding: '6px 14px',
                     fontSize: '13px',
                     borderRadius: '20px',
-                    background: statusFilter === filter ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255,255,255,0.03)',
+                    background: statusFilter === filter ? 'rgba(0, 0, 0, 0.02)' : 'transparent',
                     border: `1px solid ${statusFilter === filter ? 'var(--accent-color)' : 'var(--border-color)'}`,
-                    color: statusFilter === filter ? '#34d399' : 'var(--text-secondary)',
+                    color: statusFilter === filter ? 'var(--accent-color)' : 'var(--text-secondary)',
                   }}
                 >
                   {filter}
