@@ -10,7 +10,7 @@ const adminBadgeStyle = (adminStatus: string, status?: string): React.CSSPropert
   let bg = 'rgba(255, 255, 255, 0.05)'
   let color = 'var(--text-secondary)'
 
-  if (adminStatus === 'Declined by Tech' || status === 'Cancelled' || adminStatus === 'Cancelled') {
+  if (adminStatus === 'Declined by Tech' || status === 'Cancelled' || adminStatus === 'Cancelled' || adminStatus === 'Cancelled by Admin') {
     bg = 'rgba(239, 68, 68, 0.2)'
     color = '#f87171'
   } else if (adminStatus === 'In Progress') {
@@ -47,9 +47,9 @@ export default function AdminDB() {
   const {
     bookings,
     updateBooking,
-    updateBookingStatus,
     resetBookings,
     addBooking,
+    addNotification,
   } = useBooking()
 
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
@@ -68,6 +68,16 @@ export default function AdminDB() {
   const [jobDate, setJobDate] = useState(() => new Date().toISOString().split('T')[0])
   const [jobTime, setJobTime] = useState('09:00')
   const [jobNotes, setJobNotes] = useState('')
+
+  // Admin Reschedule Modal State
+  const [reschedulingJob, setReschedulingJob] = useState<any | null>(null)
+  const [adminNewDate, setAdminNewDate] = useState('')
+  const [adminNewTime, setAdminNewTime] = useState('09:00')
+  const [adminRescheduleReason, setAdminRescheduleReason] = useState('')
+
+  // Admin Cancel Modal State
+  const [cancellingJob, setCancellingJob] = useState<any | null>(null)
+  const [adminCancelReason, setAdminCancelReason] = useState('')
 
   const handleLogout = () => {
     logout()
@@ -96,7 +106,25 @@ export default function AdminDB() {
     })
   }, [bookings, techFilter, statusFilter])
 
-  // Urgent Action Items (Declined or Unacknowledged Jobs requiring Admin attention)
+  // Count Badges for Filters
+  const counts = useMemo(() => {
+    const assigned = bookings.filter((b) => b.adminStatus === 'Assigned' && b.status !== 'Cancelled').length
+    const acknowledged = bookings.filter((b) => b.adminStatus === 'Acknowledged' && b.status !== 'Cancelled').length
+    const inProgress = bookings.filter((b) => b.adminStatus === 'In Progress' && b.status !== 'Cancelled').length
+    const completed = bookings.filter((b) => b.status === 'Completed' || b.adminStatus === 'Completed').length
+    const declinedCancelled = bookings.filter((b) => b.adminStatus === 'Declined by Tech' || b.status === 'Cancelled').length
+
+    return {
+      all: bookings.length,
+      assigned,
+      acknowledged,
+      inProgress,
+      completed,
+      declinedCancelled,
+    }
+  }, [bookings])
+
+  // Urgent Action Items (Declined by tech)
   const urgentDeclinedJobs = useMemo(() => {
     return bookings.filter((b) => b.adminStatus === 'Declined by Tech' || (b.status === 'Cancelled' && b.declineReason))
   }, [bookings])
@@ -105,6 +133,13 @@ export default function AdminDB() {
     () => bookings.find((b) => b.id === selectedBookingId) || null,
     [bookings, selectedBookingId]
   )
+
+  const handleInspectJob = (jobId: string) => {
+    setSelectedBookingId(jobId)
+    setTimeout(() => {
+      detailsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 100)
+  }
 
   const handleDispatchJob = (e: React.FormEvent) => {
     e.preventDefault()
@@ -128,7 +163,10 @@ export default function AdminDB() {
           status: 'Confirmed',
           acknowledgedByTech: false,
           declineReason: null,
+          date: jobDate,
+          time: jobTime,
         })
+        addNotification(`🔄 REASSIGNED: Admin reassigned Job Order for ${clientName} to Technician ${techObj?.name}`)
       }
       setReassignJobId(null)
     } else {
@@ -151,6 +189,7 @@ export default function AdminDB() {
         depositAmount: serviceObj?.price || 0,
         depositPaid: false,
       })
+      addNotification(`🛠️ DISPATCHED: New Job Order for ${clientName} assigned to Technician ${techObj?.name}`)
     }
 
     setShowDispatchModal(false)
@@ -164,7 +203,46 @@ export default function AdminDB() {
     setReassignJobId(job.id)
     setClientName(job.customerName)
     setClientPhone(job.customerPhone)
+    setJobDate(job.date)
+    setJobTime(job.time)
     setShowDispatchModal(true)
+  }
+
+  const handleAdminConfirmReschedule = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!reschedulingJob) return
+
+    updateBooking(reschedulingJob.id, {
+      ...reschedulingJob,
+      date: adminNewDate,
+      time: adminNewTime,
+      notes: adminRescheduleReason
+        ? `${reschedulingJob.notes || ''} | [ADMIN RESCHEDULED]: ${adminRescheduleReason}`
+        : reschedulingJob.notes,
+    })
+
+    addNotification(`📅 ADMIN RESCHEDULED: Admin rescheduled Job for ${reschedulingJob.customerName} to ${adminNewDate} at ${adminNewTime}. Assigned Tech ${reschedulingJob.artistName} notified.`)
+    setReschedulingJob(null)
+    setAdminRescheduleReason('')
+  }
+
+  const handleAdminConfirmCancel = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!cancellingJob || !adminCancelReason.trim()) {
+      alert('Please state a reason for cancelling this job order.')
+      return
+    }
+
+    updateBooking(cancellingJob.id, {
+      ...cancellingJob,
+      status: 'Cancelled',
+      adminStatus: 'Cancelled by Admin',
+      cancellationReason: adminCancelReason,
+    })
+
+    addNotification(`🚨 ADMIN CANCELLED: Admin cancelled Job Order for ${cancellingJob.customerName} assigned to ${cancellingJob.artistName} — Reason: "${adminCancelReason}".`)
+    setCancellingJob(null)
+    setAdminCancelReason('')
   }
 
   return (
@@ -215,7 +293,7 @@ export default function AdminDB() {
         </div>
       </div>
 
-      {/* ─── INTERACTIVE ADMIN ACTION QUEUE CARD FEED ──────────── */}
+      {/* ─── PROMINENT TOP URGENT ACTION QUEUE BANNER ──────────── */}
       {urgentDeclinedJobs.length > 0 && (
         <div
           className="premium-card"
@@ -223,56 +301,75 @@ export default function AdminDB() {
             marginBottom: '28px',
             padding: '24px',
             border: '1px solid #f87171',
-            background: 'rgba(239, 68, 68, 0.08)',
-            boxShadow: '0 8px 32px rgba(239, 68, 68, 0.15)',
+            background: 'rgba(239, 68, 68, 0.09)',
+            boxShadow: '0 8px 32px rgba(239, 68, 68, 0.18)',
+            borderRadius: '20px',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '24px' }}>🛑</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '28px' }}>🛑</span>
               <div>
-                <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#f87171', margin: 0 }}>
-                  Urgent Action Queue ({urgentDeclinedJobs.length})
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#f87171', margin: 0 }}>
+                  Urgent Action Queue ({urgentDeclinedJobs.length} Order{urgentDeclinedJobs.length > 1 ? 's' : ''} Declined)
                 </h3>
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                  Technicians have declined work orders. Review reason and reassign immediately.
+                  Technicians declined work orders. Review initial scheduled date/time & reassign immediately.
                 </span>
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {urgentDeclinedJobs.map((job) => (
               <div
                 key={job.id}
                 style={{
-                  background: 'rgba(0, 0, 0, 0.4)',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  borderRadius: '12px',
-                  padding: '14px 18px',
+                  background: 'rgba(0, 0, 0, 0.45)',
+                  border: '1px solid rgba(239, 68, 68, 0.35)',
+                  borderRadius: '14px',
+                  padding: '16px 20px',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
                   flexWrap: 'wrap',
-                  gap: '12px',
+                  gap: '16px',
                 }}
               >
                 <div>
-                  <strong style={{ color: '#ffffff', fontSize: '14px', display: 'block' }}>
-                    {job.service} — {job.customerName}
-                  </strong>
-                  <span style={{ fontSize: '13px', color: '#f87171', fontWeight: 600 }}>
-                    Technician {job.artistName} Declined: "{job.declineReason || 'No reason provided'}"
-                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+                    <strong style={{ color: '#ffffff', fontSize: '16px' }}>
+                      {job.service}
+                    </strong>
+                    <span style={{ fontSize: '12px', color: 'var(--accent-color)', fontWeight: 700, background: 'rgba(245,158,11,0.15)', padding: '2px 8px', borderRadius: '6px' }}>
+                      Client: {job.customerName} ({job.customerPhone})
+                    </span>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: '#e2e8f0', flexWrap: 'wrap' }}>
+                    <span>📅 <strong>Initial Date & Time:</strong> {job.date} at {job.time}</span>
+                    <span>👷 <strong>Assigned Tech:</strong> {job.artistName}</span>
+                  </div>
+
+                  <div style={{ marginTop: '6px', color: '#f87171', fontSize: '13px', fontWeight: 600 }}>
+                    🚨 <strong>Decline Reason:</strong> "{job.declineReason || 'No reason specified'}"
+                  </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button
+                    onClick={() => handleInspectJob(job.id)}
+                    className="btn btn-secondary"
+                    style={{ fontSize: '12px', padding: '8px 14px' }}
+                  >
+                    👁️ Inspect Order Details
+                  </button>
                   <button
                     onClick={() => handleReassignClick(job)}
                     className="btn btn-primary"
-                    style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
+                    style={{ fontSize: '12px', padding: '8px 16px', fontWeight: 700 }}
                   >
-                    🔄 Reassign Job Order Now →
+                    🔄 Reassign Job Order →
                   </button>
                 </div>
               </div>
@@ -289,7 +386,7 @@ export default function AdminDB() {
         </p>
       </div>
 
-      {/* ─── FILTERS ────────────────────────────────────────────── */}
+      {/* ─── STATUS FILTERS WITH COUNT BADGES ───────────────────── */}
       <div
         className="premium-card"
         style={{
@@ -303,29 +400,56 @@ export default function AdminDB() {
         }}
       >
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {['All', 'Assigned', 'Acknowledged', 'In Progress', 'Completed', 'Declined / Cancelled'].map((f) => (
-            <button
-              key={f}
-              onClick={() => setStatusFilter(f)}
-              style={{
-                padding: '6px 14px',
-                fontSize: '13px',
-                borderRadius: '20px',
-                background: statusFilter === f ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255,255,255,0.03)',
-                border: `1px solid ${statusFilter === f ? 'var(--accent-color)' : 'var(--border-color)'}`,
-                color: statusFilter === f ? 'var(--accent-color)' : 'var(--text-secondary)',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              {f}
-            </button>
-          ))}
+          {[
+            { key: 'All', label: `All Jobs (${counts.all})` },
+            { key: 'Assigned', label: `🟨 Assigned / Unseen (${counts.assigned})` },
+            { key: 'Acknowledged', label: `🟦 Acknowledged (${counts.acknowledged})` },
+            { key: 'In Progress', label: `🚀 In Progress (${counts.inProgress})` },
+            { key: 'Completed', label: `✅ Completed (${counts.completed})` },
+            { key: 'Declined / Cancelled', label: `🛑 Declined / Cancelled (${counts.declinedCancelled})` },
+          ].map((f) => {
+            const isActive = statusFilter === f.key
+            const isAlertState = f.key === 'Declined / Cancelled' && counts.declinedCancelled > 0
+
+            return (
+              <button
+                key={f.key}
+                onClick={() => setStatusFilter(f.key)}
+                style={{
+                  padding: '6px 14px',
+                  fontSize: '13px',
+                  borderRadius: '20px',
+                  background: isActive
+                    ? 'rgba(245, 158, 11, 0.2)'
+                    : isAlertState
+                    ? 'rgba(239, 68, 68, 0.15)'
+                    : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${
+                    isActive
+                      ? 'var(--accent-color)'
+                      : isAlertState
+                      ? '#f87171'
+                      : 'var(--border-color)'
+                  }`,
+                  color: isActive
+                    ? 'var(--accent-color)'
+                    : isAlertState
+                    ? '#f87171'
+                    : 'var(--text-secondary)',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                {f.label}
+              </button>
+            )
+          })}
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>
-            Technician:
+            Filter Technician:
           </span>
           <select
             value={techFilter}
@@ -348,7 +472,7 @@ export default function AdminDB() {
         {/* Left: Job Orders List */}
         <div className="premium-card">
           <h2 style={{ fontSize: '20px', marginBottom: '16px' }}>
-            Dispatched Jobs ({filteredBookings.length})
+            Dispatched Work Orders ({filteredBookings.length})
           </h2>
 
           {filteredBookings.length === 0 ? (
@@ -364,12 +488,13 @@ export default function AdminDB() {
                     key={job.id}
                     onClick={() => setSelectedBookingId(job.id)}
                     style={{
-                      background: isDeclined ? 'rgba(239, 68, 68, 0.08)' : isSelected ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255,255,255,0.02)',
+                      background: isDeclined ? 'rgba(239, 68, 68, 0.08)' : isSelected ? 'rgba(245, 158, 11, 0.12)' : 'rgba(255,255,255,0.02)',
                       border: `1px solid ${isDeclined ? '#f87171' : isSelected ? 'var(--accent-color)' : 'var(--border-color)'}`,
                       borderRadius: '14px',
                       padding: '18px 20px',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
+                      boxShadow: isSelected ? '0 0 16px rgba(245, 158, 11, 0.2)' : 'none',
                     }}
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
@@ -411,7 +536,7 @@ export default function AdminDB() {
                     </div>
 
                     {/* Quick Action Controls */}
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.05)', flexWrap: 'wrap' }}>
                       {isDeclined && (
                         <button
                           onClick={(e) => {
@@ -429,22 +554,25 @@ export default function AdminDB() {
                           <button
                             onClick={(e) => {
                               e.stopPropagation()
-                              updateBookingStatus(job.id, 'Confirmed', 'In Progress')
+                              setReschedulingJob(job)
+                              setAdminNewDate(job.date)
+                              setAdminNewTime(job.time)
                             }}
                             className="btn btn-secondary"
                             style={{ fontSize: '11px', padding: '4px 10px' }}
                           >
-                            ▶️ In Progress
+                            📅 Reschedule
                           </button>
                           <button
                             onClick={(e) => {
                               e.stopPropagation()
-                              updateBookingStatus(job.id, 'Completed', 'Completed')
+                              setCancellingJob(job)
+                              setAdminCancelReason('')
                             }}
                             className="btn btn-secondary"
-                            style={{ fontSize: '11px', padding: '4px 10px', color: '#34d399' }}
+                            style={{ fontSize: '11px', padding: '4px 10px', color: '#f87171' }}
                           >
-                            ✅ Complete Job
+                            🛑 Cancel Order
                           </button>
                         </>
                       )}
@@ -509,6 +637,13 @@ export default function AdminDB() {
                   </div>
                 )}
 
+                {selectedBooking.cancellationReason && (
+                  <div style={{ background: 'rgba(239,68,68,0.15)', padding: '14px', borderRadius: '10px', border: '1px solid #f87171', color: '#f87171' }}>
+                    <strong style={{ display: 'block', marginBottom: '4px' }}>🛑 Admin Cancellation Reason:</strong>
+                    "{selectedBooking.cancellationReason}"
+                  </div>
+                )}
+
                 {selectedBooking.completionReport && (
                   <div style={{ background: 'rgba(16,185,129,0.15)', padding: '14px', borderRadius: '10px', border: '1px solid #34d399', color: '#34d399' }}>
                     <strong style={{ display: 'block', marginBottom: '4px' }}>✅ Technician Work Report:</strong>
@@ -525,8 +660,9 @@ export default function AdminDB() {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                  {(selectedBooking.adminStatus === 'Declined by Tech' || selectedBooking.status === 'Cancelled') && (
+                {/* Admin Management Controls */}
+                <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
+                  {(selectedBooking.adminStatus === 'Declined by Tech' || selectedBooking.status === 'Cancelled') ? (
                     <button
                       onClick={() => handleReassignClick(selectedBooking)}
                       className="btn btn-primary"
@@ -534,15 +670,30 @@ export default function AdminDB() {
                     >
                       🔄 Reassign to Tech
                     </button>
-                  )}
-                  {selectedBooking.status !== 'Completed' && (
-                    <button
-                      onClick={() => updateBookingStatus(selectedBooking.id, 'Completed', 'Completed')}
-                      className="btn btn-primary"
-                      style={{ flex: 1, padding: '10px', fontSize: '13px' }}
-                    >
-                      ✅ Mark Completed
-                    </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          setReschedulingJob(selectedBooking)
+                          setAdminNewDate(selectedBooking.date)
+                          setAdminNewTime(selectedBooking.time)
+                        }}
+                        className="btn btn-secondary"
+                        style={{ flex: 1, padding: '10px', fontSize: '13px' }}
+                      >
+                        📅 Reschedule Order
+                      </button>
+                      <button
+                        onClick={() => {
+                          setCancellingJob(selectedBooking)
+                          setAdminCancelReason('')
+                        }}
+                        className="btn btn-secondary"
+                        style={{ padding: '10px 14px', fontSize: '13px', color: '#f87171' }}
+                      >
+                        🛑 Cancel Order
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
@@ -552,6 +703,175 @@ export default function AdminDB() {
           </div>
         </div>
       </div>
+
+      {/* ─── ADMIN RESCHEDULE MODAL ────────────────────────────── */}
+      {reschedulingJob && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px',
+            backdropFilter: 'blur(6px)',
+          }}
+        >
+          <form
+            onSubmit={handleAdminConfirmReschedule}
+            className="premium-card"
+            style={{
+              maxWidth: '480px',
+              width: '100%',
+              padding: '28px',
+              borderRadius: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--accent-color)' }}>
+              📅 Reschedule Job Order
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+              Update schedule for <strong>{reschedulingJob.customerName}</strong> ({reschedulingJob.service}). Existing order record will be updated cleanly.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                  New Date *
+                </label>
+                <input
+                  type="date"
+                  value={adminNewDate}
+                  onChange={(e) => setAdminNewDate(e.target.value)}
+                  className="form-input"
+                  required
+                />
+              </div>
+              <div>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                  New Time *
+                </label>
+                <select
+                  value={adminNewTime}
+                  onChange={(e) => setAdminNewTime(e.target.value)}
+                  className="form-select"
+                >
+                  {['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '16:00'].map((t) => (
+                    <option key={t} value={t}>{t}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                Reschedule Reason / Client Consent Note
+              </label>
+              <input
+                type="text"
+                value={adminRescheduleReason}
+                onChange={(e) => setAdminRescheduleReason(e.target.value)}
+                placeholder="e.g. Client requested Monday morning slot"
+                className="form-input"
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setReschedulingJob(null)}
+                className="btn btn-secondary"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-primary"
+                style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 700 }}
+              >
+                Update Schedule & Notify Tech 📅
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* ─── ADMIN CANCEL MODAL ────────────────────────────────── */}
+      {cancellingJob && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px',
+            backdropFilter: 'blur(6px)',
+          }}
+        >
+          <form
+            onSubmit={handleAdminConfirmCancel}
+            className="premium-card"
+            style={{
+              maxWidth: '460px',
+              width: '100%',
+              padding: '28px',
+              borderRadius: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#f87171' }}>
+              🛑 Cancel Work Order
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+              Are you sure you want to cancel the job order for <strong>{cancellingJob.customerName}</strong> assigned to <strong>{cancellingJob.artistName}</strong>?
+            </p>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                Cancellation Reason *
+              </label>
+              <textarea
+                rows={3}
+                value={adminCancelReason}
+                onChange={(e) => setAdminCancelReason(e.target.value)}
+                placeholder="e.g. Client called to cancel due to schedule conflict..."
+                className="form-textarea"
+                required
+                autoFocus
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setCancellingJob(null)}
+                className="btn btn-secondary"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Keep Order Active
+              </button>
+              <button
+                type="submit"
+                className="btn btn-danger"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Confirm Cancel & Alert Tech 🛑
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* ─── DISPATCH / REASSIGN JOB MODAL ─────────────────────── */}
       {showDispatchModal && (
