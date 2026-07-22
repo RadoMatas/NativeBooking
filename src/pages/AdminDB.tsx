@@ -1,24 +1,19 @@
 import { Navigate, useNavigate } from 'react-router-dom'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { currentUserRole, logout } from '../auth'
-import {
-  fetchIntroCalls,
-  updateIntroCallStatus,
-  generateGoogleCalendarUrl,
-  type IntroCallBooking,
-} from '../introCallHelpers'
+import { fetchIntroCalls, updateIntroCallStatus, type IntroCallBooking } from '../introCallHelpers'
 
 export default function AdminDB() {
   const navigate = useNavigate()
   const [introCalls, setIntroCalls] = useState<IntroCallBooking[]>([])
-  const [loadingCalls, setLoadingCalls] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'declined'>('all')
 
   const loadCalls = async () => {
-    setLoadingCalls(true)
-    const data = await fetchIntroCalls()
-    setIntroCalls(data)
-    setLoadingCalls(false)
+    setLoading(true)
+    const calls = await fetchIntroCalls()
+    setIntroCalls(calls)
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -35,8 +30,67 @@ export default function AdminDB() {
     return <Navigate to="/" replace />
   }
 
-  const handleStatusChange = async (id: string, newStatus: 'confirmed' | 'declined') => {
-    await updateIntroCallStatus(id, newStatus)
+  const handleAcceptCall = async (call: IntroCallBooking) => {
+    await updateIntroCallStatus(call.id, 'confirmed')
+
+    // 1. Send automated EmailJS confirmation to prospect
+    try {
+      await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: 'service_jfrd3cr',
+          template_id: 'template_4e7ipi1',
+          user_id: 'SWLupKhyJ1aMBxMI-',
+          template_params: {
+            from_name: 'NativeBooking Team',
+            to_name: call.name,
+            to_email: call.email,
+            from_email: 'info@nativebooking.co',
+            email: call.email,
+            phone: call.phone,
+            industry: call.industry,
+            requested_date: call.date,
+            requested_time: call.timeSlot,
+            message: `Hi ${call.name},\n\nYour discovery call with NativeBooking is CONFIRMED for ${call.date} at ${call.timeSlot} CET!\n\nWe look forward to speaking with you.\n\nBest regards,\nNativeBooking Team`,
+          },
+        }),
+      })
+    } catch (e) {
+      console.warn('EmailJS auto-confirm error:', e)
+    }
+
+    // 2. Open Google Calendar to add event to BOTH admin & prospect calendars
+    const [startHourStr] = call.timeSlot.split(':')
+    const startHour = parseInt(startHourStr, 10) || 9
+    const endHour = startHour + 1
+    const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`)
+
+    const cleanDateStr = call.date.replace(/-/g, '')
+    const gcalDateStr = `${cleanDateStr}T${pad(startHour)}0000Z`
+    const gcalEndDateStr = `${cleanDateStr}T${pad(endHour)}0000Z`
+
+    const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+      `NativeBooking Discovery Call — ${call.name}`
+    )}&details=${encodeURIComponent(
+      `Discovery call with ${call.name}\nIndustry: ${call.industry}\nPhone/WhatsApp: ${call.phone}\nNotes: ${call.notes || 'None'}`
+    )}&dates=${gcalDateStr}/${gcalEndDateStr}&add=${encodeURIComponent(call.email)}&authuser=info@nativebooking.co`
+
+    window.open(gcalUrl, '_blank')
+
+    await loadCalls()
+  }
+
+  const handleDeclineCall = async (call: IntroCallBooking) => {
+    await updateIntroCallStatus(call.id, 'declined')
+
+    // Open email draft for admin to type reason why call is declined
+    const mailtoSubject = encodeURIComponent(`Update on your NativeBooking Discovery Call Request`)
+    const mailtoBody = encodeURIComponent(
+      `Hi ${call.name},\n\nThank you for requesting a discovery call with NativeBooking for ${call.date} at ${call.timeSlot} CET.\n\n[Please enter your decline / reschedule reason here]\n\nBest regards,\nNativeBooking Team`
+    )
+    window.open(`mailto:${call.email}?subject=${mailtoSubject}&body=${mailtoBody}`, '_blank')
+
     await loadCalls()
   }
 
@@ -161,96 +215,103 @@ export default function AdminDB() {
                 padding: '20px 24px',
               }}
             >
-              <span style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: t.textSecondary, letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: '13px', color: t.textSecondary, fontWeight: 600, display: 'block', marginBottom: '4px' }}>
                 {stat.label}
               </span>
-              <div style={{ fontSize: '32px', fontWeight: 800, color: stat.color, marginTop: '4px' }}>
-                {stat.count}
-              </div>
+              <span style={{ fontSize: '32px', fontWeight: 800, color: stat.color }}>{stat.count}</span>
             </div>
           ))}
         </div>
 
-        {/* ─── FILTER & ACTION BAR ───────────────────────────── */}
+        {/* ─── FILTER TABS ───────────────────────────────────── */}
         <div
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            gap: '10px',
             marginBottom: '24px',
+            borderBottom: `1px solid ${t.border}`,
+            paddingBottom: '16px',
             flexWrap: 'wrap',
-            gap: '12px',
           }}
         >
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {(['all', 'pending', 'confirmed', 'declined'] as const).map((filter) => (
+          {(['all', 'pending', 'confirmed', 'declined'] as const).map((filterKey) => {
+            const isActive = statusFilter === filterKey
+            const labelMap = {
+              all: `All Requests (${introCalls.length})`,
+              pending: `⏳ Pending (${countPending})`,
+              confirmed: `✅ Confirmed (${countConfirmed})`,
+              declined: `❌ Declined (${countDeclined})`,
+            }
+
+            return (
               <button
-                key={filter}
-                onClick={() => setStatusFilter(filter)}
+                key={filterKey}
+                onClick={() => setStatusFilter(filterKey)}
                 style={{
-                  padding: '7px 16px',
+                  background: isActive ? t.accent : 'rgba(255,255,255,0.03)',
+                  color: isActive ? '#ffffff' : t.textSecondary,
+                  border: `1px solid ${isActive ? t.accent : t.border}`,
+                  padding: '8px 18px',
+                  borderRadius: '10px',
                   fontSize: '13px',
-                  fontWeight: 600,
-                  borderRadius: '20px',
-                  background: statusFilter === filter ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255,255,255,0.03)',
-                  border: `1px solid ${statusFilter === filter ? t.accent : t.border}`,
-                  color: statusFilter === filter ? '#34d399' : t.textSecondary,
+                  fontWeight: 700,
                   cursor: 'pointer',
-                  textTransform: 'capitalize',
-                  fontFamily: 'inherit',
+                  transition: 'all 0.2s ease',
                 }}
               >
-                {filter}
+                {labelMap[filterKey]}
               </button>
-            ))}
-          </div>
-
-          <button
-            onClick={loadCalls}
-            className="btn btn-secondary"
-            style={{ fontSize: '13px', padding: '7px 16px' }}
-          >
-            🔄 Refresh List
-          </button>
+            )
+          })}
         </div>
 
-        {/* ─── CALLS LIST ────────────────────────────────────── */}
-        {loadingCalls ? (
-          <p style={{ color: t.textSecondary, padding: '40px 0', textAlign: 'center' }}>Loading calls...</p>
+        {/* ─── CALL REQUESTS LIST ────────────────────────────── */}
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '60px 0', color: t.textSecondary }}>
+            Loading discovery calls...
+          </div>
         ) : filteredCalls.length === 0 ? (
           <div
             style={{
               textAlign: 'center',
-              padding: '60px 20px',
+              padding: '60px 24px',
               background: t.cardBg,
               border: `1px solid ${t.border}`,
               borderRadius: '20px',
+              color: t.textSecondary,
             }}
           >
-            <span style={{ fontSize: '40px', display: 'block', marginBottom: '12px' }}>📞</span>
-            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '6px', color: '#ffffff' }}>
-              No Call Requests Found
-            </h3>
-            <p style={{ fontSize: '14px', color: t.textSecondary }}>
-              When potential clients request a discovery call from your homepage, they will appear here.
-            </p>
+            No intro call requests found matching <strong>{statusFilter}</strong> status.
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {filteredCalls.map((call) => {
-              const gcalUrl = generateGoogleCalendarUrl(call)
+              const [startHourStr] = call.timeSlot.split(':')
+              const startHour = parseInt(startHourStr, 10) || 9
+              const endHour = startHour + 1
+              const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`)
+
+              const cleanDateStr = call.date.replace(/-/g, '')
+              const gcalDateStr = `${cleanDateStr}T${pad(startHour)}0000Z`
+              const gcalEndDateStr = `${cleanDateStr}T${pad(endHour)}0000Z`
+
+              const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+                `NativeBooking Discovery Call — ${call.name}`
+              )}&details=${encodeURIComponent(
+                `Discovery call with ${call.name}\nIndustry: ${call.industry}\nPhone/WhatsApp: ${call.phone}\nNotes: ${call.notes || 'None'}`
+              )}&dates=${gcalDateStr}/${gcalEndDateStr}&add=${encodeURIComponent(call.email)}&authuser=info@nativebooking.co`
+
               return (
                 <div
                   key={call.id}
                   style={{
                     background: t.cardBg,
                     border: `1px solid ${t.border}`,
-                    borderRadius: '18px',
+                    borderRadius: '20px',
                     padding: '24px 28px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '16px',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
@@ -306,7 +367,7 @@ export default function AdminDB() {
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px', fontSize: '14px' }}>
                     <div>
-                      <strong style={{ color: t.textSecondary }}>Email:</strong>{' '}
+                      <strong style={{ color: t.textSecondary }}>Client Email:</strong>{' '}
                       <a href={`mailto:${call.email}`} style={{ color: t.accent, textDecoration: 'underline' }}>
                         {call.email}
                       </a>
@@ -336,7 +397,7 @@ export default function AdminDB() {
                     </div>
                   )}
 
-                  {/* Action buttons */}
+                  {/* Action controls according to strict status locking rules */}
                   <div
                     style={{
                       display: 'flex',
@@ -344,80 +405,97 @@ export default function AdminDB() {
                       flexWrap: 'wrap',
                       paddingTop: '12px',
                       borderTop: `1px solid ${t.border}`,
+                      alignItems: 'center',
                     }}
                   >
-                    {call.status !== 'confirmed' && (
-                      <button
-                        onClick={() => handleStatusChange(call.id, 'confirmed')}
-                        style={{
-                          background: t.accent,
-                          color: '#ffffff',
-                          border: 'none',
-                          padding: '9px 18px',
-                          borderRadius: '8px',
-                          fontSize: '13px',
-                          fontWeight: 700,
-                          cursor: 'pointer',
-                          boxShadow: '0 2px 10px rgba(16,185,129,0.25)',
-                        }}
-                      >
-                        ✅ Accept & Confirm
-                      </button>
+                    {call.status === 'pending' && (
+                      <>
+                        <button
+                          onClick={() => handleAcceptCall(call)}
+                          style={{
+                            background: t.accent,
+                            color: '#ffffff',
+                            border: 'none',
+                            padding: '9px 18px',
+                            borderRadius: '8px',
+                            fontSize: '13px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 10px rgba(16,185,129,0.25)',
+                          }}
+                        >
+                          ✅ Accept & Add to Both Calendars
+                        </button>
+
+                        <button
+                          onClick={() => handleDeclineCall(call)}
+                          style={{
+                            background: 'rgba(239, 68, 68, 0.1)',
+                            border: '1px solid rgba(239, 68, 68, 0.3)',
+                            color: '#f87171',
+                            padding: '9px 18px',
+                            borderRadius: '8px',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          ❌ Decline Request & Write Reason
+                        </button>
+                      </>
                     )}
-                    {call.status !== 'declined' && (
-                      <button
-                        onClick={() => handleStatusChange(call.id, 'declined')}
-                        style={{
-                          background: 'rgba(239, 68, 68, 0.1)',
-                          border: '1px solid rgba(239, 68, 68, 0.3)',
-                          color: '#f87171',
-                          padding: '9px 18px',
-                          borderRadius: '8px',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        ❌ Decline Request
-                      </button>
+
+                    {call.status === 'confirmed' && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '13px', color: '#34d399', fontWeight: 700, background: 'rgba(16,185,129,0.15)', padding: '6px 14px', borderRadius: '8px' }}>
+                          ✅ Confirmed & Scheduled on Google Calendar
+                        </span>
+                        <a href={gcalUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                          <button
+                            style={{
+                              background: 'rgba(255, 255, 255, 0.05)',
+                              border: `1px solid ${t.border}`,
+                              color: '#ffffff',
+                              padding: '8px 16px',
+                              borderRadius: '8px',
+                              fontSize: '13px',
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            📅 View Google Calendar Event (Both Attendees)
+                          </button>
+                        </a>
+                      </div>
                     )}
-                    <a href={gcalUrl} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                      <button
-                        style={{
-                          background: 'rgba(255, 255, 255, 0.05)',
-                          border: `1px solid ${t.border}`,
-                          color: '#ffffff',
-                          padding: '9px 18px',
-                          borderRadius: '8px',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        📅 Add to Google Calendar (1-Tap)
-                      </button>
-                    </a>
-                    <a
-                      href={`mailto:${call.email}?subject=${encodeURIComponent(`Confirmed: NativeBooking Discovery Call (${call.date} @ ${call.timeSlot} CET)`)}&body=${encodeURIComponent(`Hi ${call.name},\n\nYour discovery call with NativeBooking is CONFIRMED!\n\nDate: ${call.date}\nTime: ${call.timeSlot} CET\n\nWe look forward to speaking with you!\n\nBest regards,\nNativeBooking Team`)}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: 'none' }}
-                    >
-                      <button
-                        style={{
-                          background: 'rgba(14, 165, 233, 0.1)',
-                          border: '1px solid rgba(14, 165, 233, 0.3)',
-                          color: '#38bdf8',
-                          padding: '9px 18px',
-                          borderRadius: '8px',
-                          fontSize: '13px',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        ✉️ Email Confirmation to Client ({call.email})
-                      </button>
-                    </a>
+
+                    {call.status === 'declined' && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                        <span style={{ fontSize: '13px', color: '#f87171', fontWeight: 700, background: 'rgba(239,68,68,0.15)', padding: '6px 14px', borderRadius: '8px' }}>
+                          ❌ Request Declined (Locked)
+                        </span>
+                        <a
+                          href={`mailto:${call.email}?subject=${encodeURIComponent(`Update on your NativeBooking Intro Call Request`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ textDecoration: 'none' }}
+                        >
+                          <button
+                            style={{
+                              background: 'none',
+                              border: `1px solid ${t.border}`,
+                              color: t.textSecondary,
+                              padding: '7px 14px',
+                              borderRadius: '8px',
+                              fontSize: '12px',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            ✉️ Email Client Reason Again
+                          </button>
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
               )
