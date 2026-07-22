@@ -333,7 +333,11 @@ export default function BookIntroCall() {
                       <button
                         type="button"
                         key={slot}
-                        onClick={() => setSelectedTimeSlot(slot)}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          setSelectedTimeSlot(slot)
+                        }}
                         style={{
                           padding: '10px',
                           borderRadius: '8px',
