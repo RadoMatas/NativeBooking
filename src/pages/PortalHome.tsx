@@ -132,11 +132,11 @@ export default function PortalHome() {
     {
       title: 'HVAC & Home Services',
       icon: '🛠️',
-      status: 'In Planning',
-      statusColor: '#a855f7',
-      statusBg: 'rgba(168, 85, 247, 0.1)',
-      description: 'Job dispatch board, technician assignments, on-site reports, and internal team scheduling — no customer portal needed.',
-      link: null,
+      status: 'Live Sandbox',
+      statusColor: '#f59e0b',
+      statusBg: 'rgba(245, 158, 11, 0.1)',
+      description: 'Internal job dispatch board, field technician assignments, job site addresses, and status pipelines — no customer portal needed.',
+      link: 'https://contractor.nativebooking.co',
       badge: 'Contractor Niche',
     },
   ]
