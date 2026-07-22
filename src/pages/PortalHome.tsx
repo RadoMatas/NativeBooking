@@ -1,4 +1,89 @@
+import { useEffect, useRef } from 'react'
+
 export default function PortalHome() {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    let animId = 0
+    let snakeHead = 0
+    let waveOffset = 0
+    const SNAKE_LEN = 22
+    const SEG = 9          // px between perimeter steps
+    const GRID = 38        // dot grid spacing
+    const ACCENT = '16, 185, 129'
+
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth
+      canvas.height = canvas.offsetHeight
+    }
+    resize()
+    window.addEventListener('resize', resize)
+
+    // Build perimeter point list clockwise
+    const buildPerim = () => {
+      const w = canvas.width
+      const h = canvas.height
+      const pts: { x: number; y: number }[] = []
+      for (let x = 0; x <= w; x += SEG) pts.push({ x, y: 0 })
+      for (let y = 0; y <= h; y += SEG) pts.push({ x: w, y })
+      for (let x = w; x >= 0; x -= SEG) pts.push({ x, y: h })
+      for (let y = h; y >= 0; y -= SEG) pts.push({ x: 0, y })
+      return pts
+    }
+
+    const draw = () => {
+      const w = canvas.width
+      const h = canvas.height
+      ctx.clearRect(0, 0, w, h)
+
+      // ── Dot grid with sine-wave pulse ──────────────────────
+      waveOffset += 0.018
+      for (let x = 0; x <= w; x += GRID) {
+        for (let y = 0; y <= h; y += GRID) {
+          const dist  = Math.sqrt((x - w * 0.5) ** 2 + (y - h * 0.45) ** 2)
+          const pulse = Math.sin(dist * 0.018 - waveOffset)
+          const alpha = Math.max(0.05, 0.1 + pulse * 0.07)
+          ctx.beginPath()
+          ctx.arc(x, y, 1.4, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(${ACCENT}, ${alpha})`
+          ctx.fill()
+        }
+      }
+
+      // ── Snake along perimeter ──────────────────────────────
+      const perim = buildPerim()
+      const total = perim.length
+      snakeHead = (snakeHead + 0.35) % total
+
+      for (let i = 0; i < SNAKE_LEN; i++) {
+        const idx   = (Math.floor(snakeHead) - i + total * 2) % total
+        const pt    = perim[idx]
+        const ratio = 1 - i / SNAKE_LEN          // 1 at head → 0 at tail
+        const alpha = ratio * 0.65
+        const size  = 3 + ratio * 4
+
+        ctx.shadowColor = `rgba(${ACCENT}, 0.9)`
+        ctx.shadowBlur  = i === 0 ? 14 : 5
+        ctx.fillStyle   = `rgba(${ACCENT}, ${alpha})`
+        ctx.fillRect(pt.x - size / 2, pt.y - size / 2, size, size)
+      }
+      ctx.shadowBlur = 0
+
+      animId = requestAnimationFrame(draw)
+    }
+
+    draw()
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+    }
+  }, [])
+
   const t = {
     bg: '#09090b',
     cardBg: 'rgba(20, 20, 23, 0.6)',
@@ -179,14 +264,30 @@ export default function PortalHome() {
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section
         style={{
+          position: 'relative',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
           padding: '100px 24px 90px 24px',
           animation: 'fadeInUp 0.7s ease both',
+          overflow: 'hidden',
         }}
       >
+        {/* Snake + dot grid canvas */}
+        <canvas
+          ref={canvasRef}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
+        {/* Hero content sits above canvas */}
+        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div
           style={{
             display: 'inline-flex',
@@ -250,6 +351,7 @@ export default function PortalHome() {
         >
           Explore Live Demos ↓
         </button>
+        </div>
       </section>
 
       {/* ─── WHAT WE OFFER ────────────────────────────────────── */}
