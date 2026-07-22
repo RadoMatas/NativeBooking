@@ -21,6 +21,8 @@ export type Booking = {
   adminStatus?: string | null
   cancelledBy?: 'customer' | 'admin' | null
   cancellationReason?: string | null
+  declineReason?: string | null
+  acknowledgedByTech?: boolean | null
   notes?: string | null
   originalDate?: string | null
   originalTime?: string | null
@@ -62,74 +64,90 @@ type BookingContextType = {
   ) => void
 }
 
-const BookingContext = createContext<BookingContextType | undefined>(undefined)
+export const BookingContext = createContext<BookingContextType | undefined>(undefined)
+
+function getFutureDate(daysAhead: number): string {
+  const date = new Date()
+  date.setDate(date.getDate() + daysAhead)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+
 
 export function BookingProvider({ children }: { children: React.ReactNode }) {
-  const getPastDate = (daysAgo: number) => {
-    const d = new Date()
-    d.setDate(d.getDate() - daysAgo)
-    return d.toISOString().split('T')[0]
-  }
-
-  const getFutureDate = (daysAhead: number) => {
-    const d = new Date()
-    d.setDate(d.getDate() + daysAhead)
-    return d.toISOString().split('T')[0]
-  }
-
   const INITIAL_BOOKINGS: Booking[] = [
     {
-      id: "demo-completed-1",
-      ownerEmail: "customer@test.com",
-      customerName: "Jane Doe",
-      customerEmail: "customer@test.com",
-      customerPhone: "+48 555 123 456",
-      service: "Tattoo Session",
-      date: getPastDate(3),
+      id: "job-101",
+      ownerEmail: "admin@test.com",
+      customerName: "Janusz Kowal",
+      customerEmail: "janusz@warsaw-realestate.pl",
+      customerPhone: "+48 501 234 567",
+      service: "HVAC Diagnostics & Repair",
+      date: getFutureDate(0),
+      time: "09:00",
+      status: "Confirmed",
+      adminStatus: "In Progress",
+      acknowledgedByTech: true,
+      notes: "📍 Site Address: ul. Marszałkowska 84 / Apt 12, Warsaw | Specs: Main heat pump compressor failing, noisy fan.",
+      depositAmount: 150,
+      artistId: "marek",
+      artistName: "Marek Kowal",
+    },
+    {
+      id: "job-102",
+      ownerEmail: "admin@test.com",
+      customerName: "Anna Nowak",
+      customerEmail: "anna.nowak@gmail.com",
+      customerPhone: "+48 602 345 678",
+      service: "Bathroom & Interior Renovation",
+      date: getFutureDate(1),
+      time: "08:00",
+      status: "Confirmed",
+      adminStatus: "Assigned",
+      acknowledgedByTech: false,
+      notes: "📍 Site Address: ul. Lipowa 12, Warsaw | Specs: Full tile removal and waterproof membrane installation.",
+      depositAmount: 1200,
+      artistId: "tomek",
+      artistName: "Tomek Wisniewski",
+    },
+    {
+      id: "job-103",
+      ownerEmail: "admin@test.com",
+      customerName: "Marek Zieliński",
+      customerEmail: "marek@office-hub.pl",
+      customerPhone: "+48 703 456 789",
+      service: "Electrical Rewiring & Panel Upgrade",
+      date: getFutureDate(2),
       time: "10:00",
       status: "Confirmed",
-      notes: "First tattoo, wants a small flower on her wrist.",
-      priceCharged: 120,
-      adminNotesForCustomer: "Keep wrapped for 2 hours, wash gently with warm water, apply cream 3x daily.",
-      internalAdminNotes: "Client sat very well. Skin accepted ink easily. Follow up on colors.",
-      artistId: "marcel",
-      artistName: "Marcel",
-      depositAmount: 24,
-      depositPaid: true
+      adminStatus: "Acknowledged",
+      acknowledgedByTech: true,
+      notes: "📍 Site Address: ul. Wilcza 22, Warsaw | Specs: Replace main 3-phase fuse box with 63A circuit breaker.",
+      depositAmount: 350,
+      artistId: "piotr",
+      artistName: "Piotr Nowak",
     },
     {
-      id: "demo-upcoming-1",
-      ownerEmail: "customer@test.com",
-      customerName: "Jane Doe",
-      customerEmail: "customer@test.com",
-      customerPhone: "+48 555 123 456",
-      service: "Laser Removal Session",
-      date: getFutureDate(2),
-      time: "14:00",
-      status: "Confirmed",
-      notes: "Wants to discuss laser fading options.",
-      artistId: "konrad",
-      artistName: "Konrad",
-      depositAmount: 16,
-      depositPaid: true
-    },
-    {
-      id: "demo-pending-1",
-      ownerEmail: "customer@test.com",
-      customerName: "Jane Doe",
-      customerEmail: "customer@test.com",
-      customerPhone: "+48 555 123 456",
-      service: "Permanent Make-up",
-      date: getFutureDate(5),
+      id: "job-104",
+      ownerEmail: "admin@test.com",
+      customerName: "Piotr Wiśniewski",
+      customerEmail: "piotr.wisniewski@home.pl",
+      customerPhone: "+48 804 567 890",
+      service: "Roof Inspection & Waterproofing",
+      date: getFutureDate(3),
       time: "11:00",
-      status: "Pending",
-      notes: "Scheduled session following design approval.",
-      adminStatus: "New",
-      artistId: "marcel",
-      artistName: "Marcel",
-      depositAmount: 40,
-      depositPaid: false
-    }
+      status: "Cancelled",
+      adminStatus: "Declined by Tech",
+      acknowledgedByTech: false,
+      declineReason: "High wind safety hazard on site. Requires scaffolding setup before roof access.",
+      notes: "📍 Site Address: ul. Mokotowska 45, Warsaw | Specs: Chimney flashing sealant leaking during heavy rain.",
+      depositAmount: 450,
+      artistId: "viktor",
+      artistName: "Viktor Dubczak",
+    },
   ]
 
   const [bookings, setBookings] = useState<Booking[]>(() => {

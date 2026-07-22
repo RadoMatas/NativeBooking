@@ -6,35 +6,39 @@ import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
 
-const adminBadgeStyle = (adminStatus: string): React.CSSProperties => {
+const adminBadgeStyle = (adminStatus: string, status?: string): React.CSSProperties => {
   let bg = 'rgba(255, 255, 255, 0.05)'
   let color = 'var(--text-secondary)'
 
-  if (adminStatus === 'New' || adminStatus === 'Assigned') {
-    bg = 'rgba(245, 158, 11, 0.15)'
-    color = '#f59e0b'
-  } else if (adminStatus === 'In Progress') {
-    bg = 'rgba(14, 165, 233, 0.15)'
-    color = '#38bdf8'
-  } else if (adminStatus === 'Completed' || adminStatus === 'Invoiced') {
-    bg = 'rgba(16, 185, 129, 0.15)'
-    color = '#34d399'
-  } else if (adminStatus === 'Cancelled') {
-    bg = 'rgba(239, 68, 68, 0.15)'
+  if (adminStatus === 'Declined by Tech' || status === 'Cancelled' || adminStatus === 'Cancelled') {
+    bg = 'rgba(239, 68, 68, 0.2)'
     color = '#f87171'
+  } else if (adminStatus === 'In Progress') {
+    bg = 'rgba(14, 165, 233, 0.18)'
+    color = '#38bdf8'
+  } else if (adminStatus === 'Acknowledged') {
+    bg = 'rgba(13, 148, 136, 0.18)'
+    color = '#2dd4bf'
+  } else if (adminStatus === 'Assigned' || adminStatus === 'New') {
+    bg = 'rgba(245, 158, 11, 0.18)'
+    color = '#f59e0b'
+  } else if (adminStatus === 'Completed' || status === 'Completed') {
+    bg = 'rgba(16, 185, 129, 0.18)'
+    color = '#34d399'
   }
 
   return {
     display: 'inline-flex',
     alignItems: 'center',
-    padding: '4px 10px',
+    padding: '5px 12px',
     fontSize: '11px',
-    fontWeight: 700,
+    fontWeight: 800,
     borderRadius: '9999px',
     textTransform: 'uppercase',
-    letterSpacing: '0.05em',
+    letterSpacing: '0.06em',
     backgroundColor: bg,
     color: color,
+    border: `1px solid ${color}40`,
   }
 }
 
@@ -42,9 +46,11 @@ export default function AdminDB() {
   const navigate = useNavigate()
   const {
     bookings,
+    updateBooking,
     updateBookingStatus,
     resetBookings,
     addBooking,
+    notifications,
   } = useBooking()
 
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
@@ -54,6 +60,7 @@ export default function AdminDB() {
 
   // Dispatch Job Modal State
   const [showDispatchModal, setShowDispatchModal] = useState(false)
+  const [reassignJobId, setReassignJobId] = useState<string | null>(null)
   const [clientName, setClientName] = useState('')
   const [clientPhone, setClientPhone] = useState('')
   const [siteAddress, setSiteAddress] = useState('')
@@ -76,12 +83,15 @@ export default function AdminDB() {
   const filteredBookings = useMemo(() => {
     return bookings.filter((b) => {
       const matchTech = techFilter === 'All' || b.artistId === techFilter
+      const isDeclined = b.adminStatus === 'Declined by Tech' || (b.status === 'Cancelled' && b.declineReason)
+
       const matchStatus =
         statusFilter === 'All' ||
-        (statusFilter === 'Assigned' && (b.status === 'Confirmed' || b.adminStatus === 'Assigned')) ||
+        (statusFilter === 'Assigned' && b.adminStatus === 'Assigned') ||
+        (statusFilter === 'Acknowledged' && b.adminStatus === 'Acknowledged') ||
         (statusFilter === 'In Progress' && b.adminStatus === 'In Progress') ||
         (statusFilter === 'Completed' && b.status === 'Completed') ||
-        (statusFilter === 'Cancelled' && b.status === 'Cancelled')
+        (statusFilter === 'Declined / Cancelled' && (isDeclined || b.status === 'Cancelled'))
       return matchTech && matchStatus
     })
   }, [bookings, techFilter, statusFilter])
@@ -101,29 +111,55 @@ export default function AdminDB() {
     const serviceObj = BUSINESS_CONFIG.services.find((s) => s.id === selectedServiceId)
     const techObj = BUSINESS_CONFIG.artists.find((a) => a.id === assignedTechId)
 
-    addBooking({
-      id: `job_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
-      ownerEmail: 'admin@test.com',
-      customerName: clientName,
-      customerEmail: 'dispatch@contractor.com',
-      customerPhone: clientPhone,
-      service: serviceObj?.name || 'Custom Contractor Service',
-      date: jobDate,
-      time: jobTime,
-      status: 'Confirmed',
-      adminStatus: 'Assigned',
-      notes: `📍 Site Address: ${siteAddress} | Notes: ${jobNotes || 'None'}`,
-      artistId: assignedTechId,
-      artistName: techObj?.name || 'Field Technician',
-      depositAmount: serviceObj?.price || 0,
-      depositPaid: false,
-    })
+    if (reassignJobId) {
+      // Reassign existing declined job
+      const existing = bookings.find((b) => b.id === reassignJobId)
+      if (existing) {
+        updateBooking(reassignJobId, {
+          ...existing,
+          artistId: assignedTechId,
+          artistName: techObj?.name || 'Technician',
+          adminStatus: 'Assigned',
+          status: 'Confirmed',
+          acknowledgedByTech: false,
+          declineReason: null,
+        })
+      }
+      setReassignJobId(null)
+    } else {
+      // Create new job
+      addBooking({
+        id: `job_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+        ownerEmail: 'admin@test.com',
+        customerName: clientName,
+        customerEmail: 'dispatch@contractor.com',
+        customerPhone: clientPhone,
+        service: serviceObj?.name || 'Custom Contractor Service',
+        date: jobDate,
+        time: jobTime,
+        status: 'Confirmed',
+        adminStatus: 'Assigned',
+        acknowledgedByTech: false,
+        notes: `📍 Site Address: ${siteAddress} | Notes: ${jobNotes || 'None'}`,
+        artistId: assignedTechId,
+        artistName: techObj?.name || 'Field Technician',
+        depositAmount: serviceObj?.price || 0,
+        depositPaid: false,
+      })
+    }
 
     setShowDispatchModal(false)
     setClientName('')
     setClientPhone('')
     setSiteAddress('')
     setJobNotes('')
+  }
+
+  const handleReassignClick = (job: any) => {
+    setReassignJobId(job.id)
+    setClientName(job.customerName)
+    setClientPhone(job.customerPhone)
+    setShowDispatchModal(true)
   }
 
   return (
@@ -156,14 +192,17 @@ export default function AdminDB() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <InkTypewriterHeader text="Dispatch Control Hub" />
           <button
-            onClick={() => setShowDispatchModal(true)}
+            onClick={() => {
+              setReassignJobId(null)
+              setShowDispatchModal(true)
+            }}
             className="btn btn-primary"
             style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 700 }}
           >
             + Dispatch New Job Order 🛠️
           </button>
           <button onClick={resetBookings} className="btn btn-danger" style={{ padding: '7px 12px', fontSize: '12px' }}>
-            Reset Jobs
+            Reset Board
           </button>
           <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '7px 12px', fontSize: '12px' }}>
             Logout
@@ -171,11 +210,39 @@ export default function AdminDB() {
         </div>
       </div>
 
+      {/* ─── ADMIN NOTIFICATION FEED ────────────────────────────── */}
+      {notifications.length > 0 && (
+        <div
+          className="premium-card"
+          style={{
+            marginBottom: '24px',
+            padding: '16px 20px',
+            border: '1px solid rgba(245, 158, 11, 0.4)',
+            background: 'rgba(245, 158, 11, 0.08)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+            <span style={{ fontSize: '18px' }}>🔔</span>
+            <h3 style={{ fontSize: '14px', fontWeight: 800, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Real-Time Dispatch Activity Feed ({notifications.length})
+            </h3>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '120px', overflowY: 'auto' }}>
+            {notifications.slice(0, 4).map((n, i) => (
+              <div key={i} style={{ fontSize: '13px', color: '#e2e8f0', display: 'flex', justifyContent: 'space-between' }}>
+                <span>{n.message}</span>
+                <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{n.timestamp}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Title */}
       <div style={{ marginBottom: '28px' }}>
         <h1 style={{ fontSize: '36px', marginBottom: '4px' }}>Field Service Dispatch Board</h1>
         <p style={{ color: 'var(--text-secondary)' }}>
-          Manage contractor work orders, site addresses, technician schedules, and job site statuses.
+          Track job site work orders, technician acknowledgments, site addresses, and real-time status pipelines.
         </p>
       </div>
 
@@ -193,7 +260,7 @@ export default function AdminDB() {
         }}
       >
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {['All', 'Assigned', 'In Progress', 'Completed', 'Cancelled'].map((f) => (
+          {['All', 'Assigned', 'Acknowledged', 'In Progress', 'Completed', 'Declined / Cancelled'].map((f) => (
             <button
               key={f}
               onClick={() => setStatusFilter(f)}
@@ -247,13 +314,15 @@ export default function AdminDB() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               {filteredBookings.map((job) => {
                 const isSelected = selectedBookingId === job.id
+                const isDeclined = job.adminStatus === 'Declined by Tech' || (job.status === 'Cancelled' && job.declineReason)
+
                 return (
                   <div
                     key={job.id}
                     onClick={() => setSelectedBookingId(job.id)}
                     style={{
-                      background: isSelected ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255,255,255,0.02)',
-                      border: `1px solid ${isSelected ? 'var(--accent-color)' : 'var(--border-color)'}`,
+                      background: isDeclined ? 'rgba(239, 68, 68, 0.08)' : isSelected ? 'rgba(245, 158, 11, 0.08)' : 'rgba(255,255,255,0.02)',
+                      border: `1px solid ${isDeclined ? '#f87171' : isSelected ? 'var(--accent-color)' : 'var(--border-color)'}`,
                       borderRadius: '14px',
                       padding: '18px 20px',
                       cursor: 'pointer',
@@ -262,8 +331,8 @@ export default function AdminDB() {
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                       <div>
-                        <span style={adminBadgeStyle(job.adminStatus || job.status)}>
-                          {job.adminStatus || job.status}
+                        <span style={adminBadgeStyle(job.adminStatus || job.status, job.status)}>
+                          {isDeclined ? '🛑 DECLINED BY TECH' : job.adminStatus || job.status}
                         </span>
                         <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#ffffff', marginTop: '6px' }}>
                           {job.service}
@@ -284,37 +353,58 @@ export default function AdminDB() {
                         <strong>Client:</strong> {job.customerName || 'Client'} ({job.customerPhone || 'No Phone'})
                       </div>
                       <div>
-                        <strong>Technician:</strong> {job.artistName}
+                        <strong>Technician:</strong> {job.artistName} {job.acknowledgedByTech ? '👁️ (Seen)' : '⏳ (Unseen)'}
                       </div>
                       {job.notes && (
-                        <div style={{ color: '#e2e8f0', fontSize: '12px', fontStyle: 'italic', marginTop: '4px' }}>
-                          📍 {job.notes}
+                        <div style={{ color: '#e2e8f0', fontSize: '12px', marginTop: '4px' }}>
+                          {job.notes}
+                        </div>
+                      )}
+                      {job.declineReason && (
+                        <div style={{ color: '#f87171', fontSize: '12px', fontWeight: 700, background: 'rgba(239,68,68,0.15)', padding: '6px 10px', borderRadius: '6px', marginTop: '6px' }}>
+                          🚨 Declined Reason: "{job.declineReason}"
                         </div>
                       )}
                     </div>
 
-                    {/* Quick Status Control */}
+                    {/* Quick Action Controls */}
                     <div style={{ display: 'flex', gap: '8px', marginTop: '12px', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          updateBookingStatus(job.id, 'Confirmed', 'In Progress')
-                        }}
-                        className="btn btn-secondary"
-                        style={{ fontSize: '11px', padding: '4px 10px' }}
-                      >
-                        ▶️ Set In Progress
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          updateBookingStatus(job.id, 'Completed', 'Completed')
-                        }}
-                        className="btn btn-secondary"
-                        style={{ fontSize: '11px', padding: '4px 10px', color: '#34d399' }}
-                      >
-                        ✅ Complete Job
-                      </button>
+                      {isDeclined && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleReassignClick(job)
+                          }}
+                          className="btn btn-primary"
+                          style={{ fontSize: '12px', padding: '5px 12px' }}
+                        >
+                          🔄 Reassign Job to Another Tech
+                        </button>
+                      )}
+                      {job.status !== 'Completed' && !isDeclined && (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              updateBookingStatus(job.id, 'Confirmed', 'In Progress')
+                            }}
+                            className="btn btn-secondary"
+                            style={{ fontSize: '11px', padding: '4px 10px' }}
+                          >
+                            ▶️ In Progress
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              updateBookingStatus(job.id, 'Completed', 'Completed')
+                            }}
+                            className="btn btn-secondary"
+                            style={{ fontSize: '11px', padding: '4px 10px', color: '#34d399' }}
+                          >
+                            ✅ Complete Job
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 )
@@ -326,12 +416,12 @@ export default function AdminDB() {
         {/* Right: Job Details Inspector */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div ref={detailsRef} className="premium-card">
-            <h2 style={{ fontSize: '20px', marginBottom: '16px' }}>Job Site Details</h2>
+            <h2 style={{ fontSize: '20px', marginBottom: '16px' }}>Job Site Details Inspector</h2>
 
             {selectedBooking ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '14px' }}>
                 <div style={{ padding: '14px', background: 'rgba(255,255,255,0.03)', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
-                  <span style={adminBadgeStyle(selectedBooking.adminStatus || selectedBooking.status)}>
+                  <span style={adminBadgeStyle(selectedBooking.adminStatus || selectedBooking.status, selectedBooking.status)}>
                     {selectedBooking.adminStatus || selectedBooking.status}
                   </span>
                   <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginTop: '8px' }}>
@@ -349,14 +439,19 @@ export default function AdminDB() {
 
                 <div>
                   <strong style={{ color: 'var(--text-secondary)' }}>Client Phone / WhatsApp:</strong>{' '}
-                  <a href={`tel:${selectedBooking.customerPhone}`} style={{ color: 'var(--accent-color)', textDecoration: 'underline' }}>
+                  <a href={`tel:${selectedBooking.customerPhone}`} style={{ color: 'var(--accent-color)', textDecoration: 'underline', fontWeight: 700 }}>
                     {selectedBooking.customerPhone || 'Not provided'}
                   </a>
                 </div>
 
                 <div>
                   <strong style={{ color: 'var(--text-secondary)' }}>Assigned Technician:</strong>{' '}
-                  <span style={{ color: '#ffffff', fontWeight: 700 }}>{selectedBooking.artistName}</span>
+                  <span style={{ color: '#ffffff', fontWeight: 700 }}>{selectedBooking.artistName}</span>{' '}
+                  {selectedBooking.acknowledgedByTech ? (
+                    <span style={{ fontSize: '12px', color: '#34d399', fontWeight: 700 }}> (👁️ Acknowledged by Tech)</span>
+                  ) : (
+                    <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 700 }}> (⏳ Unseen by Tech)</span>
+                  )}
                 </div>
 
                 <div>
@@ -364,9 +459,16 @@ export default function AdminDB() {
                   <span>{selectedBooking.date} at {selectedBooking.time}</span>
                 </div>
 
+                {selectedBooking.declineReason && (
+                  <div style={{ background: 'rgba(239,68,68,0.15)', padding: '14px', borderRadius: '10px', border: '1px solid #f87171', color: '#f87171' }}>
+                    <strong style={{ display: 'block', marginBottom: '4px' }}>🚨 Declined by Technician:</strong>
+                    "{selectedBooking.declineReason}"
+                  </div>
+                )}
+
                 <div style={{ background: 'rgba(0,0,0,0.3)', padding: '14px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
                   <strong style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
-                    Job Site Specs & Address:
+                    Job Site Address & Specs:
                   </strong>
                   <div style={{ color: '#ffffff', lineHeight: '1.5' }}>
                     {selectedBooking.notes || 'No site specs added.'}
@@ -374,36 +476,40 @@ export default function AdminDB() {
                 </div>
 
                 <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
-                  <button
-                    onClick={() => updateBookingStatus(selectedBooking.id, 'Completed', 'Completed')}
-                    className="btn btn-primary"
-                    style={{ flex: 1, padding: '10px', fontSize: '13px' }}
-                  >
-                    ✅ Mark Completed
-                  </button>
-                  <button
-                    onClick={() => updateBookingStatus(selectedBooking.id, 'Cancelled', 'Cancelled')}
-                    className="btn btn-danger"
-                    style={{ padding: '10px 14px', fontSize: '13px' }}
-                  >
-                    Cancel Job
-                  </button>
+                  {(selectedBooking.adminStatus === 'Declined by Tech' || selectedBooking.status === 'Cancelled') && (
+                    <button
+                      onClick={() => handleReassignClick(selectedBooking)}
+                      className="btn btn-primary"
+                      style={{ flex: 1, padding: '10px', fontSize: '13px' }}
+                    >
+                      🔄 Reassign to Tech
+                    </button>
+                  )}
+                  {selectedBooking.status !== 'Completed' && (
+                    <button
+                      onClick={() => updateBookingStatus(selectedBooking.id, 'Completed', 'Completed')}
+                      className="btn btn-primary"
+                      style={{ flex: 1, padding: '10px', fontSize: '13px' }}
+                    >
+                      ✅ Mark Completed
+                    </button>
+                  )}
                 </div>
               </div>
             ) : (
-              <p style={{ color: 'var(--text-secondary)' }}>Select a job order from the list to view site specs and contact details.</p>
+              <p style={{ color: 'var(--text-secondary)' }}>Select a job order from the list to inspect site specs, decline notes, and technician statuses.</p>
             )}
           </div>
         </div>
       </div>
 
-      {/* ─── DISPATCH NEW JOB MODAL ────────────────────────────── */}
+      {/* ─── DISPATCH / REASSIGN JOB MODAL ─────────────────────── */}
       {showDispatchModal && (
         <div
           style={{
             position: 'fixed',
             inset: 0,
-            background: 'rgba(0,0,0,0.8)',
+            background: 'rgba(0,0,0,0.85)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -427,7 +533,7 @@ export default function AdminDB() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff' }}>
-                + Dispatch New Job Order
+                {reassignJobId ? '🔄 Reassign Job Order' : '+ Dispatch New Job Order'}
               </h2>
               <button
                 type="button"
@@ -446,7 +552,7 @@ export default function AdminDB() {
                 type="text"
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
-                placeholder="e.g. Jan Kowalski"
+                placeholder="e.g. Janusz Kowal"
                 className="form-input"
                 required
               />
@@ -501,7 +607,7 @@ export default function AdminDB() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
-                  Assign Technician
+                  Assign Technician *
                 </label>
                 <select
                   value={assignedTechId}
@@ -555,7 +661,7 @@ export default function AdminDB() {
             </div>
 
             <button type="submit" className="btn btn-primary" style={{ padding: '14px', fontSize: '14px', marginTop: '6px' }}>
-              Dispatch Job to Technician 🚀
+              {reassignJobId ? 'Reassign Job to Technician 🚀' : 'Dispatch Job Order 🚀'}
             </button>
           </form>
         </div>

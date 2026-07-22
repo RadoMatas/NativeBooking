@@ -8,8 +8,12 @@ import InkTypewriterHeader from '../components/InkTypewriterHeader'
 
 export default function CustomerDB() {
   const navigate = useNavigate()
-  const { bookings, updateBookingStatus } = useBooking()
+  const { bookings, updateBooking, addNotification } = useBooking()
   const [activeTechId, setActiveTechId] = useState(BUSINESS_CONFIG.artists[0].id)
+
+  // Decline Modal State
+  const [decliningJob, setDecliningJob] = useState<any | null>(null)
+  const [declineReasonText, setDeclineReasonText] = useState('')
 
   const handleLogout = () => {
     logout()
@@ -25,6 +29,56 @@ export default function CustomerDB() {
 
   // Filter jobs assigned to the selected technician
   const techJobs = bookings.filter((b) => b.artistId === activeTechId)
+  const unacknowledgedJobs = techJobs.filter((b) => !b.acknowledgedByTech && b.status !== 'Cancelled')
+
+  const handleAcknowledge = (job: any) => {
+    updateBooking(job.id, {
+      ...job,
+      acknowledgedByTech: true,
+      adminStatus: 'Acknowledged',
+      status: 'Confirmed',
+    })
+    addNotification(`👁️ Technician ${selectedTech.name} ACKNOWLEDGED Job order for ${job.customerName} (${job.service})`)
+  }
+
+  const handleStartJob = (job: any) => {
+    updateBooking(job.id, {
+      ...job,
+      acknowledgedByTech: true,
+      adminStatus: 'In Progress',
+      status: 'Confirmed',
+    })
+    addNotification(`🚀 Technician ${selectedTech.name} STARTED Job on site for ${job.customerName}`)
+  }
+
+  const handleCompleteJob = (job: any) => {
+    updateBooking(job.id, {
+      ...job,
+      adminStatus: 'Completed',
+      status: 'Completed',
+    })
+    addNotification(`✅ Technician ${selectedTech.name} COMPLETED Job for ${job.customerName}`)
+  }
+
+  const handleConfirmDecline = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!decliningJob || !declineReasonText.trim()) {
+      alert('Please state a reason for declining the job.')
+      return
+    }
+
+    updateBooking(decliningJob.id, {
+      ...decliningJob,
+      status: 'Cancelled',
+      adminStatus: 'Declined by Tech',
+      declineReason: declineReasonText,
+      acknowledgedByTech: false,
+    })
+
+    addNotification(`🛑 URGENT: Technician ${selectedTech.name} DECLINED Job for ${decliningJob.customerName} — Reason: "${declineReasonText}"`)
+    setDecliningJob(null)
+    setDeclineReasonText('')
+  }
 
   return (
     <div className="page-container" style={{ paddingBottom: '60px' }}>
@@ -48,20 +102,46 @@ export default function CustomerDB() {
               {BUSINESS_CONFIG.name}
             </span>
             <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
-              🛠️ Field Worker Schedule Portal
+              🛠️ Technician Work Schedule Portal
             </span>
           </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <InkTypewriterHeader text="Field Worker Schedule" />
+          <InkTypewriterHeader text="Technician Route Schedule" />
           <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '7px 12px', fontSize: '12px' }}>
             Logout
           </button>
         </div>
       </div>
 
-      {/* ─── TECHNICIAN SWITCHER (FOR DEMO PURPOSE) ─────────────── */}
+      {/* ─── UNACKNOWLEDGED JOBS ALERT BANNER ───────────────────── */}
+      {unacknowledgedJobs.length > 0 && (
+        <div
+          style={{
+            background: 'rgba(245, 158, 11, 0.15)',
+            border: '1px solid rgba(245, 158, 11, 0.4)',
+            borderRadius: '16px',
+            padding: '16px 20px',
+            marginBottom: '24px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px',
+          }}
+        >
+          <span style={{ fontSize: '24px' }}>⚠️</span>
+          <div>
+            <strong style={{ color: '#f59e0b', fontSize: '15px', display: 'block' }}>
+              {unacknowledgedJobs.length} Unacknowledged Job Order{unacknowledgedJobs.length > 1 ? 's' : ''} Awaiting Review!
+            </strong>
+            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+              Please review site specs and click "Acknowledge Job" to confirm it in your daily schedule.
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* ─── TECHNICIAN SWITCHER ─────────────────────────────── */}
       <div
         className="premium-card"
         style={{
@@ -76,7 +156,7 @@ export default function CustomerDB() {
       >
         <div>
           <span style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--accent-color)', letterSpacing: '0.08em', display: 'block', marginBottom: '4px' }}>
-            Active Field Technician Profile
+            Active Technician Profile
           </span>
           <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff' }}>
             {selectedTech.avatarEmoji} {selectedTech.name} — <span style={{ fontSize: '15px', color: 'var(--text-secondary)', fontWeight: 500 }}>{selectedTech.specialty}</span>
@@ -85,7 +165,7 @@ export default function CustomerDB() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>
-            Switch Technician View:
+            Switch Technician Profile:
           </span>
           <select
             value={activeTechId}
@@ -102,16 +182,16 @@ export default function CustomerDB() {
         </div>
       </div>
 
-      {/* ─── DAILY ROUTE & ASSIGNED JOBS ──────────────────────── */}
+      {/* ─── DAILY ROUTE & WORK ORDERS ───────────────────────── */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         <h2 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff' }}>
-          Your Assigned Field Jobs ({techJobs.length})
+          Your Assigned Work Orders ({techJobs.length})
         </h2>
 
         {techJobs.length === 0 ? (
           <div className="premium-card" style={{ textAlign: 'center', padding: '48px 20px' }}>
             <span style={{ fontSize: '40px', display: 'block', marginBottom: '12px' }}>🛠️</span>
-            <h3 style={{ fontSize: '18px', marginBottom: '6px', color: '#ffffff' }}>No Assigned Jobs Today</h3>
+            <h3 style={{ fontSize: '18px', marginBottom: '6px', color: '#ffffff' }}>No Assigned Work Orders</h3>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
               Check back soon or contact dispatch for new job site assignments.
             </p>
@@ -121,6 +201,30 @@ export default function CustomerDB() {
             {techJobs.map((job) => {
               const isCompleted = job.status === 'Completed' || job.adminStatus === 'Completed'
               const isInProgress = job.adminStatus === 'In Progress'
+              const isAcknowledged = job.acknowledgedByTech || job.adminStatus === 'Acknowledged'
+              const isDeclined = job.adminStatus === 'Declined by Tech' || (job.status === 'Cancelled' && job.declineReason)
+
+              let badgeText = '⏳ Assigned (Unseen)'
+              let badgeBg = 'rgba(245, 158, 11, 0.15)'
+              let badgeColor = '#f59e0b'
+
+              if (isDeclined) {
+                badgeText = '🛑 Declined by Tech'
+                badgeBg = 'rgba(239, 68, 68, 0.2)'
+                badgeColor = '#f87171'
+              } else if (isCompleted) {
+                badgeText = '✅ Job Completed'
+                badgeBg = 'rgba(16, 185, 129, 0.15)'
+                badgeColor = '#34d399'
+              } else if (isInProgress) {
+                badgeText = '🚀 In Progress (On Site)'
+                badgeBg = 'rgba(14, 165, 233, 0.15)'
+                badgeColor = '#38bdf8'
+              } else if (isAcknowledged) {
+                badgeText = '👁️ Acknowledged & In Calendar'
+                badgeBg = 'rgba(13, 148, 136, 0.15)'
+                badgeColor = '#2dd4bf'
+              }
 
               return (
                 <div
@@ -131,8 +235,8 @@ export default function CustomerDB() {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '16px',
-                    border: isInProgress ? '1px solid #38bdf8' : isCompleted ? '1px solid #34d399' : '1px solid var(--border-color)',
-                    background: isInProgress ? 'rgba(14, 165, 233, 0.08)' : isCompleted ? 'rgba(16, 185, 129, 0.08)' : 'rgba(30, 41, 59, 0.8)',
+                    border: isDeclined ? '1px solid #f87171' : isInProgress ? '1px solid #38bdf8' : isCompleted ? '1px solid #34d399' : '1px solid var(--border-color)',
+                    background: isDeclined ? 'rgba(239, 68, 68, 0.08)' : isInProgress ? 'rgba(14, 165, 233, 0.08)' : isCompleted ? 'rgba(16, 185, 129, 0.08)' : 'rgba(30, 41, 59, 0.8)',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
@@ -145,17 +249,13 @@ export default function CustomerDB() {
                           letterSpacing: '0.05em',
                           padding: '4px 12px',
                           borderRadius: '12px',
-                          background: isCompleted
-                            ? 'rgba(16, 185, 129, 0.15)'
-                            : isInProgress
-                            ? 'rgba(14, 165, 233, 0.15)'
-                            : 'rgba(245, 158, 11, 0.15)',
-                          color: isCompleted ? '#34d399' : isInProgress ? '#38bdf8' : '#f59e0b',
+                          background: badgeBg,
+                          color: badgeColor,
                           display: 'inline-block',
                           marginBottom: '8px',
                         }}
                       >
-                        {isCompleted ? '✅ Job Completed' : isInProgress ? '▶️ In Progress' : '⏳ Assigned Work Order'}
+                        {badgeText}
                       </span>
                       <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', margin: 0 }}>
                         {job.service}
@@ -184,7 +284,7 @@ export default function CustomerDB() {
                   {job.notes && (
                     <div style={{ background: 'rgba(0,0,0,0.35)', padding: '14px 16px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
                       <strong style={{ color: 'var(--text-secondary)', display: 'block', marginBottom: '4px' }}>
-                        📍 Job Site Address & Instructions:
+                        📍 Job Site Address & Specs:
                       </strong>
                       <div style={{ color: '#ffffff', lineHeight: '1.5' }}>
                         {job.notes}
@@ -192,25 +292,50 @@ export default function CustomerDB() {
                     </div>
                   )}
 
-                  {/* Technician Status Action Buttons */}
+                  {job.declineReason && (
+                    <div style={{ background: 'rgba(239, 68, 68, 0.15)', padding: '12px 14px', borderRadius: '8px', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#f87171', fontSize: '13px' }}>
+                      <strong>Declined Reason:</strong> "{job.declineReason}"
+                    </div>
+                  )}
+
+                  {/* Technician Status Action Controls */}
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', paddingTop: '12px', borderTop: '1px solid var(--border-color)' }}>
-                    {!isInProgress && !isCompleted && (
+                    {!isAcknowledged && !isDeclined && !isCompleted && (
                       <button
-                        onClick={() => updateBookingStatus(job.id, 'Confirmed', 'In Progress')}
-                        className="btn btn-secondary"
-                        style={{ padding: '10px 18px', fontSize: '13px', color: '#38bdf8', border: '1px solid rgba(14, 165, 233, 0.4)' }}
+                        onClick={() => handleAcknowledge(job)}
+                        className="btn btn-primary"
+                        style={{ padding: '9px 16px', fontSize: '13px', fontWeight: 700 }}
                       >
-                        ▶️ Start Job (In Progress)
+                        👁️ Acknowledge Job (Put in Schedule)
                       </button>
                     )}
-                    {!isCompleted && (
-                      <button
-                        onClick={() => updateBookingStatus(job.id, 'Completed', 'Completed')}
-                        className="btn btn-primary"
-                        style={{ padding: '10px 18px', fontSize: '13px', fontWeight: 700 }}
-                      >
-                        ✅ Mark Job Completed
-                      </button>
+
+                    {!isCompleted && !isDeclined && (
+                      <>
+                        {!isInProgress && (
+                          <button
+                            onClick={() => handleStartJob(job)}
+                            className="btn btn-secondary"
+                            style={{ padding: '9px 16px', fontSize: '13px', color: '#38bdf8', border: '1px solid rgba(14, 165, 233, 0.4)' }}
+                          >
+                            🚀 Start Job (On Site)
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleCompleteJob(job)}
+                          className="btn btn-primary"
+                          style={{ padding: '9px 16px', fontSize: '13px', fontWeight: 700 }}
+                        >
+                          ✅ Complete Job
+                        </button>
+                        <button
+                          onClick={() => setDecliningJob(job)}
+                          className="btn btn-secondary"
+                          style={{ padding: '9px 16px', fontSize: '13px', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.4)' }}
+                        >
+                          ❌ Decline Job
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>
@@ -219,6 +344,77 @@ export default function CustomerDB() {
           </div>
         )}
       </div>
+
+      {/* ─── DECLINE JOB REASON MODAL ──────────────────────────── */}
+      {decliningJob && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px',
+            backdropFilter: 'blur(6px)',
+          }}
+        >
+          <form
+            onSubmit={handleConfirmDecline}
+            className="premium-card"
+            style={{
+              maxWidth: '460px',
+              width: '100%',
+              padding: '28px',
+              borderRadius: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#f87171' }}>
+              Decline Work Order
+            </h3>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+              Please state why you are declining the job for <strong>{decliningJob.customerName}</strong> ({decliningJob.service}). Admin will be notified immediately.
+            </p>
+
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                Reason for Declining *
+              </label>
+              <textarea
+                rows={3}
+                value={declineReasonText}
+                onChange={(e) => setDeclineReasonText(e.target.value)}
+                placeholder="e.g. Missing 22mm copper fittings, schedule conflict, site hazard..."
+                className="form-textarea"
+                required
+                autoFocus
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setDecliningJob(null)}
+                className="btn btn-secondary"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="btn btn-danger"
+                style={{ padding: '8px 16px', fontSize: '13px' }}
+              >
+                Confirm Decline & Alert Admin
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Watermark Footer */}
       <div style={{ textAlign: 'center', marginTop: '60px', paddingTop: '20px', borderTop: '1px solid var(--border-color)', fontSize: '12px', color: 'var(--text-secondary)' }}>
