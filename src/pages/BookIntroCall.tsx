@@ -288,7 +288,7 @@ export default function BookIntroCall() {
                 Powered by NativeBooking Engine
               </span>
               <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', marginBottom: '8px' }}>
-                Schedule a 1-Hour Call
+                Let's Get in Touch
               </h1>
               <p style={{ fontSize: '14px', color: t.textSecondary, lineHeight: '1.5' }}>
                 Select a time slot below. Experience our booking engine in action for your own business consultation.
