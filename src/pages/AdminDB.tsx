@@ -37,37 +37,6 @@ export default function AdminDB() {
 
   const handleStatusChange = async (id: string, newStatus: 'confirmed' | 'declined') => {
     await updateIntroCallStatus(id, newStatus)
-
-    const targetCall = introCalls.find((c) => c.id === id)
-    if (targetCall && newStatus === 'confirmed') {
-      try {
-        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            service_id: 'service_jfrd3cr',
-            template_id: 'template_4e7ipi1',
-            user_id: 'SWLupKhyJ1aMBxMI-',
-            template_params: {
-              from_name: 'NativeBooking Team',
-              name: targetCall.name,
-              to_name: targetCall.name,
-              to_email: targetCall.email,
-              from_email: 'info@nativebooking.co',
-              email: targetCall.email,
-              phone: targetCall.phone,
-              industry: targetCall.industry,
-              requested_date: targetCall.date,
-              requested_time: targetCall.timeSlot,
-              message: `Hi ${targetCall.name},\n\nYour discovery call with NativeBooking is CONFIRMED!\n\nDate: ${targetCall.date}\nTime: ${targetCall.timeSlot} CET\n\nWe look forward to speaking with you!`,
-            },
-          }),
-        })
-      } catch (err) {
-        console.warn('Failed to send confirmation email to client:', err)
-      }
-    }
-
     await loadCalls()
   }
 
@@ -418,6 +387,27 @@ export default function AdminDB() {
                         }}
                       >
                         📅 Add to Google Calendar (1-Tap)
+                      </button>
+                    </a>
+                    <a
+                      href={`mailto:${call.email}?subject=${encodeURIComponent(`Confirmed: NativeBooking Discovery Call (${call.date} @ ${call.timeSlot} CET)`)}&body=${encodeURIComponent(`Hi ${call.name},\n\nYour discovery call with NativeBooking is CONFIRMED!\n\nDate: ${call.date}\nTime: ${call.timeSlot} CET\n\nWe look forward to speaking with you!\n\nBest regards,\nNativeBooking Team`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      <button
+                        style={{
+                          background: 'rgba(14, 165, 233, 0.1)',
+                          border: '1px solid rgba(14, 165, 233, 0.3)',
+                          color: '#38bdf8',
+                          padding: '9px 18px',
+                          borderRadius: '8px',
+                          fontSize: '13px',
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        ✉️ Email Confirmation to Client ({call.email})
                       </button>
                     </a>
                   </div>
