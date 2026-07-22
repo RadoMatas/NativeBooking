@@ -112,7 +112,7 @@ export default function CustomerDB() {
     })
 
     if (isRescheduled) {
-      addNotification(`📅 RESCHEDULED & STARTED: Technician ${selectedTech.name} rescheduled Job for ${job.customerName} to ${date} at ${time} and started work on site.`)
+      addNotification(`📅 RESCHEDULED: Technician ${selectedTech.name} rescheduled with customer ${job.customerName} — job order data updated to ${date} ${time} & work in progress on site.`)
     } else {
       addNotification(`🚀 Technician ${selectedTech.name} STARTED Job on site for ${job.customerName}`)
     }
