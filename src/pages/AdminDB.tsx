@@ -230,21 +230,22 @@ export default function AdminDB() {
         <p>Review bookings, statuses, and customer notes for {BUSINESS_CONFIG.name}.</p>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: '2fr 1fr',
-          gap: '24px',
-          alignItems: 'start',
-        }}
-      >
+      <div className="admin-dashboard-grid">
         {/* Left Side: Bookings list */}
         <div className="premium-card">
           <h2 style={{ fontSize: '22px', marginBottom: '20px' }}>All Bookings</h2>
 
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '24px' }}>
-          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '24px', alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '16px',
+              flexWrap: 'wrap',
+              marginBottom: '24px',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
               {['All', 'Pending', 'Upcoming', 'Cancelled', 'Completed'].map((filter) => (
                 <button
                   key={filter}
@@ -282,7 +283,6 @@ export default function AdminDB() {
                 ))}
               </select>
             </div>
-          </div>
           </div>
 
           {filteredBookings.length > 0 ? (

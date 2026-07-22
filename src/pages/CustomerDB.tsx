@@ -305,93 +305,229 @@ export default function CustomerDB() {
         }}
       >
         <h2 style={{ fontSize: '20px', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          Current Appointment
+          Current Appointments
         </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '16px', color: 'var(--text-primary)' }}>
-          {latestBooking ? (
-            <>
-              <p>
-                <strong style={{ color: 'var(--text-secondary)' }}>Service:</strong>{' '}
-                {latestBooking.service}
-              </p>
-              <p>
-                <strong style={{ color: 'var(--text-secondary)' }}>Date:</strong>{' '}
-                {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedDate
-                  ? latestBooking.requestedDate
-                  : latestBooking.date}
-              </p>
-              <p>
-                <strong style={{ color: 'var(--text-secondary)' }}>Time:</strong>{' '}
-                {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime
-                  ? latestBooking.requestedTime
-                  : latestBooking.time}
-              </p>
-              {latestBooking.artistName && (
-                <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong>{' '}
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
-                    {BUSINESS_CONFIG.artists.find((a) => a.id === latestBooking.artistId || a.name === latestBooking.artistName)?.avatarEmoji || '👤'}{' '}
-                    {latestBooking.artistName}
-                  </span>
-                </p>
-              )}
-              {latestBooking.depositAmount != null && (
-                <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Deposit Amount:</strong>{' '}
-                  <span style={{ color: 'var(--accent-color)', fontWeight: 600 }}>
-                    £{latestBooking.depositAmount.toFixed(2)} (Paid)
-                  </span>
-                </p>
-              )}
-              <p style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <strong style={{ color: 'var(--text-secondary)' }}>Status:</strong>{' '}
-                <span className={`status-badge ${getDisplayStatus(latestBooking).toLowerCase()}`}>
-                  {getDisplayStatus(latestBooking)}
-                </span>
-              </p>
-              {latestBooking.adminStatus === 'Reschedule Requested' && (
-                <p style={{ color: '#facc15', fontWeight: 600, fontSize: '14px', marginTop: '4px' }}>
-                  ★ Requested new slot — awaiting admin approval
-                </p>
-              )}
-              <p>
-                <strong style={{ color: 'var(--text-secondary)' }}>Notes:</strong>{' '}
-                {latestBooking.notes || 'No notes added'}
-              </p>
-            </>
-          ) : (
-            <p style={{ color: 'var(--text-secondary)' }}>No meetings scheduled right now.</p>
-          )}
-        </div>
 
-        <div style={{ display: 'flex', gap: '12px', marginTop: '28px', flexWrap: 'wrap' }}>
-          <Link to="/book" style={{ textDecoration: 'none' }}>
-            <button className="btn btn-primary">Book New Appointment</button>
-          </Link>
-          {canManageLatestBooking && getDisplayStatus(latestBooking) === 'Upcoming' && (
-            <button
-              className="btn btn-secondary"
-              onClick={() =>
-                navigate('/book', {
-                  state: { isReschedule: true, bookingId: latestBooking.id },
-                })
-              }
-            >
-              Reschedule
-            </button>
-          )}
-          {canManageLatestBooking && (
-            <button
-              className="btn btn-danger"
-              onClick={() => {
-                setShowCancelModal(true)
-                setCancelReasonInput('')
-              }}
-            >
-              Cancel Visit
-            </button>
-          )}
-        </div>
+        {latestBooking ? (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '24px',
+            }}
+          >
+            {/* Left Column: Next Appointment Details */}
+            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '15px', color: 'var(--text-primary)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                  <span style={{ fontSize: '12px', background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', padding: '4px 10px', borderRadius: '9999px', fontWeight: 600 }}>
+                    🔥 Next Session
+                  </span>
+                </div>
+                <p>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Service:</strong>{' '}
+                  {latestBooking.service}
+                </p>
+                <p>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Date:</strong>{' '}
+                  {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedDate
+                    ? latestBooking.requestedDate
+                    : latestBooking.date}
+                </p>
+                <p>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Time:</strong>{' '}
+                  {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime
+                    ? latestBooking.requestedTime
+                    : latestBooking.time}
+                </p>
+                {latestBooking.artistName && (
+                  <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong>{' '}
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                      {BUSINESS_CONFIG.artists.find((a) => a.id === latestBooking.artistId || a.name === latestBooking.artistName)?.avatarEmoji || '👤'}{' '}
+                      {latestBooking.artistName}
+                    </span>
+                  </p>
+                )}
+                {latestBooking.depositAmount != null && (
+                  <p>
+                    <strong style={{ color: 'var(--text-secondary)' }}>Deposit Amount:</strong>{' '}
+                    <span style={{ color: 'var(--accent-color)', fontWeight: 600 }}>
+                      £{latestBooking.depositAmount.toFixed(2)} (Paid)
+                    </span>
+                  </p>
+                )}
+                <p style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Status:</strong>{' '}
+                  <span className={`status-badge ${getDisplayStatus(latestBooking).toLowerCase()}`}>
+                    {getDisplayStatus(latestBooking)}
+                  </span>
+                </p>
+                {latestBooking.adminStatus === 'Reschedule Requested' && (
+                  <p style={{ color: '#facc15', fontWeight: 600, fontSize: '13px', marginTop: '4px' }}>
+                    ★ Requested new slot — awaiting approval
+                  </p>
+                )}
+                <p>
+                  <strong style={{ color: 'var(--text-secondary)' }}>Notes:</strong>{' '}
+                  {latestBooking.notes || 'No notes added'}
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
+                <Link to="/book" style={{ textDecoration: 'none' }}>
+                  <button className="btn btn-primary" style={{ padding: '8px 14px', fontSize: '13px' }}>Book New</button>
+                </Link>
+                {canManageLatestBooking && getDisplayStatus(latestBooking) === 'Upcoming' && (
+                  <button
+                    className="btn btn-secondary"
+                    style={{ padding: '8px 14px', fontSize: '13px' }}
+                    onClick={() =>
+                      navigate('/book', {
+                        state: { isReschedule: true, bookingId: latestBooking.id },
+                      })
+                    }
+                  >
+                    Reschedule
+                  </button>
+                )}
+                {canManageLatestBooking && (
+                  <button
+                    className="btn btn-danger"
+                    style={{ padding: '8px 14px', fontSize: '13px' }}
+                    onClick={() => {
+                      setShowCancelModal(true)
+                      setCancelReasonInput('')
+                    }}
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Right Column: Dynamic Showcase or Queue List */}
+            <div className="booking-split-container" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              {sortedActiveBookings.length > 1 ? (
+                // Case B: Show other active sessions list
+                <div>
+                  <h3 style={{ fontSize: '16px', marginBottom: '14px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    ⏳ Other Scheduled Sessions ({sortedActiveBookings.length - 1})
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '240px', overflowY: 'auto', paddingRight: '8px' }}>
+                    {sortedActiveBookings.slice(1).map((booking) => {
+                      const matchedArtist = BUSINESS_CONFIG.artists.find((a) => a.id === booking.artistId || a.name === booking.artistName)
+                      return (
+                        <div
+                          key={booking.id}
+                          style={{
+                            padding: '12px',
+                            borderRadius: '10px',
+                            background: 'rgba(255, 255, 255, 0.02)',
+                            border: '1px solid var(--border-color)',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: '10px',
+                          }}
+                        >
+                          <div>
+                            <p style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>{booking.service}</p>
+                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                              📅 {booking.date} at {booking.time}
+                            </p>
+                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              👤 {matchedArtist?.avatarEmoji || '👤'} {booking.artistName}
+                            </p>
+                          </div>
+                          <button
+                            className="btn btn-danger"
+                            style={{ padding: '6px 10px', fontSize: '11px' }}
+                            onClick={() => {
+                              const reason = prompt('Please enter cancellation reason:')
+                              if (reason !== null) {
+                                cancelBooking(booking.id, reason || 'Cancelled by customer')
+                                addNotification(`Customer cancelled booking: ${booking.service} with ${booking.artistName}`)
+                              }
+                            }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ) : (
+                // Case A: Show Premium Artist Profile Showcase
+                <div style={{ textAlign: 'center', padding: '10px 0' }}>
+                  {latestBooking.artistName ? (() => {
+                    const artist = BUSINESS_CONFIG.artists.find((a) => a.id === latestBooking.artistId || a.name === latestBooking.artistName)
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                        <div
+                          style={{
+                            width: '80px',
+                            height: '80px',
+                            borderRadius: '50%',
+                            background: 'rgba(16, 185, 129, 0.08)',
+                            border: '2px solid var(--accent-color)',
+                            color: 'var(--text-primary)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '36px',
+                            marginBottom: '12px',
+                            boxShadow: '0 0 16px rgba(16, 185, 129, 0.2)',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {artist?.avatarUrl ? (
+                            <img
+                              src={artist.avatarUrl}
+                              alt={artist.name}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                            />
+                          ) : (
+                            artist?.avatarEmoji || '👤'
+                          )}
+                        </div>
+                        <h3 style={{ fontSize: '17px', margin: '0 0 4px 0', fontWeight: 700, color: 'var(--text-primary)' }}>
+                          Your Artist: {latestBooking.artistName}
+                        </h3>
+                        {artist?.specialty && (
+                          <span style={{ fontSize: '11px', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
+                            ✦ {artist.specialty}
+                          </span>
+                        )}
+                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '12px', maxWidth: '260px', lineHeight: '1.4' }}>
+                          "Excited to work on your design! Make sure to stay hydrated and bring your reference photos."
+                        </p>
+                      </div>
+                    )
+                  })() : (
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      <div style={{ fontSize: '40px', marginBottom: '8px' }}>🎨</div>
+                      <h3 style={{ fontSize: '16px', margin: '0 0 4px 0', fontWeight: 700 }}>No Artist Selected</h3>
+                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '240px' }}>
+                        Any available professional artist will be assigned to your service.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '32px 0' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '20px' }}>
+              No appointments scheduled right now.
+            </p>
+            <Link to="/book" style={{ textDecoration: 'none' }}>
+              <button className="btn btn-primary" style={{ padding: '10px 20px' }}>Book Your First Appointment</button>
+            </Link>
+          </div>
+        )}
       </div>
 
       <div

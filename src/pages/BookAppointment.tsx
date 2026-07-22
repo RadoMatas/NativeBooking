@@ -82,7 +82,7 @@ export default function BookAppointment() {
     // Check if the selected artist is booked at this exact date & time
     const isArtistBooked = bookings.some(
       (booking) =>
-        booking.id !== latestBooking?.id &&
+        (booking.id !== (isReschedule ? latestBooking?.id : null)) &&
         booking.date === date &&
         booking.time === slot &&
         booking.artistId === artistId &&
@@ -195,6 +195,16 @@ export default function BookAppointment() {
 
     if (!artistId) {
       alert(`Please select a ${BUSINESS_CONFIG.staffLabel.toLowerCase()} before proceeding.`)
+      return
+    }
+
+    if (!date) {
+      alert('Please select a date before proceeding.')
+      return
+    }
+
+    if (!time) {
+      alert('Please select a time slot before proceeding.')
       return
     }
 
