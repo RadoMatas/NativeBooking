@@ -436,7 +436,17 @@ export default function PortalHome() {
       </section>
 
       {/* ─── DEMO SANDBOXES ───────────────────────────────────── */}
-      <section id="demos" style={{ padding: '80px 24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+      <section
+        id="demos"
+        style={{
+          position: 'relative',
+          padding: '80px 24px',
+          overflow: 'hidden',
+          backgroundImage: 'radial-gradient(rgba(16,185,129,0.16) 1.8px, transparent 1.8px)',
+          backgroundSize: '36px 36px',
+        }}
+      >
+        <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '52px' }}>
           <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent, marginBottom: '12px' }}>
             Live Demos
@@ -552,6 +562,7 @@ export default function PortalHome() {
               )}
             </div>
           ))}
+        </div>
         </div>
       </section>
 
