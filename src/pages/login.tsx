@@ -258,6 +258,14 @@ export default function Login() {
         >
           Powered by NativeBooking Software ⚡
         </div>
+        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+          <a
+            href="/privacy"
+            style={{ fontSize: '11px', color: 'var(--text-secondary)', textDecoration: 'underline', opacity: 0.7 }}
+          >
+            Privacy Policy
+          </a>
+        </div>
       </form>
     </div>
   )
