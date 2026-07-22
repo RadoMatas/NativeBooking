@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function PortalHome() {
   const portalTheme = {
     bg: '#09090b',
