@@ -145,6 +145,7 @@ export default function PortalHome() {
     { icon: '👥', title: 'Staff & Roster', desc: 'Each team member gets their own schedule, profile, and service list. Clients pick who they want.' },
     { icon: '🧑‍💼', title: 'Client Portal', desc: 'Clients log in, see their bookings, request a reschedule, and track the status — no phone call needed.' },
     { icon: '⚙️', title: 'Admin Control Hub', desc: 'See every booking, approve changes, leave notes on completed sessions, and keep the whole team on track.' },
+    { icon: '🔐', title: 'Login & Access', desc: 'Email and password auth out of the box. Google Sign-in can be wired in for customer-facing builds. Role-based access keeps admin and client views fully separate.' },
   ]
 
   const pills = [
