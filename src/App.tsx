@@ -5,6 +5,7 @@ import Login from './pages/login'
 import CustomerDB from './pages/CustomerDB'
 import AdminDB from './pages/AdminDB'
 import BookAppointment from './pages/BookAppointment'
+import PrivacyPolicy from './pages/PrivacyPolicy'
 import { BookingProvider } from './BookingContext'
 import { BUSINESS_CONFIG } from './businessConfig'
 
@@ -39,6 +40,7 @@ function App() {
           <Route path="/dashboard" element={<CustomerDB />} />
           <Route path="/admin" element={<AdminDB />} />
           <Route path="/book" element={<BookAppointment />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
         </Routes>
       </BrowserRouter>
     </BookingProvider>

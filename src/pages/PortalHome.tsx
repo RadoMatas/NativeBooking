@@ -243,11 +243,12 @@ export default function PortalHome() {
           backdropFilter: 'blur(16px)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img src="/logo-icon.jpg" alt="NativeBooking" style={{ height: '32px', width: '32px', borderRadius: '8px', display: 'block' }} />
-          <span style={{ fontSize: '17px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>
-            NATIVEBOOKING
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src="/logo-icon.jpg"
+            alt="NativeBooking"
+            style={{ height: '44px', width: '44px', borderRadius: '10px', display: 'block' }}
+          />
         </div>
         <a
           href="mailto:info@nativebooking.co"
@@ -665,9 +666,12 @@ export default function PortalHome() {
           textAlign: 'center',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img src="/logo-icon.jpg" alt="NativeBooking" style={{ height: '28px', width: '28px', borderRadius: '7px', display: 'block' }} />
-          <span style={{ fontSize: '15px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>NATIVEBOOKING</span>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <img
+            src="/logo-icon.jpg"
+            alt="NativeBooking"
+            style={{ height: '40px', width: '40px', borderRadius: '9px', display: 'block' }}
+          />
         </div>
         <a
           href="mailto:info@nativebooking.co"
@@ -678,6 +682,12 @@ export default function PortalHome() {
         <p style={{ fontSize: '12px', color: t.textMuted, margin: 0 }}>
           © 2025 NativeBooking. All rights reserved.
         </p>
+        <a
+          href="/privacy"
+          style={{ fontSize: '12px', color: t.textMuted, textDecoration: 'underline' }}
+        >
+          Privacy Policy
+        </a>
       </footer>
     </div>
   )
