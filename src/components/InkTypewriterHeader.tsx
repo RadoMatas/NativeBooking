@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export default function InkTypewriterHeader({ text }: { text?: string }) {
+export default function PulseTypewriterHeader({ text }: { text?: string }) {
   const fullText = text || 'Manage Your Booking'
   const [displayedText, setDisplayedText] = useState('')
   const [isDone, setIsDone] = useState(false)
@@ -36,26 +36,21 @@ export default function InkTypewriterHeader({ text }: { text?: string }) {
         backdropFilter: 'blur(8px)',
       }}
     >
-      {/* Minimalist Tattoo Needle / Pen SVG Icon */}
+      {/* ECG Heartbeat Pulse SVG Icon */}
       <svg
         width="18"
         height="18"
         viewBox="0 0 24 24"
         fill="none"
         stroke="var(--accent-color)"
-        strokeWidth="2"
+        strokeWidth="2.5"
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{
-          filter: 'drop-shadow(0 0 6px rgba(16, 185, 129, 0.5))',
-          transform: isDone ? 'none' : 'rotate(-10deg) translateY(-1px)',
-          transition: 'transform 0.1s ease',
+          filter: 'drop-shadow(0 0 6px var(--accent-color))',
         }}
       >
-        <path d="M12 19l7-7 3 3-7 7-3-3z" />
-        <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18" />
-        <path d="M2 2l7.5 7.5" />
-        <line x1="10.4" y1="10.4" x2="16" y2="16" />
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
       </svg>
 
       {/* Letter by Letter Typewriter Text */}

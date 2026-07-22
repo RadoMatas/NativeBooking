@@ -4,7 +4,7 @@ import { currentUserRole, logout } from '../auth'
 import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
-import InkTypewriterHeader from '../components/InkTypewriterHeader'
+import PulseTypewriterHeader from '../components/InkTypewriterHeader'
 
 const adminBadgeStyle = (adminStatus: string): React.CSSProperties => {
   let bg = 'rgba(255, 255, 255, 0.05)'
@@ -204,7 +204,7 @@ export default function AdminDB() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
           <Logo size="small" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1 }}>
+            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: 'var(--accent-color)', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1 }}>
               {BUSINESS_CONFIG.name}
             </span>
             <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
@@ -213,7 +213,7 @@ export default function AdminDB() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <InkTypewriterHeader text="Admin Control Hub" />
+          <PulseTypewriterHeader text="Admin Control Hub" />
           <div style={{ display: 'flex', gap: '8px' }}>
             <button onClick={resetBookings} className="btn btn-danger" style={{ padding: '7px 12px', fontSize: '12px' }}>
               Reset Data
@@ -761,15 +761,15 @@ export default function AdminDB() {
               width: '100%',
               padding: '28px',
               borderRadius: '16px',
-              backgroundColor: '#1e293b',
-              border: '1px solid #334155',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              backgroundColor: '#ffffff',
+              border: '1px solid var(--border-color)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
             }}
           >
-            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: '#ffffff' }}>
+            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>
               Cancel Appointment
             </h3>
-            <p style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '20px', lineHeight: '1.5' }}>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
               Are you sure you want to cancel <strong>{cancellingBooking.service}</strong> for{' '}
               <strong>{cancellingBooking.customerName || 'Client'}</strong>?
             </p>
@@ -790,8 +790,8 @@ export default function AdminDB() {
                   fontSize: '14px',
                   borderRadius: '8px',
                   resize: 'vertical',
-                  backgroundColor: 'rgba(15, 23, 42, 0.6)',
-                  color: '#ffffff',
+                  backgroundColor: 'rgba(0, 0, 0, 0.02)',
+                  color: 'var(--text-primary)',
                   border: '1px solid var(--border-color)',
                 }}
                 autoFocus

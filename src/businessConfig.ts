@@ -32,6 +32,7 @@ export interface BusinessConfig {
   adminNotesLabel: string
   internalNotesLabel: string
   checklist: string[]
+  dbPrefix: string
   theme: {
     primaryColor: string
     cardBg: string
@@ -43,43 +44,42 @@ export interface BusinessConfig {
 }
 
 export const BUSINESS_CONFIG: BusinessConfig = {
-  name: "Sanatorium Tattoo",
-  tagline: "Award-Winning Tattoo Studio",
-  address: "8 Drummond St, Edinburgh, EH8 9TU",
-  contact: "+44 7765 899429",
-  openingHour: 11,
-  closingHour: 20,
+  name: "Apex Dental & Chiropractic",
+  tagline: "Premium General Dentistry & Chiropractic Care",
+  address: "12 Medical Plaza, Suite 300, Dallas, TX 75201",
+  contact: "+1 (214) 555-0198",
+  openingHour: 9,
+  closingHour: 18,
   slotInterval: 30,
   closedDays: [0], // Sunday closed
-  depositPercentage: 0, // 20% deposit
+  depositPercentage: 0, // 0% deposit
+  dbPrefix: "medical",
   services: [
-    { id: "tattoo", name: "Tattoo Session", price: 120, durationMin: 60 },
-    { id: "permanent", name: "Permanent Make-up", price: 200, durationMin: 120 },
-    { id: "laser", name: "Laser Removal Session", price: 80, durationMin: 30 },
-    { id: "piercing", name: "Piercing Session", price: 40, durationMin: 20 }
+    { id: "dental-checkup", name: "Dental Checkup & Hygiene", price: 75, durationMin: 45 },
+    { id: "teeth-whitening", name: "Teeth Whitening Session", price: 180, durationMin: 60 },
+    { id: "chiro-adjustment", name: "Chiropractic Adjustment", price: 90, durationMin: 45 },
+    { id: "spinal-decompression", name: "Spinal Decompression", price: 120, durationMin: 60 }
   ],
   artists: [
-    { id: "marcel", name: "Marcel", specialty: "Black & Grey Realism", avatarEmoji: "🎨", workingDays: [1, 2, 3, 4, 5] },
-    { id: "tomek", name: "Tomek", specialty: "Traditional & Neo-Traditional", avatarEmoji: "✒️", workingDays: [1, 2, 3, 4] },
-    { id: "konrad", name: "Konrad", specialty: "Geometric & Dotwork", avatarEmoji: "📐", workingDays: [3, 4, 5, 6] },
-    { id: "viktor", name: "Viktor", specialty: "Japanese Realism", avatarEmoji: "🐉", workingDays: [5, 6] }
+    { id: "dr-jenny", name: "Dr. Jenny Vance", specialty: "General Dentist", avatarEmoji: "🦷", workingDays: [1, 2, 3, 4, 5] },
+    { id: "dr-marcus", name: "Dr. Marcus Vance", specialty: "Lead Chiropractor", avatarEmoji: "🩻", workingDays: [1, 2, 3, 4, 6] }
   ],
-  staffLabel: "Artist",
-  staffLabelPlural: "Artists",
-  notesLabel: "Special Notes / Requests",
-  adminNotesLabel: "Aftercare Instructions",
-  internalNotesLabel: "Internal Admin Notes",
+  staffLabel: "Doctor",
+  staffLabelPlural: "Doctors",
+  notesLabel: "Describe symptoms / treatment goals",
+  adminNotesLabel: "Treatment Plan / Post-Session Guidelines",
+  internalNotesLabel: "Internal Medical Notes",
   checklist: [
-    "Please arrive 10 minutes early.",
-    "Bring any reference photos or design ideas.",
-    "Ensure you have eaten and are well hydrated.",
-    "Wear comfortable clothing exposing the tattoo area."
+    "Bring your ID and list of current medications.",
+    "Wear loose, comfortable clothing for chiropractic assessments.",
+    "Avoid eating heavy meals 2 hours before your appointment.",
+    "Arrive 10 minutes early to complete check-in."
   ],
   theme: {
-    primaryColor: "#09090b", // zinc 950
-    cardBg: "rgba(20, 20, 23, 0.8)", // zinc 900 glass
-    accentColor: "#10b981",  // emerald green
-    accentHover: "#34d399",  // light emerald
+    primaryColor: "#fbfbfa", // soft cream
+    cardBg: "rgba(255, 255, 255, 0.8)", // white frosted glass
+    accentColor: "#0284c7",  // deep clinical sky blue
+    accentHover: "#0369a1",  // hover deep sky blue
     borderRadius: "12px",
     fontFamily: "'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif"
   }
