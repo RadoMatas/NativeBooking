@@ -68,6 +68,32 @@ export default function PortalHome() {
         backgroundAttachment: 'fixed',
       }}
     >
+      {/* Demo Disclaimer Banner */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '16px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          zIndex: 9999,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          padding: '8px 18px',
+          borderRadius: '9999px',
+          background: 'rgba(0, 0, 0, 0.75)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255,255,255,0.12)',
+          fontSize: '12px',
+          color: 'rgba(255,255,255,0.75)',
+          whiteSpace: 'nowrap',
+          boxShadow: '0 4px 24px rgba(0,0,0,0.4)',
+        }}
+      >
+        <span style={{ fontSize: '14px' }}>⚡</span>
+        <span>Live product demo — all data is simulated for demonstration purposes only.</span>
+      </div>
+
       {/* SaaS Logo Banner */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
         <span style={{ fontSize: '32px' }}>⚡</span>
