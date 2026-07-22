@@ -112,6 +112,10 @@ export default function CustomerDB() {
 
   const sortedActiveBookings = sortActiveBookingsPrioritizeUpcoming(activeBookings)
   const sortedHistoryBookings = sortHistoryBookingsPrioritizeCompleted(historyBookings)
+  const [showAllHistory, setShowAllHistory] = useState(false)
+  const displayedHistoryBookings = showAllHistory
+    ? sortedHistoryBookings
+    : sortedHistoryBookings.slice(0, 3)
 
   const latestBooking = sortedActiveBookings[0]
 
@@ -129,6 +133,7 @@ export default function CustomerDB() {
   const [toastVariant, setToastVariant] = useState<'success' | 'warning' | 'error'>('warning')
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [cancelReasonInput, setCancelReasonInput] = useState('')
+  
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -646,85 +651,101 @@ export default function CustomerDB() {
         {sortedHistoryBookings.length === 0 ? (
           <p style={{ color: 'var(--text-secondary)' }}>No visit history yet.</p>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {sortedHistoryBookings.map((booking, index) => (
-              <div
-                key={booking.id}
-                style={{
-                  paddingBottom: '20px',
-                  borderBottom:
-                    index === sortedHistoryBookings.length - 1
-                      ? 'none'
-                      : '1px solid var(--border-color)',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <p style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{booking.service}</p>
-                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                      {booking.date} · {booking.time}
-                    </p>
-                  </div>
-                  <span className={`status-badge ${getDisplayStatus(booking).toLowerCase()}`}>
-                    {getDisplayStatus(booking)}
-                  </span>
-                </div>
-
-                <div style={{ marginTop: '8px', fontSize: '14px', display: 'flex', gap: '20px', color: 'var(--text-secondary)' }}>
-                  {booking.artistName && (
-                    <span>
-                      <strong>{BUSINESS_CONFIG.staffLabel}:</strong> {booking.artistName}
+          <>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {displayedHistoryBookings.map((booking, index) => (
+                <div
+                  key={booking.id}
+                  style={{
+                    paddingBottom: '20px',
+                    borderBottom:
+                      index === displayedHistoryBookings.length - 1
+                        ? 'none'
+                        : '1px solid var(--border-color)',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <p style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{booking.service}</p>
+                      <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                        {booking.date} · {booking.time}
+                      </p>
+                    </div>
+                    <span className={`status-badge ${getDisplayStatus(booking).toLowerCase()}`}>
+                      {getDisplayStatus(booking)}
                     </span>
+                  </div>
+
+                  <div style={{ marginTop: '8px', fontSize: '14px', display: 'flex', gap: '20px', color: 'var(--text-secondary)' }}>
+                    {booking.artistName && (
+                      <span>
+                        <strong>{BUSINESS_CONFIG.staffLabel}:</strong> {booking.artistName}
+                      </span>
+                    )}
+                    {booking.depositAmount != null && (
+                      <span>
+                        <strong>Deposit Paid:</strong> £{booking.depositAmount.toFixed(2)}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Show Aftercare Instructions if completed & notes exist */}
+                  {getDisplayStatus(booking) === 'Completed' && booking.adminNotesForCustomer && (
+                    <div
+                      style={{
+                        marginTop: '12px',
+                        padding: '12px 16px',
+                        background: 'rgba(16, 185, 129, 0.05)',
+                        border: '1px solid rgba(16, 185, 129, 0.15)',
+                        borderRadius: '12px',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <p style={{ fontWeight: 600, color: '#34d399', marginBottom: '4px' }}>
+                        ✨ {BUSINESS_CONFIG.adminNotesLabel}:
+                      </p>
+                      <p style={{ color: 'var(--text-primary)', margin: 0 }}>
+                        {booking.adminNotesForCustomer}
+                      </p>
+                    </div>
                   )}
-                  {booking.depositAmount != null && (
-                    <span>
-                      <strong>Deposit Paid:</strong> £{booking.depositAmount.toFixed(2)}
-                    </span>
+
+                  {/* Show Cancellation details if cancelled */}
+                  {booking.status === 'Cancelled' && booking.cancellationReason && (
+                    <div
+                      style={{
+                        marginTop: '12px',
+                        padding: '12px 16px',
+                        background: 'rgba(239, 68, 68, 0.05)',
+                        border: '1px solid rgba(239, 68, 68, 0.1)',
+                        borderRadius: '12px',
+                        fontSize: '14px',
+                      }}
+                    >
+                      <p style={{ color: 'var(--text-secondary)', margin: 0, fontStyle: 'italic' }}>
+                        Cancellation Reason: "{booking.cancellationReason}"
+                      </p>
+                    </div>
                   )}
                 </div>
+              ))}
+            </div>
 
-                {/* Show Aftercare Instructions if completed & notes exist */}
-                {getDisplayStatus(booking) === 'Completed' && booking.adminNotesForCustomer && (
-                  <div
-                    style={{
-                      marginTop: '12px',
-                      padding: '12px 16px',
-                      background: 'rgba(16, 185, 129, 0.05)',
-                      border: '1px solid rgba(16, 185, 129, 0.15)',
-                      borderRadius: '12px',
-                      fontSize: '14px',
-                    }}
-                  >
-                    <p style={{ fontWeight: 600, color: '#34d399', marginBottom: '4px' }}>
-                      ✨ {BUSINESS_CONFIG.adminNotesLabel}:
-                    </p>
-                    <p style={{ color: 'var(--text-primary)', margin: 0 }}>
-                      {booking.adminNotesForCustomer}
-                    </p>
-                  </div>
-                )}
-
-                {/* Show Cancellation details if cancelled */}
-                {booking.status === 'Cancelled' && booking.cancellationReason && (
-                  <div
-                    style={{
-                      marginTop: '12px',
-                      padding: '12px 16px',
-                      background: 'rgba(239, 68, 68, 0.05)',
-                      border: '1px solid rgba(239, 68, 68, 0.1)',
-                      borderRadius: '12px',
-                      fontSize: '14px',
-                    }}
-                  >
-                    <p style={{ color: 'var(--text-secondary)', margin: 0, fontStyle: 'italic' }}>
-                      Cancellation Reason: "{booking.cancellationReason}"
-                    </p>
-                  </div>
-                )}
+            {/* Show Toggle Button if there are more than 3 bookings */}
+            {sortedHistoryBookings.length > 3 && (
+              <div style={{ textAlign: 'center', marginTop: '24px', borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowAllHistory(!showAllHistory)}
+                  style={{ padding: '8px 20px', fontSize: '13px', borderRadius: '20px' }}
+                >
+                  {showAllHistory ? '▲ Show Less' : `▼ Show More (${sortedHistoryBookings.length - 3} more)`}
+                </button>
               </div>
-            ))}
-          </div>
+            )}
+          </>
         )}
+      </div>
       {showCancelModal && latestBooking && (
         <div
           style={{
@@ -816,7 +837,6 @@ export default function CustomerDB() {
           </div>
         </div>
       )}
-      </div>
     </div>
   )
 }
