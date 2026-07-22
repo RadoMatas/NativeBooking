@@ -4,8 +4,8 @@ import { login, currentUserRole } from '../auth'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('admin@nativebooking.co')
-  const [password, setPassword] = useState('NativeBooking2026!Admin')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [isLoggingIn, setIsLoggingIn] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,6 +89,8 @@ export default function AdminLogin() {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="admin@nativebooking.co"
+            autoComplete="username"
             style={{
               width: '100%',
               padding: '12px 14px',
@@ -111,6 +113,8 @@ export default function AdminLogin() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            autoComplete="current-password"
             style={{
               width: '100%',
               padding: '12px 14px',
