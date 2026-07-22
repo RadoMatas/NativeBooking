@@ -134,7 +134,7 @@ export const generateGoogleCalendarUrl = (call: IntroCallBooking): string => {
     `NativeBooking Discovery Call\n\nClient Name: ${call.name}\nEmail: ${call.email}\nPhone/WhatsApp: ${call.phone}\nIndustry: ${call.industry}\nNotes: ${call.notes || 'None'}`
   )
   
-  const locationStr = encodeURIComponent('Google Meet / WhatsApp Video')
+  const guestEmail = encodeURIComponent(call.email)
 
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${datesStr}&details=${detailsStr}&location=${locationStr}`
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${datesStr}&details=${detailsStr}&location=${locationStr}&add=${guestEmail}&authuser=antony@nativebooking.co`
 }

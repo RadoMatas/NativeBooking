@@ -37,6 +37,37 @@ export default function AdminDB() {
 
   const handleStatusChange = async (id: string, newStatus: 'confirmed' | 'declined') => {
     await updateIntroCallStatus(id, newStatus)
+
+    const targetCall = introCalls.find((c) => c.id === id)
+    if (targetCall && newStatus === 'confirmed') {
+      try {
+        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            service_id: 'service_jfrd3cr',
+            template_id: 'template_4e7ipi1',
+            user_id: 'SWLupKhyJ1aMBxMI-',
+            template_params: {
+              from_name: 'NativeBooking Team',
+              name: targetCall.name,
+              to_name: targetCall.name,
+              to_email: targetCall.email,
+              from_email: 'info@nativebooking.co',
+              email: targetCall.email,
+              phone: targetCall.phone,
+              industry: targetCall.industry,
+              requested_date: targetCall.date,
+              requested_time: targetCall.timeSlot,
+              message: `Hi ${targetCall.name},\n\nYour discovery call with NativeBooking is CONFIRMED!\n\nDate: ${targetCall.date}\nTime: ${targetCall.timeSlot} CET\n\nWe look forward to speaking with you!`,
+            },
+          }),
+        })
+      } catch (err) {
+        console.warn('Failed to send confirmation email to client:', err)
+      }
+    }
+
     await loadCalls()
   }
 
