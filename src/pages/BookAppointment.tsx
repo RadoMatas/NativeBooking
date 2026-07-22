@@ -507,7 +507,7 @@ export default function BookAppointment() {
                         fontSize: '13px',
                       }}
                     >
-                      £{srv.price}
+                      {BUSINESS_CONFIG.currencySymbol || '$'}{srv.price}
                     </span>
                   </button>
                 )
@@ -640,11 +640,11 @@ export default function BookAppointment() {
             >
               <p style={{ display: 'flex', justifyContent: 'space-between', margin: '2px 0', fontSize: '14px' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Service Total Price:</span>
-                <span style={{ fontWeight: 600 }}>£{servicePrice.toFixed(2)}</span>
+                <span style={{ fontWeight: 600 }}>{BUSINESS_CONFIG.currencySymbol || '$'}{servicePrice.toFixed(2)}</span>
               </p>
               <p style={{ display: 'flex', justifyContent: 'space-between', margin: '2px 0', fontSize: '14px', color: 'var(--accent-color)' }}>
                 <span style={{ fontWeight: 700 }}>Required Booking Deposit ({BUSINESS_CONFIG.depositPercentage}%):</span>
-                <span style={{ fontWeight: 700 }}>£{depositAmount.toFixed(2)}</span>
+                <span style={{ fontWeight: 700 }}>{BUSINESS_CONFIG.currencySymbol || '$'}{depositAmount.toFixed(2)}</span>
               </p>
             </div>
           )}

@@ -204,7 +204,7 @@ export default function AdminDB() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
           <Logo size="small" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1 }}>
+            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: 'var(--accent-color)', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1 }}>
               {BUSINESS_CONFIG.name}
             </span>
             <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
@@ -213,7 +213,7 @@ export default function AdminDB() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <InkTypewriterHeader text="Admin Control Hub" />
+          <InkTypewriterHeader text="Faculty Control Hub" />
           <div style={{ display: 'flex', gap: '8px' }}>
             <button onClick={resetBookings} className="btn btn-danger" style={{ padding: '7px 12px', fontSize: '12px' }}>
               Reset Data
@@ -352,9 +352,9 @@ export default function AdminDB() {
 
                   <p style={{ margin: '4px 0', fontSize: '15px' }}>
                     <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong> {booking.artistName || 'None'}
-                    {booking.depositAmount != null && (
+                    {booking.depositAmount != null && booking.depositAmount > 0 && (
                       <span style={{ marginLeft: '14px' }}>
-                        <strong style={{ color: 'var(--text-secondary)' }}>Deposit:</strong> £{booking.depositAmount.toFixed(2)}
+                        <strong style={{ color: 'var(--text-secondary)' }}>Deposit:</strong> {BUSINESS_CONFIG.currencySymbol || '$'}{booking.depositAmount.toFixed(2)}
                       </span>
                     )}
                   </p>
@@ -597,11 +597,11 @@ export default function AdminDB() {
                     {selectedBooking.artistName}
                   </p>
                 )}
-                {selectedBooking.depositAmount != null && (
+                {selectedBooking.depositAmount != null && selectedBooking.depositAmount > 0 && (
                   <p>
                     <strong style={{ color: 'var(--text-secondary)' }}>Deposit Status:</strong>{' '}
                     <span style={{ color: selectedBooking.depositPaid ? 'var(--accent-color)' : '#facc15', fontWeight: 600 }}>
-                      £{selectedBooking.depositAmount.toFixed(2)} ({selectedBooking.depositPaid ? 'Authorized & Paid' : 'Unpaid'})
+                      {BUSINESS_CONFIG.currencySymbol || '$'}{selectedBooking.depositAmount.toFixed(2)} ({selectedBooking.depositPaid ? 'Authorized & Paid' : 'Unpaid'})
                     </span>
                   </p>
                 )}
@@ -648,20 +648,20 @@ export default function AdminDB() {
                   style={{
                     marginTop: '8px',
                     padding: '14px',
-                    background: 'rgba(16, 185, 129, 0.04)',
-                    border: '1px solid rgba(16, 185, 129, 0.12)',
+                    background: 'rgba(0, 0, 0, 0.02)',
+                    border: '1px solid var(--accent-color)',
                     borderRadius: '12px',
                     fontSize: '13px',
                   }}
                 >
-                  <p style={{ fontWeight: 700, color: '#34d399', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <p style={{ fontWeight: 700, color: 'var(--accent-color)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                     📈 Client Metrics
                   </p>
                   <p style={{ margin: '2px 0' }}>
                     <strong style={{ color: 'var(--text-secondary)' }}>Completed Visits:</strong> {clientAnalytics.visits}
                   </p>
                   <p style={{ margin: '2px 0' }}>
-                    <strong style={{ color: 'var(--text-secondary)' }}>Lifetime LTV:</strong> ${clientAnalytics.ltv}
+                    <strong style={{ color: 'var(--text-secondary)' }}>Lifetime LTV:</strong> {BUSINESS_CONFIG.currencySymbol || '$'}{clientAnalytics.ltv}
                   </p>
                 </div>
 

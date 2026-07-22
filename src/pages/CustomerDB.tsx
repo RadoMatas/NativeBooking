@@ -282,7 +282,7 @@ export default function CustomerDB() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
           <Logo size="small" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1 }}>
+            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: 'var(--accent-color)', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1 }}>
               {BUSINESS_CONFIG.name}
             </span>
             <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
@@ -291,7 +291,7 @@ export default function CustomerDB() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <InkTypewriterHeader text="Manage Your Booking" />
+          <InkTypewriterHeader text="Manage Your Lessons" />
           <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '7px 12px', fontSize: '12px' }}>
             Logout
           </button>
@@ -354,11 +354,11 @@ export default function CustomerDB() {
                     </span>
                   </p>
                 )}
-                {latestBooking.depositAmount != null && (
+                {latestBooking.depositAmount != null && latestBooking.depositAmount > 0 && (
                   <p>
                     <strong style={{ color: 'var(--text-secondary)' }}>Deposit Amount:</strong>{' '}
                     <span style={{ color: 'var(--accent-color)', fontWeight: 600 }}>
-                      £{latestBooking.depositAmount.toFixed(2)} (Paid)
+                      {BUSINESS_CONFIG.currencySymbol || '$'}{latestBooking.depositAmount.toFixed(2)} (Paid)
                     </span>
                   </p>
                 )}
@@ -682,9 +682,9 @@ export default function CustomerDB() {
                         <strong>{BUSINESS_CONFIG.staffLabel}:</strong> {booking.artistName}
                       </span>
                     )}
-                    {booking.depositAmount != null && (
+                    {booking.depositAmount != null && booking.depositAmount > 0 && (
                       <span>
-                        <strong>Deposit Paid:</strong> £{booking.depositAmount.toFixed(2)}
+                        <strong>Deposit Paid:</strong> {BUSINESS_CONFIG.currencySymbol || '$'}{booking.depositAmount.toFixed(2)}
                       </span>
                     )}
                   </div>
@@ -695,13 +695,13 @@ export default function CustomerDB() {
                       style={{
                         marginTop: '12px',
                         padding: '12px 16px',
-                        background: 'rgba(16, 185, 129, 0.05)',
-                        border: '1px solid rgba(16, 185, 129, 0.15)',
+                        background: 'rgba(0, 0, 0, 0.02)',
+                        border: '1px solid var(--accent-color)',
                         borderRadius: '12px',
                         fontSize: '14px',
                       }}
                     >
-                      <p style={{ fontWeight: 600, color: '#34d399', marginBottom: '4px' }}>
+                      <p style={{ fontWeight: 600, color: 'var(--accent-color)', marginBottom: '4px' }}>
                         ✨ {BUSINESS_CONFIG.adminNotesLabel}:
                       </p>
                       <p style={{ color: 'var(--text-primary)', margin: 0 }}>

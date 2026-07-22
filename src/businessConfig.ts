@@ -33,6 +33,7 @@ export interface BusinessConfig {
   internalNotesLabel: string
   checklist: string[]
   dbPrefix: string
+  currencySymbol: string
   theme: {
     primaryColor: string
     cardBg: string
@@ -54,6 +55,7 @@ export const BUSINESS_CONFIG: BusinessConfig = {
   closedDays: [0], // Sunday closed
   depositPercentage: 0, // 0% deposit
   dbPrefix: "academic",
+  currencySymbol: "$",
   services: [
     { id: "english-gen", name: "English General Course", price: 50, durationMin: 45 },
     { id: "spanish-int", name: "Spanish Intensive Class", price: 75, durationMin: 60 },
@@ -78,8 +80,8 @@ export const BUSINESS_CONFIG: BusinessConfig = {
   theme: {
     primaryColor: "#fbfbfa", // soft warm cream background
     cardBg: "rgba(255, 255, 255, 0.85)", // frosted white glass card
-    accentColor: "#4f46e5",  // deep academic indigo
-    accentHover: "#4338ca",  // hover indigo
+    accentColor: "#0d9488",  // classic academic teal
+    accentHover: "#115e59",  // hover teal
     borderRadius: "12px",
     fontFamily: "'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif"
   }
