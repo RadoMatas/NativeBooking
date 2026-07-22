@@ -89,6 +89,25 @@ export default function AdminDB() {
     return <Navigate to="/login" replace />
   }
 
+  // Strict Technician Conflict Validation: checks if target technician ALREADY has an active job at same Date & Time!
+  const dispatchConflict = useMemo(() => {
+    if (!showDispatchModal) return null
+    return bookings.find((b) => {
+      if (b.id === reassignJobId) return false // ignore current job being reassigned
+      if (b.status === 'Cancelled' || b.adminStatus === 'Declined by Tech') return false // cancelled slots are free
+      return b.artistId === assignedTechId && b.date === jobDate && b.time === jobTime
+    }) || null
+  }, [showDispatchModal, reassignJobId, assignedTechId, jobDate, jobTime, bookings])
+
+  const rescheduleConflict = useMemo(() => {
+    if (!reschedulingJob) return null
+    return bookings.find((b) => {
+      if (b.id === reschedulingJob.id) return false
+      if (b.status === 'Cancelled' || b.adminStatus === 'Declined by Tech') return false
+      return b.artistId === reschedulingJob.artistId && b.date === adminNewDate && b.time === adminNewTime
+    }) || null
+  }, [reschedulingJob, adminNewDate, adminNewTime, bookings])
+
   // Filtered Jobs
   const filteredBookings = useMemo(() => {
     return bookings.filter((b) => {
@@ -148,6 +167,11 @@ export default function AdminDB() {
       return
     }
 
+    if (dispatchConflict) {
+      alert(`Conflict: Technician is already booked for ${dispatchConflict.service} at ${jobTime} on ${jobDate}. Please select another slot.`)
+      return
+    }
+
     const serviceObj = BUSINESS_CONFIG.services.find((s) => s.id === selectedServiceId)
     const techObj = BUSINESS_CONFIG.artists.find((a) => a.id === assignedTechId)
 
@@ -166,7 +190,7 @@ export default function AdminDB() {
           date: jobDate,
           time: jobTime,
         })
-        addNotification(`🔄 REASSIGNED: Admin reassigned Job Order for ${clientName} to Technician ${techObj?.name}`)
+        addNotification(`🔄 REASSIGNED: Admin reassigned Job Order for ${clientName} to Technician ${techObj?.name} for ${jobDate} at ${jobTime}`)
       }
       setReassignJobId(null)
     } else {
@@ -189,7 +213,7 @@ export default function AdminDB() {
         depositAmount: serviceObj?.price || 0,
         depositPaid: false,
       })
-      addNotification(`🛠️ DISPATCHED: New Job Order for ${clientName} assigned to Technician ${techObj?.name}`)
+      addNotification(`🛠️ DISPATCHED: New Job Order for ${clientName} assigned to Technician ${techObj?.name} for ${jobDate} at ${jobTime}`)
     }
 
     setShowDispatchModal(false)
@@ -211,6 +235,11 @@ export default function AdminDB() {
   const handleAdminConfirmReschedule = (e: React.FormEvent) => {
     e.preventDefault()
     if (!reschedulingJob) return
+
+    if (rescheduleConflict) {
+      alert(`Conflict: Technician is already booked for ${rescheduleConflict.service} at ${adminNewTime} on ${adminNewDate}.`)
+      return
+    }
 
     updateBooking(reschedulingJob.id, {
       ...reschedulingJob,
@@ -739,6 +768,12 @@ export default function AdminDB() {
               Update schedule for <strong>{reschedulingJob.customerName}</strong> ({reschedulingJob.service}). Existing order record will be updated cleanly.
             </p>
 
+            {rescheduleConflict && (
+              <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #f87171', padding: '12px', borderRadius: '10px', color: '#f87171', fontSize: '13px' }}>
+                🛑 <strong>Time Slot Conflict!</strong> Technician {reschedulingJob.artistName} is ALREADY booked for "{rescheduleConflict.service}" ({rescheduleConflict.customerName}) at {adminNewTime} on {adminNewDate}.
+              </div>
+            )}
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
@@ -760,10 +795,24 @@ export default function AdminDB() {
                   value={adminNewTime}
                   onChange={(e) => setAdminNewTime(e.target.value)}
                   className="form-select"
+                  style={{ borderColor: rescheduleConflict ? '#f87171' : undefined }}
                 >
-                  {['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '16:00'].map((t) => (
-                    <option key={t} value={t}>{t}</option>
-                  ))}
+                  {['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '16:00'].map((t) => {
+                    const isOccupied = bookings.some(
+                      (b) =>
+                        b.id !== reschedulingJob.id &&
+                        b.status !== 'Cancelled' &&
+                        b.adminStatus !== 'Declined by Tech' &&
+                        b.artistId === reschedulingJob.artistId &&
+                        b.date === adminNewDate &&
+                        b.time === t
+                    )
+                    return (
+                      <option key={t} value={t} disabled={isOccupied}>
+                        {t} {isOccupied ? '(⚠️ Booked)' : ''}
+                      </option>
+                    )
+                  })}
                 </select>
               </div>
             </div>
@@ -792,8 +841,9 @@ export default function AdminDB() {
               </button>
               <button
                 type="submit"
+                disabled={Boolean(rescheduleConflict)}
                 className="btn btn-primary"
-                style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 700 }}
+                style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 700, opacity: rescheduleConflict ? 0.5 : 1 }}
               >
                 Update Schedule & Notify Tech 📅
               </button>
@@ -914,6 +964,12 @@ export default function AdminDB() {
               </button>
             </div>
 
+            {dispatchConflict && (
+              <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #f87171', padding: '12px 16px', borderRadius: '12px', color: '#f87171', fontSize: '13px' }}>
+                🛑 <strong>Time Slot Conflict!</strong> Technician {BUSINESS_CONFIG.artists.find((a) => a.id === assignedTechId)?.name} is ALREADY booked for <strong>"{dispatchConflict.service}"</strong> ({dispatchConflict.customerName}) at {jobTime} on {jobDate}. Please select another time slot or technician.
+              </div>
+            )}
+
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
                 Client Name *
@@ -1007,11 +1063,24 @@ export default function AdminDB() {
                     value={jobTime}
                     onChange={(e) => setJobTime(e.target.value)}
                     className="form-select"
-                    style={{ padding: '8px' }}
+                    style={{ padding: '8px', borderColor: dispatchConflict ? '#f87171' : undefined }}
                   >
-                    {['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '16:00'].map((t) => (
-                      <option key={t} value={t}>{t}</option>
-                    ))}
+                    {['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '16:00'].map((t) => {
+                      const isOccupied = bookings.some(
+                        (b) =>
+                          b.id !== reassignJobId &&
+                          b.status !== 'Cancelled' &&
+                          b.adminStatus !== 'Declined by Tech' &&
+                          b.artistId === assignedTechId &&
+                          b.date === jobDate &&
+                          b.time === t
+                      )
+                      return (
+                        <option key={t} value={t} disabled={isOccupied}>
+                          {t} {isOccupied ? '(⚠️ Booked)' : ''}
+                        </option>
+                      )
+                    })}
                   </select>
                 </div>
               </div>
@@ -1030,7 +1099,12 @@ export default function AdminDB() {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary" style={{ padding: '14px', fontSize: '14px', marginTop: '6px' }}>
+            <button
+              type="submit"
+              disabled={Boolean(dispatchConflict)}
+              className="btn btn-primary"
+              style={{ padding: '14px', fontSize: '14px', marginTop: '6px', opacity: dispatchConflict ? 0.5 : 1 }}
+            >
               {reassignJobId ? 'Reassign Job to Technician 🚀' : 'Dispatch Job Order 🚀'}
             </button>
           </form>
