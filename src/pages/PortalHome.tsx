@@ -225,6 +225,11 @@ export default function PortalHome() {
           .nb-hero-title { font-size: 32px !important; }
           .nb-section-title { font-size: 26px !important; }
           .nb-feature-grid { grid-template-columns: 1fr !important; }
+          .nb-nav { padding: 12px 16px !important; }
+          .nb-logo-img { height: 34px !important; width: 34px !important; }
+          .nb-logo-title { font-size: 14px !important; letter-spacing: 0.04em !important; }
+          .nb-nav-actions { gap: 8px !important; }
+          .nb-nav-btn { padding: 6px 12px !important; font-size: 12px !important; }
         }
         @media (max-width: 900px) {
           .nb-feature-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -233,6 +238,7 @@ export default function PortalHome() {
 
       {/* ─── NAV ──────────────────────────────────────────────── */}
       <nav
+        className="nb-nav"
         style={{
           position: 'sticky',
           top: 0,
@@ -250,15 +256,17 @@ export default function PortalHome() {
           <img
             src="/logo-icon.jpg"
             alt="NativeBooking"
+            className="nb-logo-img"
             style={{ height: '44px', width: '44px', borderRadius: '10px', display: 'block' }}
           />
-          <span style={{ fontSize: '16px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>
+          <span className="nb-logo-title" style={{ fontSize: '16px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>
             NATIVEBOOKING
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div className="nb-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button
             onClick={() => navigate('/book-call')}
+            className="nb-nav-btn"
             style={{
               fontSize: '13px',
               fontWeight: 700,
@@ -276,6 +284,7 @@ export default function PortalHome() {
           </button>
           <a
             href="mailto:info@nativebooking.co"
+            className="nb-nav-btn"
             style={{
               fontSize: '13px',
               fontWeight: 600,

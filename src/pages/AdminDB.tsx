@@ -71,9 +71,17 @@ export default function AdminDB() {
                      ${t.bg}`,
       }}
     >
+      <style>{`
+        @media (max-width: 640px) {
+          .nb-admin-header { margin-bottom: 24px !important; padding-bottom: 16px !important; gap: 12px !important; }
+          .nb-admin-logo-title { font-size: 15px !important; }
+          .nb-admin-btn { padding: 6px 12px !important; font-size: 12px !important; }
+        }
+      `}</style>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
         {/* ─── TOP BAR ─────────────────────────────────────────── */}
         <header
+          className="nb-admin-header"
           style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -92,7 +100,7 @@ export default function AdminDB() {
               style={{ height: '40px', width: '40px', borderRadius: '10px', display: 'block' }}
             />
             <div>
-              <span style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '0.05em', color: '#ffffff', display: 'block' }}>
+              <span className="nb-admin-logo-title" style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '0.05em', color: '#ffffff', display: 'block' }}>
                 NATIVEBOOKING
               </span>
               <span style={{ fontSize: '12px', color: t.textSecondary, fontWeight: 500 }}>
@@ -104,14 +112,14 @@ export default function AdminDB() {
           <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
             <button
               onClick={() => navigate('/')}
-              className="btn btn-secondary"
+              className="btn btn-secondary nb-admin-btn"
               style={{ padding: '8px 16px', fontSize: '13px', borderRadius: '8px' }}
             >
               ← Portal Homepage
             </button>
             <button
               onClick={handleLogout}
-              className="btn btn-secondary"
+              className="btn btn-secondary nb-admin-btn"
               style={{ padding: '8px 16px', fontSize: '13px', borderRadius: '8px', color: '#f87171' }}
             >
               Logout

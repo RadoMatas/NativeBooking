@@ -102,8 +102,16 @@ export default function BookIntroCall() {
         paddingBottom: '80px',
       }}
     >
+      <style>{`
+        @media (max-width: 640px) {
+          .nb-bic-nav { padding: 12px 16px !important; }
+          .nb-bic-logo-title { font-size: 14px !important; letter-spacing: 0.04em !important; }
+          .nb-bic-btn { padding: 6px 12px !important; font-size: 12px !important; }
+        }
+      `}</style>
       {/* ─── NAV ──────────────────────────────────────────────── */}
       <nav
+        className="nb-bic-nav"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -123,12 +131,13 @@ export default function BookIntroCall() {
             alt="NativeBooking"
             style={{ height: '36px', width: '36px', borderRadius: '8px', display: 'block' }}
           />
-          <span style={{ fontSize: '16px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>
+          <span className="nb-bic-logo-title" style={{ fontSize: '16px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>
             NATIVEBOOKING
           </span>
         </div>
         <button
           onClick={() => navigate('/')}
+          className="nb-bic-btn"
           style={{
             background: 'none',
             border: `1px solid ${t.border}`,
