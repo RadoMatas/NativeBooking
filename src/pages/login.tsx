@@ -168,6 +168,20 @@ export default function Login() {
           {isSignUpMode ? 'Sign Up with Google' : 'Sign In with Google'}
         </button>
 
+        {/* Back to Portal Router link */}
+        <a
+          href="https://nativebooking.co"
+          style={{ textDecoration: 'none', width: '100%', display: 'block', marginTop: '12px' }}
+        >
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{ width: '100%', gap: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}
+          >
+            ← Back to Industry Portal
+          </button>
+        </a>
+
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
           <button
             type="button"
