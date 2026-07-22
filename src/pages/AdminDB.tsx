@@ -734,8 +734,8 @@ export default function AdminDB() {
                 Select a booking from the list or review queue to inspect details.
               </p>
             )}
-          </div>
         </div>
+      </div>
       {cancellingBooking && (
         <div
           style={{
