@@ -164,6 +164,7 @@ export default function PortalHome() {
     { num: '01', icon: '🤝', title: 'Discovery', desc: 'We get on a call, talk about how your business runs day to day, and figure out exactly what to build.' },
     { num: '02', icon: '🔨', title: 'Build', desc: 'We build it. Your name on it, your colors, your domain, your way of working.' },
     { num: '03', icon: '🚀', title: 'Handover', desc: 'You get everything — the domain, the database, the source code. We stay around if you need us.' },
+    { num: '04', icon: '🎯', title: 'The Result', desc: 'Your clients book. You manage. NativeBooking handles the rest. Less admin, more business.' },
   ]
 
   const scrollToDemo = () => {
@@ -243,12 +244,15 @@ export default function PortalHome() {
           backdropFilter: 'blur(16px)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img
             src="/logo-icon.jpg"
             alt="NativeBooking"
             style={{ height: '44px', width: '44px', borderRadius: '10px', display: 'block' }}
           />
+          <span style={{ fontSize: '16px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>
+            NATIVEBOOKING
+          </span>
         </div>
         <a
           href="mailto:info@nativebooking.co"
@@ -607,7 +611,16 @@ export default function PortalHome() {
       </section>
 
       {/* ─── HOW IT WORKS ─────────────────────────────────────── */}
-      <section style={{ padding: '80px 24px', maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
+      <section
+        style={{
+          position: 'relative',
+          padding: '80px 24px',
+          overflow: 'hidden',
+          backgroundImage: 'radial-gradient(rgba(16,185,129,0.13) 1.5px, transparent 1.5px)',
+          backgroundSize: '38px 38px',
+        }}
+      >
+        <div style={{ maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '52px' }}>
           <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent, marginBottom: '12px' }}>
             Process
@@ -652,6 +665,7 @@ export default function PortalHome() {
             </div>
           ))}
         </div>
+        </div>
       </section>
 
       {/* ─── FOOTER ───────────────────────────────────────────── */}
@@ -666,12 +680,13 @@ export default function PortalHome() {
           textAlign: 'center',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <img
             src="/logo-icon.jpg"
             alt="NativeBooking"
             style={{ height: '40px', width: '40px', borderRadius: '9px', display: 'block' }}
           />
+          <span style={{ fontSize: '14px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>NATIVEBOOKING</span>
         </div>
         <a
           href="mailto:info@nativebooking.co"
