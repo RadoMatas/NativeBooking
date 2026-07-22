@@ -736,6 +736,7 @@ export default function AdminDB() {
             )}
         </div>
       </div>
+    </div>
       {cancellingBooking && (
         <div
           style={{
