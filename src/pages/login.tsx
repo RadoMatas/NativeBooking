@@ -210,6 +210,29 @@ export default function Login() {
             </p>
           </div>
         )}
+
+        {/* Sleek NativeBooking Watermark Footer */}
+        <div
+          style={{
+            marginTop: '24px',
+            paddingTop: '16px',
+            borderTop: '1px solid var(--border-color)',
+            fontSize: '12px',
+            color: 'var(--text-secondary)',
+            textAlign: 'center',
+            letterSpacing: '0.03em',
+          }}
+        >
+          Made by{' '}
+          <a
+            href="https://nativebooking.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: 'var(--accent-color)', textDecoration: 'none', fontWeight: 700 }}
+          >
+            NativeBooking Software ⚡
+          </a>
+        </div>
       </form>
     </div>
   )
