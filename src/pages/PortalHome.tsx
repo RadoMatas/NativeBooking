@@ -47,9 +47,9 @@ export default function PortalHome() {
         for (let y = 0; y <= h; y += GRID) {
           const dist  = Math.sqrt((x - w * 0.5) ** 2 + (y - h * 0.45) ** 2)
           const pulse = Math.sin(dist * 0.018 - waveOffset)
-          const alpha = Math.max(0.05, 0.1 + pulse * 0.07)
+          const alpha = Math.max(0.1, 0.18 + pulse * 0.12)
           ctx.beginPath()
-          ctx.arc(x, y, 1.4, 0, Math.PI * 2)
+          ctx.arc(x, y, 1.8, 0, Math.PI * 2)
           ctx.fillStyle = `rgba(${ACCENT}, ${alpha})`
           ctx.fill()
         }
