@@ -33,33 +33,6 @@ export default function AdminDB() {
   const handleAcceptCall = async (call: IntroCallBooking) => {
     await updateIntroCallStatus(call.id, 'confirmed')
 
-    // 1. Send automated EmailJS confirmation to prospect
-    try {
-      await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          service_id: 'service_jfrd3cr',
-          template_id: 'template_4e7ipi1',
-          user_id: 'SWLupKhyJ1aMBxMI-',
-          template_params: {
-            from_name: 'NativeBooking Team',
-            to_name: call.name,
-            to_email: call.email,
-            from_email: 'info@nativebooking.co',
-            email: call.email,
-            phone: call.phone,
-            industry: call.industry,
-            requested_date: call.date,
-            requested_time: call.timeSlot,
-            message: `Hi ${call.name},\n\nYour discovery call with NativeBooking is CONFIRMED for ${call.date} at ${call.timeSlot} CET!\n\nWe look forward to speaking with you.\n\nBest regards,\nNativeBooking Team`,
-          },
-        }),
-      })
-    } catch (e) {
-      console.warn('EmailJS auto-confirm error:', e)
-    }
-
     // 2. Open Google Calendar to add event to BOTH admin & prospect calendars
     const [startHourStr] = call.timeSlot.split(':')
     const startHour = parseInt(startHourStr, 10) || 9
