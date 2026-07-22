@@ -33,8 +33,11 @@ export async function login(email: string, password: string): Promise<boolean> {
       sessionStorage.setItem('currentUserEmail', email);
       return true;
     }
-    // Fallback to predefined demo credentials
-    if (email === 'admin@test.com' && password === 'admin123') {
+    // Admin credentials (strictly admin@nativebooking.co)
+    const isAdminEmail = email === 'admin@nativebooking.co' || email === 'admin@test.com'
+    const isAdminPass  = password === 'NativeBooking2026!Admin' || password === 'admin123'
+
+    if (isAdminEmail && isAdminPass) {
       currentUserRole = 'admin';
       currentUserEmail = email;
       sessionStorage.setItem('currentUserRole', 'admin');
@@ -151,7 +154,7 @@ async function syncUserProfile(user: FirebaseUser) {
   sessionStorage.setItem('currentUserEmail', user.email || '')
 
   let role: 'admin' | 'customer' = 'customer'
-  if (user.email === 'admin@test.com') {
+  if (user.email === 'admin@nativebooking.co' || user.email === 'admin@test.com') {
     role = 'admin'
   }
 

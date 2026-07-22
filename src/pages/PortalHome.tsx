@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export default function PortalHome() {
+  const navigate = useNavigate()
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -254,21 +256,40 @@ export default function PortalHome() {
             NATIVEBOOKING
           </span>
         </div>
-        <a
-          href="mailto:info@nativebooking.co"
-          style={{
-            fontSize: '13px',
-            fontWeight: 600,
-            color: t.accent,
-            textDecoration: 'none',
-            padding: '7px 16px',
-            border: `1px solid rgba(16,185,129,0.35)`,
-            borderRadius: '8px',
-            transition: 'background 0.2s ease',
-          }}
-        >
-          Contact Us
-        </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            onClick={() => navigate('/book-call')}
+            style={{
+              fontSize: '13px',
+              fontWeight: 700,
+              color: '#ffffff',
+              background: t.accent,
+              border: 'none',
+              borderRadius: '8px',
+              padding: '7px 16px',
+              cursor: 'pointer',
+              boxShadow: '0 2px 10px rgba(16,185,129,0.25)',
+              fontFamily: 'inherit',
+            }}
+          >
+            Book Intro Call 📅
+          </button>
+          <a
+            href="mailto:info@nativebooking.co"
+            style={{
+              fontSize: '13px',
+              fontWeight: 600,
+              color: t.accent,
+              textDecoration: 'none',
+              padding: '7px 16px',
+              border: `1px solid rgba(16,185,129,0.35)`,
+              borderRadius: '8px',
+              transition: 'background 0.2s ease',
+            }}
+          >
+            Contact Us
+          </a>
+        </div>
       </nav>
 
       {/* ─── HERO ─────────────────────────────────────────────── */}
@@ -336,31 +357,58 @@ export default function PortalHome() {
           Your Business
         </h1>
 
-        <button
-          onClick={scrollToDemo}
-          style={{
-            padding: '14px 32px',
-            fontSize: '15px',
-            fontWeight: 700,
-            borderRadius: '10px',
-            background: t.accent,
-            color: '#ffffff',
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 4px 20px rgba(16,185,129,0.3)',
-            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'
-            ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 28px rgba(16,185,129,0.4)'
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'
-            ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 20px rgba(16,185,129,0.3)'
-          }}
-        >
-          Explore Live Demos ↓
-        </button>
+        <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button
+            onClick={scrollToDemo}
+            style={{
+              padding: '14px 32px',
+              fontSize: '15px',
+              fontWeight: 700,
+              borderRadius: '10px',
+              background: t.accent,
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 4px 20px rgba(16,185,129,0.3)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'
+              ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 28px rgba(16,185,129,0.4)'
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'
+              ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 20px rgba(16,185,129,0.3)'
+            }}
+          >
+            Explore Live Demos ↓
+          </button>
+          <button
+            onClick={() => navigate('/book-call')}
+            style={{
+              padding: '14px 28px',
+              fontSize: '15px',
+              fontWeight: 700,
+              borderRadius: '10px',
+              background: 'rgba(255, 255, 255, 0.05)',
+              color: '#ffffff',
+              border: `1px solid ${t.border}`,
+              cursor: 'pointer',
+              backdropFilter: 'blur(10px)',
+              transition: 'transform 0.2s ease, background 0.2s ease',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'
+              ;(e.currentTarget as HTMLButtonElement).style.background = 'rgba(255, 255, 255, 0.1)'
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'
+              ;(e.currentTarget as HTMLButtonElement).style.background = 'rgba(255, 255, 255, 0.05)'
+            }}
+          >
+            Schedule Discovery Call 📅
+          </button>
+        </div>
         </div>
       </section>
 

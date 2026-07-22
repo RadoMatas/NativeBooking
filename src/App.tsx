@@ -6,6 +6,8 @@ import CustomerDB from './pages/CustomerDB'
 import AdminDB from './pages/AdminDB'
 import BookAppointment from './pages/BookAppointment'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import BookIntroCall from './pages/BookIntroCall'
+import AdminLogin from './pages/AdminLogin'
 import { BookingProvider } from './BookingContext'
 import { BUSINESS_CONFIG } from './businessConfig'
 
@@ -36,10 +38,12 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<PortalHome />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<AdminLogin />} />
+          <Route path="/adminlogin" element={<AdminLogin />} />
           <Route path="/dashboard" element={<CustomerDB />} />
           <Route path="/admin" element={<AdminDB />} />
           <Route path="/book" element={<BookAppointment />} />
+          <Route path="/book-call" element={<BookIntroCall />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
         </Routes>
       </BrowserRouter>

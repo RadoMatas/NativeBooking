@@ -11,7 +11,7 @@ export interface Artist {
   specialty: string
   avatarEmoji: string
   avatarUrl?: string
-  workingDays: number[] // days of week: 0=Sunday, 1=Monday... 6=Saturday
+  workingDays: number[]
 }
 
 export interface BusinessConfig {
@@ -19,11 +19,12 @@ export interface BusinessConfig {
   tagline: string
   address: string
   contact: string
-  openingHour: number // 24h format, e.g. 11
-  closingHour: number // 24h format, e.g. 20
-  slotInterval: number // in minutes, e.g. 30
-  closedDays: number[] // days of week the shop is closed
-  depositPercentage: number // e.g. 20 for 20%
+  openingHour: number
+  closingHour: number
+  slotInterval: number
+  closedDays: number[]
+  depositPercentage: number
+  currencySymbol?: string
   services: Service[]
   artists: Artist[]
   staffLabel: string
@@ -43,44 +44,37 @@ export interface BusinessConfig {
 }
 
 export const BUSINESS_CONFIG: BusinessConfig = {
-  name: "Sanatorium Tattoo",
-  tagline: "Award-Winning Tattoo Studio",
-  address: "8 Drummond St, Edinburgh, EH8 9TU",
-  contact: "+44 7765 899429",
-  openingHour: 11,
-  closingHour: 20,
+  name: "NativeBooking",
+  tagline: "Custom Reservation & Operations Software",
+  address: "Poland",
+  contact: "info@nativebooking.co",
+  openingHour: 9,
+  closingHour: 18,
   slotInterval: 30,
-  closedDays: [0], // Sunday closed
-  depositPercentage: 0, // 20% deposit
+  closedDays: [0, 6], // Sat, Sun closed
+  depositPercentage: 0,
+  currencySymbol: "$",
   services: [
-    { id: "tattoo", name: "Tattoo Session", price: 120, durationMin: 60 },
-    { id: "permanent", name: "Permanent Make-up", price: 200, durationMin: 120 },
-    { id: "laser", name: "Laser Removal Session", price: 80, durationMin: 30 },
-    { id: "piercing", name: "Piercing Session", price: 40, durationMin: 20 }
+    { id: "intro_call", name: "Discovery Intro Call", price: 0, durationMin: 30 },
   ],
   artists: [
-    { id: "marcel", name: "Marcel", specialty: "Black & Grey Realism", avatarEmoji: "🎨", workingDays: [1, 2, 3, 4, 5] },
-    { id: "tomek", name: "Tomek", specialty: "Traditional & Neo-Traditional", avatarEmoji: "✒️", workingDays: [1, 2, 3, 4] },
-    { id: "konrad", name: "Konrad", specialty: "Geometric & Dotwork", avatarEmoji: "📐", workingDays: [3, 4, 5, 6] },
-    { id: "viktor", name: "Viktor", specialty: "Japanese Realism", avatarEmoji: "🐉", workingDays: [5, 6] }
+    { id: "founder", name: "NativeBooking Team", specialty: "Software Architecture", avatarEmoji: "⚡", workingDays: [1, 2, 3, 4, 5] },
   ],
-  staffLabel: "Artist",
-  staffLabelPlural: "Artists",
-  notesLabel: "Special Notes / Requests",
-  adminNotesLabel: "Aftercare Instructions",
-  internalNotesLabel: "Internal Admin Notes",
+  staffLabel: "Team Member",
+  staffLabelPlural: "Team Members",
+  notesLabel: "Project Notes",
+  adminNotesLabel: "Follow-up Notes",
+  internalNotesLabel: "Internal Lead Notes",
   checklist: [
-    "Please arrive 10 minutes early.",
-    "Bring any reference photos or design ideas.",
-    "Ensure you have eaten and are well hydrated.",
-    "Wear comfortable clothing exposing the tattoo area."
+    "Review prospect business type and requested slot.",
+    "Prepare custom feature breakdown for discovery call.",
   ],
   theme: {
-    primaryColor: "#09090b", // zinc 950
-    cardBg: "rgba(20, 20, 23, 0.8)", // zinc 900 glass
-    accentColor: "#10b981",  // emerald green
-    accentHover: "#34d399",  // light emerald
+    primaryColor: "#09090b",
+    cardBg: "rgba(20, 20, 23, 0.8)",
+    accentColor: "#10b981",
+    accentHover: "#34d399",
     borderRadius: "12px",
-    fontFamily: "'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif"
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
   }
 }
