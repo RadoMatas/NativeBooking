@@ -52,6 +52,34 @@ export default function BookIntroCall() {
         date: selectedDate,
         timeSlot: selectedTimeSlot,
       })
+
+      // Send instant email notification via EmailJS REST API
+      try {
+        await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            service_id: 'service_jfrd3cr',
+            template_id: 'template_4e7ipi1',
+            user_id: 'SWLupKhyJ1aMBxMI-',
+            template_params: {
+              from_name: name,
+              name: name,
+              from_email: email,
+              email: email,
+              phone: phone,
+              industry: industry,
+              requested_date: selectedDate,
+              requested_time: selectedTimeSlot,
+              notes: notes || 'None',
+              message: `New Discovery Call Request!\n\nClient: ${name}\nEmail: ${email}\nPhone/WhatsApp: ${phone}\nIndustry: ${industry}\nRequested Date: ${selectedDate}\nRequested Time: ${selectedTimeSlot} CET\nNotes: ${notes || 'None'}\n\nManage in Central Control:\nhttps://nativebooking.co/adminlogin`,
+            },
+          }),
+        })
+      } catch (emailErr) {
+        console.warn('EmailJS notification send error:', emailErr)
+      }
+
       setSubmittedBooking(result)
     } catch (err) {
       console.error(err)
