@@ -221,6 +221,10 @@ export default function PortalHome() {
         @media (max-width: 640px) {
           .nb-hero-title { font-size: 32px !important; }
           .nb-section-title { font-size: 26px !important; }
+          .nb-feature-grid { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 900px) {
+          .nb-feature-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
       `}</style>
 
@@ -366,9 +370,10 @@ export default function PortalHome() {
           </h2>
         </div>
         <div
+          className="nb-feature-grid"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+            gridTemplateColumns: 'repeat(3, 1fr)',
             gap: '20px',
           }}
         >
