@@ -1,7 +1,6 @@
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { currentUserRole, logout } from '../auth'
-import { BUSINESS_CONFIG } from '../businessConfig'
 import {
   fetchIntroCalls,
   updateIntroCallStatus,
