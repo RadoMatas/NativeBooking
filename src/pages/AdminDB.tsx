@@ -266,8 +266,8 @@ export default function AdminDB() {
                 <div
                   key={req.id}
                   style={{
-                    background: 'rgba(0, 0, 0, 0.45)',
-                    border: '1px solid rgba(139, 92, 246, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.92)',
+                    border: '1px solid rgba(120, 53, 15, 0.2)',
                     borderRadius: '14px',
                     padding: '16px 20px',
                     display: 'flex',
@@ -280,15 +280,15 @@ export default function AdminDB() {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                       {req.adminStatus === 'Reschedule Requested' ? (
-                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(234, 179, 8, 0.25)', color: '#facc15', border: '1px solid #facc15' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(120, 53, 15, 0.15)', color: '#78350f', border: '1px solid #78350f' }}>
                           🔄 RESCHEDULE REQUEST
                         </span>
                       ) : (
-                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(139, 92, 246, 0.25)', color: '#a78bfa', border: '1px solid #8b5cf6' }}>
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(5, 150, 105, 0.15)', color: '#047857', border: '1px solid #059669' }}>
                           🆕 NEW LESSON REQUEST
                         </span>
                       )}
-                      <strong style={{ color: '#ffffff', fontSize: '15px' }}>{req.service}</strong>
+                      <strong style={{ color: '#1c1917', fontSize: '15px' }}>{req.service}</strong>
                       <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                         — {req.customerName || 'Student'} ({req.customerEmail})
                       </span>
@@ -296,15 +296,15 @@ export default function AdminDB() {
 
                     {req.adminStatus === 'Reschedule Requested' ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', marginTop: '4px', flexWrap: 'wrap' }}>
-                        <span style={{ color: '#94a3b8', textDecoration: 'line-through' }}>
+                        <span style={{ color: '#78350f', textDecoration: 'line-through' }}>
                           Original: {req.date} @ {req.time}
                         </span>
-                        <span style={{ color: '#facc15', fontWeight: 800, background: 'rgba(234, 179, 8, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>
+                        <span style={{ color: '#047857', fontWeight: 800, background: 'rgba(5, 150, 105, 0.15)', padding: '2px 8px', borderRadius: '6px' }}>
                           👉 Requested New: {req.requestedDate} @ {req.requestedTime}
                         </span>
                       </div>
                     ) : (
-                      <div style={{ fontSize: '13px', color: '#c4b5fd', fontWeight: 700, marginTop: '4px' }}>
+                      <div style={{ fontSize: '13px', color: '#059669', fontWeight: 700, marginTop: '4px' }}>
                         📅 Requested Slot: {req.date} at {req.time}
                       </div>
                     )}
