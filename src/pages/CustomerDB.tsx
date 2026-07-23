@@ -159,8 +159,119 @@ export default function CustomerDB() {
     setDeclineReasonText('')
   }
 
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastVariant, setToastVariant] = useState<'success' | 'warning' | 'error'>('success')
+
+  useEffect(() => {
+    const jobWithNotification = techJobs.find((b) => b.customerNotification)
+    if (jobWithNotification && jobWithNotification.customerNotification) {
+      const message = jobWithNotification.customerNotification
+      const variant = jobWithNotification.customerNotificationType || 'success'
+
+      setToastMessage(message!)
+      setToastVariant(variant)
+      setShowToast(true)
+    }
+  }, [techJobs])
+
   return (
     <div className="page-container" style={{ paddingBottom: '60px' }}>
+      {showToast && toastMessage && (
+        <div
+          role="alert"
+          className="premium-card toast-container"
+          style={{
+            position: 'fixed',
+            top: '24px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '90%',
+            maxWidth: '500px',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            background: 'rgba(15, 23, 42, 0.96)',
+            border: '1px solid rgba(245, 158, 11, 0.4)',
+            borderRadius: '16px',
+            boxShadow: '0 12px 36px rgba(245, 158, 11, 0.2)',
+            borderLeft: `5px solid ${
+              toastVariant === 'success'
+                ? '#f59e0b'
+                : toastVariant === 'error'
+                ? '#f87171'
+                : '#38bdf8'
+            }`,
+            padding: '16px 20px',
+            color: '#ffffff',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
+            <div
+              style={{
+                width: '34px',
+                height: '34px',
+                borderRadius: '50%',
+                background: 'rgba(245, 158, 11, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '18px',
+                fontWeight: 700,
+                color:
+                  toastVariant === 'success'
+                    ? '#f59e0b'
+                    : toastVariant === 'error'
+                    ? '#f87171'
+                    : '#38bdf8',
+              }}
+            >
+              {toastVariant === 'success' ? '🛠️' : toastVariant === 'error' ? '🛑' : 'ℹ️'}
+            </div>
+            <div>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  color: '#f59e0b',
+                }}
+              >
+                Dispatch Job Alert
+              </p>
+              <p
+                style={{
+                  margin: '2px 0 0 0',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: '#ffffff',
+                }}
+              >
+                {toastMessage}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowToast(false)}
+            aria-label="Dismiss notification"
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontSize: '20px',
+              padding: '4px',
+            }}
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {/* ─── HEADER ────────────────────────────────────────────── */}
       <div
         style={{
