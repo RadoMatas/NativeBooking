@@ -1,25 +1,19 @@
 {
   "rewrites": [
     {
-      "source": "/",
-      "has": [
-        {
-          "type": "host",
-          "value": "faraon.nativebooking.co"
-        }
-      ],
-      "destination": "/faraon/index.html"
+      "source": "/faraon",
+      "destination": "/public/faraon/index.html"
     },
     {
-      "source": "/faraon",
-      "destination": "/faraon/index.html"
+      "source": "/faraon/",
+      "destination": "/public/faraon/index.html"
     },
     {
       "source": "/faraon/(.*)",
-      "destination": "/faraon/$1"
+      "destination": "/public/faraon/$1"
     },
     {
-      "source": "/((?!assets/|faraon/).*)",
+      "source": "/((?!assets/|public/|faraon/).*)",
       "destination": "/index.html"
     }
   ]
