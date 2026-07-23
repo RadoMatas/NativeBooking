@@ -333,18 +333,51 @@ export default function CustomerDB() {
                   <strong style={{ color: 'var(--text-secondary)' }}>Service:</strong>{' '}
                   {latestBooking.service}
                 </p>
-                <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Date:</strong>{' '}
-                  {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedDate
-                    ? latestBooking.requestedDate
-                    : latestBooking.date}
-                </p>
-                <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Time:</strong>{' '}
-                  {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime
-                    ? latestBooking.requestedTime
-                    : latestBooking.time}
-                </p>
+                {/* High-Visibility Date & Time Ticket Banner */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    background: 'rgba(0, 0, 0, 0.65)',
+                    border: '1px solid rgba(16, 185, 129, 0.45)',
+                    borderRadius: '14px',
+                    overflow: 'hidden',
+                    boxShadow: '0 4px 20px rgba(16, 185, 129, 0.15)',
+                    margin: '8px 0',
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: '10px 16px',
+                      background: 'rgba(16, 185, 129, 0.15)',
+                      borderRight: '1px solid rgba(16, 185, 129, 0.3)',
+                      flex: 1,
+                      textAlign: 'center',
+                    }}
+                  >
+                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--accent-color)', display: 'block' }}>
+                      APPOINTMENT DATE
+                    </span>
+                    <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap' }}>
+                      📅 {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedDate ? latestBooking.requestedDate : latestBooking.date}
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      padding: '10px 18px',
+                      background: 'rgba(16, 185, 129, 0.28)',
+                      flex: 1,
+                      textAlign: 'center',
+                    }}
+                  >
+                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#ffffff', display: 'block' }}>
+                      TIME SLOT
+                    </span>
+                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#34d399', whiteSpace: 'nowrap' }}>
+                      🕒 {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime ? latestBooking.requestedTime : latestBooking.time}
+                    </span>
+                  </div>
+                </div>
                 {latestBooking.artistName && (
                   <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong>{' '}
