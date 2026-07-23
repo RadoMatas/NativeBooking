@@ -105,6 +105,9 @@ export default function BookAppointment() {
   // Date and Roster validation
   const getDateValidationError = (dateString: string) => {
     if (!dateString) return ''
+    if (dateString < today) {
+      return 'You cannot select a past date. Please pick today or a future date.'
+    }
     const d = new Date(dateString)
     const dayOfWeek = d.getDay() // 0=Sunday, 1=Monday... 6=Saturday
 
