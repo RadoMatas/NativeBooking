@@ -225,10 +225,134 @@ export default function AdminDB() {
         </div>
       </div>
 
-      <div style={{ marginBottom: '32px' }}>
+      <div style={{ marginBottom: '28px' }}>
         <h1 style={{ fontSize: '36px', marginBottom: '4px' }}>Admin Dashboard</h1>
         <p>Review bookings, statuses, and customer notes for {BUSINESS_CONFIG.name}.</p>
       </div>
+
+      {/* ─── PROMINENT ACTION QUEUE TOP BANNER ───────────────────── */}
+      {(() => {
+        const pendingRequests = bookings.filter(
+          (b) => b.adminStatus === 'Reschedule Requested' || b.status === 'Pending'
+        )
+        if (pendingRequests.length === 0) return null
+
+        return (
+          <div
+            className="premium-card"
+            style={{
+              marginBottom: '28px',
+              padding: '22px 26px',
+              border: '1px solid #facc15',
+              background: 'rgba(234, 179, 8, 0.08)',
+              boxShadow: '0 8px 32px rgba(234, 179, 8, 0.16)',
+              borderRadius: '20px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+              <span style={{ fontSize: '26px' }}>⚡</span>
+              <div>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#facc15', margin: 0 }}>
+                  Action Queue ({pendingRequests.length} Pending Request{pendingRequests.length > 1 ? 's' : ''})
+                </h3>
+                <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                  Clients submitted new slot requests or bookings needing admin action.
+                </span>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {pendingRequests.map((req) => (
+                <div
+                  key={req.id}
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.45)',
+                    border: '1px solid rgba(234, 179, 8, 0.3)',
+                    borderRadius: '14px',
+                    padding: '16px 20px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '14px',
+                  }}
+                >
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                      {req.adminStatus === 'Reschedule Requested' ? (
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(234, 179, 8, 0.25)', color: '#facc15', border: '1px solid #facc15' }}>
+                          🔄 RESCHEDULE REQUEST
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(56, 189, 248, 0.25)', color: '#38bdf8', border: '1px solid #38bdf8' }}>
+                          🆕 NEW BOOKING REQUEST
+                        </span>
+                      )}
+                      <strong style={{ color: '#ffffff', fontSize: '15px' }}>{req.service}</strong>
+                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                        — {req.customerName || 'Client'} ({req.customerEmail})
+                      </span>
+                    </div>
+
+                    {req.adminStatus === 'Reschedule Requested' ? (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', marginTop: '4px', flexWrap: 'wrap' }}>
+                        <span style={{ color: '#94a3b8', textDecoration: 'line-through' }}>
+                          Original: {req.date} @ {req.time}
+                        </span>
+                        <span style={{ color: '#facc15', fontWeight: 800, background: 'rgba(234, 179, 8, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>
+                          👉 Requested New: {req.requestedDate} @ {req.requestedTime}
+                        </span>
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: '13px', color: '#34d399', fontWeight: 700, marginTop: '4px' }}>
+                        📅 Requested Slot: {req.date} at {req.time}
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {req.adminStatus === 'Reschedule Requested' ? (
+                      <>
+                        <button
+                          onClick={() => handleApproveReschedule(req.id)}
+                          className="btn btn-primary"
+                          style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
+                        >
+                          ✅ Approve New Slot
+                        </button>
+                        <button
+                          onClick={() => handleDeclineReschedule(req.id)}
+                          className="btn btn-danger"
+                          style={{ fontSize: '12px', padding: '6px 14px' }}
+                        >
+                          ❌ Decline
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => updateBookingStatus(req.id, 'Confirmed')}
+                          className="btn btn-primary"
+                          style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
+                        >
+                          Confirm Booking
+                        </button>
+                        <button
+                          onClick={() => updateBookingStatus(req.id, 'Cancelled')}
+                          className="btn btn-danger"
+                          style={{ fontSize: '12px', padding: '6px 14px' }}
+                        >
+                          Decline
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
+      })()}
 
       <div className="admin-dashboard-grid">
         {/* Left Side: Bookings list */}
@@ -318,25 +442,49 @@ export default function AdminDB() {
                         </span>
                       )}
                     </div>
+                  </div>                  {/* Request Type Badge */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    {booking.adminStatus === 'Reschedule Requested' ? (
+                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px', borderRadius: '8px', background: 'rgba(234, 179, 8, 0.2)', color: '#facc15', border: '1px solid rgba(234, 179, 8, 0.4)' }}>
+                        🔄 RESCHEDULE REQUEST
+                      </span>
+                    ) : booking.status === 'Pending' ? (
+                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px', borderRadius: '8px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.4)' }}>
+                        🆕 NEW BOOKING REQUEST
+                      </span>
+                    ) : booking.status === 'Cancelled' ? (
+                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.4)' }}>
+                        🛑 CANCELLATION
+                      </span>
+                    ) : null}
                   </div>
 
                   {booking.adminStatus === 'Reschedule Requested' ? (
                     <div
                       style={{
-                        padding: '12px 16px',
-                        background: 'rgba(234, 179, 8, 0.05)',
-                        border: '1px solid rgba(234, 179, 8, 0.15)',
-                        borderRadius: '12px',
-                        marginBottom: '12px',
-                        fontSize: '14px',
+                        padding: '14px 18px',
+                        background: 'rgba(234, 179, 8, 0.08)',
+                        border: '1px solid rgba(234, 179, 8, 0.35)',
+                        borderRadius: '14px',
+                        marginBottom: '14px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
                       }}
                     >
-                      <p style={{ margin: '2px 0' }}>
-                        <strong>Current Slot:</strong> {booking.date} at {booking.time}
-                      </p>
-                      <p style={{ margin: '2px 0', color: '#facc15', fontWeight: 600 }}>
-                        <strong>Requested New Slot:</strong> {booking.requestedDate} at {booking.requestedTime}
-                      </p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                        <span>📅 <strong>Original Slot:</strong></span>
+                        <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontWeight: 600 }}>
+                          {booking.date} at {booking.time}
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', flexWrap: 'wrap' }}>
+                        <span style={{ color: '#facc15', fontWeight: 800 }}>⚡ <strong>Requested New Slot:</strong></span>
+                        <span style={{ background: 'rgba(234, 179, 8, 0.25)', border: '1px solid #facc15', color: '#fef08a', padding: '4px 10px', borderRadius: '8px', fontWeight: 900 }}>
+                          📅 {booking.requestedDate} 🕒 {booking.requestedTime}
+                        </span>
+                      </div>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', margin: '10px 0' }}>
