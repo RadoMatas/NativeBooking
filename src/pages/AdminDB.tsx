@@ -314,14 +314,14 @@ export default function AdminDB() {
                     {req.adminStatus === 'Reschedule Requested' ? (
                       <>
                         <button
-                          onClick={() => handleApproveReschedule(req.id)}
+                          onClick={() => acceptReschedule(req.id)}
                           className="btn btn-primary"
                           style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
                         >
                           ✅ Approve New Slot
                         </button>
                         <button
-                          onClick={() => handleDeclineReschedule(req.id)}
+                          onClick={() => declineReschedule(req.id)}
                           className="btn btn-danger"
                           style={{ fontSize: '12px', padding: '6px 14px' }}
                         >
