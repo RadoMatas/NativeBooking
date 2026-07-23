@@ -1,7 +1,8 @@
 {
   "rewrites": [
-    { "source": "/faraon", "destination": "/faraon/game.html" },
-    { "source": "/faraon/", "destination": "/faraon/game.html" },
+    { "source": "/faraon", "destination": "/faraon/index.html" },
+    { "source": "/faraon/", "destination": "/faraon/index.html" },
+    { "source": "/faraon/(.*)", "destination": "/faraon/$1" },
     { "source": "/((?!assets/|faraon/).*)", "destination": "/index.html" }
   ]
 }
