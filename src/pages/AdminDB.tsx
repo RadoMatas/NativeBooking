@@ -323,18 +323,56 @@ export default function AdminDB() {
                       </span>
                     </div>
 
-                    {/* Date / Time pill */}
+                    {/* High-Visibility Date & Time Ticket Badge */}
                     <div
                       style={{
-                        background: 'rgba(16, 185, 129, 0.1)',
-                        border: '1px solid rgba(16, 185, 129, 0.3)',
-                        borderRadius: '14px',
-                        padding: '12px 20px',
-                        textAlign: 'right',
+                        display: 'flex',
+                        alignItems: 'center',
+                        background: 'rgba(0, 0, 0, 0.65)',
+                        border: '1px solid rgba(16, 185, 129, 0.45)',
+                        borderRadius: '16px',
+                        overflow: 'hidden',
+                        boxShadow: '0 4px 20px rgba(16, 185, 129, 0.18)',
                       }}
                     >
-                      <div style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff' }}>📅 {call.date}</div>
-                      <div style={{ fontSize: '14px', fontWeight: 700, color: t.accent }}>🕒 {call.timeSlot} CET</div>
+                      {/* Date Section */}
+                      <div
+                        style={{
+                          padding: '10px 16px',
+                          background: 'rgba(16, 185, 129, 0.15)',
+                          borderRight: '1px solid rgba(16, 185, 129, 0.35)',
+                          textAlign: 'center',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent }}>
+                          DATE
+                        </span>
+                        <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap' }}>
+                          📅 {call.date}
+                        </span>
+                      </div>
+
+                      {/* Time Section */}
+                      <div
+                        style={{
+                          padding: '10px 18px',
+                          background: 'rgba(16, 185, 129, 0.28)',
+                          textAlign: 'center',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#ffffff' }}>
+                          TIME
+                        </span>
+                        <span style={{ fontSize: '17px', fontWeight: 900, color: '#34d399', whiteSpace: 'nowrap' }}>
+                          🕒 {call.timeSlot} CET
+                        </span>
+                      </div>
                     </div>
                   </div>
 
