@@ -2,7 +2,7 @@
  * Faraon / Prší Online Client Application
  */
 
-const socket = io();
+const socket = io('https://reservation-blueprint.onrender.com');
 
 // DOM Elements
 const viewLanding = document.getElementById('viewLanding');
