@@ -243,16 +243,16 @@ export default function AdminDB() {
             style={{
               marginBottom: '28px',
               padding: '22px 26px',
-              border: '1px solid #8b5cf6',
-              background: 'rgba(139, 92, 246, 0.08)',
-              boxShadow: '0 8px 32px rgba(139, 92, 246, 0.16)',
+              border: '1px solid #f59e0b',
+              background: 'rgba(245, 158, 11, 0.08)',
+              boxShadow: '0 8px 32px rgba(245, 158, 11, 0.16)',
               borderRadius: '20px',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
               <span style={{ fontSize: '26px' }}>⚡</span>
               <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#a78bfa', margin: 0 }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#facc15', margin: 0 }}>
                   Action Queue ({pendingRequests.length} Pending Request{pendingRequests.length > 1 ? 's' : ''})
                 </h3>
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
@@ -464,10 +464,10 @@ export default function AdminDB() {
                     </div>
                   ) : (
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', margin: '10px 0' }}>
-                      <span style={{ fontSize: '13px', fontWeight: 800, color: '#ffffff', background: 'rgba(139, 92, 246, 0.15)', border: '1px solid rgba(139, 92, 246, 0.35)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 800, color: '#ffffff', background: 'rgba(245, 158, 11, 0.12)', border: '1px solid rgba(245, 158, 11, 0.35)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
                         📅 {booking.date}
                       </span>
-                      <span style={{ fontSize: '13px', fontWeight: 900, color: '#c4b5fd', background: 'rgba(139, 92, 246, 0.28)', border: '1px solid rgba(139, 92, 246, 0.5)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 900, color: '#fbbf24', background: 'rgba(245, 158, 11, 0.25)', border: '1px solid rgba(245, 158, 11, 0.5)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
                         🕒 {booking.time}
                       </span>
                     </div>
