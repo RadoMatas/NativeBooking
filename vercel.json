@@ -1,8 +1,9 @@
 {
-  "rewrites": [
-    { "source": "/faraon", "destination": "/faraon/index.html" },
-    { "source": "/faraon/", "destination": "/faraon/index.html" },
-    { "source": "/faraon/(.*)", "destination": "/faraon/$1" },
-    { "source": "/((?!assets/|faraon/).*)", "destination": "/index.html" }
+  "routes": [
+    { "src": "/faraon", "dest": "/faraon/index.html" },
+    { "src": "/faraon/", "dest": "/faraon/index.html" },
+    { "src": "/faraon/(.*)", "dest": "/faraon/$1" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
