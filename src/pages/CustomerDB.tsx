@@ -333,29 +333,29 @@ export default function CustomerDB() {
                   <strong style={{ color: 'var(--text-secondary)' }}>Service:</strong>{' '}
                   {latestBooking.service}
                 </p>
-                {/* High-Visibility Date & Time Ticket Banner (Oxford Gold Theme) */}
+                {/* High-Visibility Date & Time Ticket Banner (Electric Cobalt Theme) */}
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    background: 'rgba(245, 158, 11, 0.08)',
-                    border: '1px solid rgba(245, 158, 11, 0.45)',
+                    background: 'rgba(56, 189, 248, 0.08)',
+                    border: '1px solid rgba(56, 189, 248, 0.45)',
                     borderRadius: '14px',
                     overflow: 'hidden',
-                    boxShadow: '0 4px 20px rgba(245, 158, 11, 0.15)',
+                    boxShadow: '0 4px 20px rgba(56, 189, 248, 0.15)',
                     margin: '8px 0',
                   }}
                 >
                   <div
                     style={{
                       padding: '10px 16px',
-                      background: 'rgba(245, 158, 11, 0.15)',
-                      borderRight: '1px solid rgba(245, 158, 11, 0.3)',
+                      background: 'rgba(56, 189, 248, 0.15)',
+                      borderRight: '1px solid rgba(56, 189, 248, 0.3)',
                       flex: 1,
                       textAlign: 'center',
                     }}
                   >
-                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#f59e0b', display: 'block' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#38bdf8', display: 'block' }}>
                       LESSON DATE
                     </span>
                     <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap' }}>
@@ -365,7 +365,7 @@ export default function CustomerDB() {
                   <div
                     style={{
                       padding: '10px 18px',
-                      background: 'rgba(245, 158, 11, 0.28)',
+                      background: 'rgba(56, 189, 248, 0.28)',
                       flex: 1,
                       textAlign: 'center',
                     }}
@@ -373,7 +373,7 @@ export default function CustomerDB() {
                     <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#ffffff', display: 'block' }}>
                       TIME SLOT
                     </span>
-                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#fbbf24', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#7dd3fc', whiteSpace: 'nowrap' }}>
                       🕒 {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime ? latestBooking.requestedTime : latestBooking.time}
                     </span>
                   </div>
