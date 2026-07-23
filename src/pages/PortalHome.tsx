@@ -422,6 +422,75 @@ export default function PortalHome() {
         </div>
       </section>
 
+      {/* ─── FEATURED PLATFORM DEMO VIDEO ──────────────────────── */}
+      <section style={{ padding: '0 24px 60px 24px', maxWidth: '960px', margin: '0 auto', width: '100%' }}>
+        <div
+          style={{
+            background: 'rgba(20, 20, 23, 0.75)',
+            border: '1px solid rgba(16, 185, 129, 0.4)',
+            borderRadius: '24px',
+            padding: '24px',
+            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(16, 185, 129, 0.15)',
+            backdropFilter: 'blur(16px)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '20px' }}>🎬</span>
+              <div>
+                <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#ffffff', margin: 0 }}>
+                  Featured Platform Overview
+                </h3>
+                <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                  See how NativeBooking transforms inquiries into instant bookings (90-sec walkthrough)
+                </span>
+              </div>
+            </div>
+            <span
+              style={{
+                fontSize: '11px',
+                fontWeight: 800,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                padding: '4px 10px',
+                borderRadius: '8px',
+                background: 'rgba(16, 185, 129, 0.15)',
+                color: '#34d399',
+                border: '1px solid rgba(16, 185, 129, 0.3)',
+              }}
+            >
+              ⚡ Official Demo Video
+            </span>
+          </div>
+
+          <div
+            style={{
+              position: 'relative',
+              paddingBottom: '56.25%',
+              height: 0,
+              overflow: 'hidden',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <iframe
+              src="https://www.youtube.com/embed/hT9lzAfrMuE?rel=0&modestbranding=1"
+              title="NativeBooking Official Platform Overview Demo"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                border: 'none',
+              }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </section>
+
       {/* ─── WHAT WE OFFER ────────────────────────────────────── */}
       <section style={{ padding: '80px 24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '52px' }}>

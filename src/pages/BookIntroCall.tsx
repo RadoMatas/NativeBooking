@@ -135,23 +135,42 @@ export default function BookIntroCall() {
             NATIVEBOOKING
           </span>
         </div>
-        <button
-          onClick={() => navigate('/')}
-          className="nb-bic-btn"
-          style={{
-            background: 'none',
-            border: `1px solid ${t.border}`,
-            color: t.textSecondary,
-            padding: '7px 16px',
-            borderRadius: '8px',
-            fontSize: '13px',
-            fontWeight: 600,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
-          ← Back to Portal
-        </button>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <button
+            onClick={() => navigate('/adminlogin')}
+            className="nb-bic-btn"
+            style={{
+              background: 'rgba(16, 185, 129, 0.15)',
+              border: '1px solid rgba(16, 185, 129, 0.4)',
+              color: '#34d399',
+              padding: '7px 16px',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            Admin Portal ⚡
+          </button>
+          <button
+            onClick={() => navigate('/')}
+            className="nb-bic-btn"
+            style={{
+              background: 'none',
+              border: `1px solid ${t.border}`,
+              color: t.textSecondary,
+              padding: '7px 16px',
+              borderRadius: '8px',
+              fontSize: '13px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            ← Back to Portal
+          </button>
+        </div>
       </nav>
 
       {/* ─── MAIN CONTENT ────────────────────────────────────── */}
@@ -244,23 +263,43 @@ export default function BookIntroCall() {
               <span style={{ color: t.accent, fontWeight: 600 }}>{submittedBooking.email}</span> shortly.
             </p>
 
-            <button
-              onClick={() => navigate('/')}
-              style={{
-                width: '100%',
-                padding: '14px',
-                fontSize: '14px',
-                fontWeight: 700,
-                borderRadius: '10px',
-                background: t.accent,
-                color: '#ffffff',
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 4px 16px rgba(16,185,129,0.3)',
-              }}
-            >
-              Return to Homepage
-            </button>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <button
+                onClick={() => navigate('/adminlogin')}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  borderRadius: '10px',
+                  background: t.accent,
+                  color: '#000000',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                  boxShadow: '0 4px 16px rgba(16, 185, 129, 0.3)',
+                }}
+              >
+                Open Central Control Board ⚡
+              </button>
+              <button
+                onClick={() => navigate('/')}
+                style={{
+                  flex: 1,
+                  padding: '14px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  borderRadius: '10px',
+                  background: 'none',
+                  border: `1px solid ${t.border}`,
+                  color: '#ffffff',
+                  cursor: 'pointer',
+                  fontFamily: 'inherit',
+                }}
+              >
+                Return to Homepage
+              </button>
+            </div>
           </div>
         ) : (
           /* ─── REQUEST FORM ─────────────────────────────────── */
