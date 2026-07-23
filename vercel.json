@@ -1,20 +1,7 @@
 {
   "rewrites": [
-    {
-      "source": "/faraon",
-      "destination": "/public/faraon/index.html"
-    },
-    {
-      "source": "/faraon/",
-      "destination": "/public/faraon/index.html"
-    },
-    {
-      "source": "/faraon/(.*)",
-      "destination": "/public/faraon/$1"
-    },
-    {
-      "source": "/((?!assets/|public/|faraon/).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/faraon", "destination": "/faraon/game.html" },
+    { "source": "/faraon/", "destination": "/faraon/game.html" },
+    { "source": "/((?!assets/|faraon/).*)", "destination": "/index.html" }
   ]
 }
