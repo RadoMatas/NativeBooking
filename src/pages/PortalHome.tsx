@@ -180,9 +180,11 @@ export default function PortalHome() {
         backgroundColor: t.bg,
         color: t.textPrimary,
         fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-        background: `radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 45%),
-                     radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.03), transparent 50%),
-                     ${t.bg}`,
+        background: `radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 50%),
+                     radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.08), transparent 50%),
+                     radial-gradient(rgba(16, 185, 129, 0.2) 1.5px, transparent 1.5px),
+                     #09090b`,
+        backgroundSize: '100% 100%, 100% 100%, 36px 36px, 100% 100%',
         backgroundAttachment: 'fixed',
       }}
     >
