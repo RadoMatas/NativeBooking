@@ -426,10 +426,12 @@ export default function PortalHome() {
       <section style={{ padding: '0 24px 60px 24px', maxWidth: '960px', margin: '0 auto', width: '100%' }}>
         <div
           style={{
-            background: 'rgba(20, 20, 23, 0.75)',
+            position: 'relative',
+            background: 'radial-gradient(circle at center, rgba(16, 185, 129, 0.12) 0%, rgba(9, 9, 11, 0.95) 100%), radial-gradient(rgba(16, 185, 129, 0.22) 1.5px, transparent 1.5px)',
+            backgroundSize: '100% 100%, 28px 28px',
             border: '1px solid rgba(16, 185, 129, 0.4)',
             borderRadius: '24px',
-            padding: '24px',
+            padding: '28px',
             boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(16, 185, 129, 0.15)',
             backdropFilter: 'blur(16px)',
           }}
