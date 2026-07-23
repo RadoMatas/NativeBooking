@@ -162,8 +162,15 @@ export default function AdminDB() {
 
   const handleDispatchJob = (e: React.FormEvent) => {
     e.preventDefault()
+    const today = new Date().toISOString().split('T')[0]
+
     if (!clientName || !siteAddress || !clientPhone) {
       alert('Please enter client name, phone, and job site address.')
+      return
+    }
+
+    if (jobDate < today) {
+      alert(`Invalid Date: You cannot schedule or reassign a job order to a past date (${jobDate}). Please select today (${today}) or a future date.`)
       return
     }
 
@@ -235,6 +242,12 @@ export default function AdminDB() {
   const handleAdminConfirmReschedule = (e: React.FormEvent) => {
     e.preventDefault()
     if (!reschedulingJob) return
+
+    const today = new Date().toISOString().split('T')[0]
+    if (adminNewDate < today) {
+      alert(`Invalid Date: You cannot reschedule a job order to a past date (${adminNewDate}). Please select today (${today}) or a future date.`)
+      return
+    }
 
     if (rescheduleConflict) {
       alert(`Conflict: Technician is already booked for ${rescheduleConflict.service} at ${adminNewTime} on ${adminNewDate}.`)
@@ -785,6 +798,7 @@ export default function AdminDB() {
                 </label>
                 <input
                   type="date"
+                  min={new Date().toISOString().split('T')[0]}
                   value={adminNewDate}
                   onChange={(e) => setAdminNewDate(e.target.value)}
                   className="form-input"
@@ -1058,6 +1072,7 @@ export default function AdminDB() {
                 <div style={{ display: 'flex', gap: '6px' }}>
                   <input
                     type="date"
+                    min={new Date().toISOString().split('T')[0]}
                     value={jobDate}
                     onChange={(e) => setJobDate(e.target.value)}
                     className="form-input"
