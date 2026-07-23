@@ -78,10 +78,10 @@ export const BUSINESS_CONFIG: BusinessConfig = {
     "Join the virtual student portal 5 minutes before class starts (if online)."
   ],
   theme: {
-    primaryColor: "#0b132b", // Deep MasterClass Cobalt Night
-    cardBg: "rgba(15, 23, 42, 0.85)", // Obsidian Navy glass card
-    accentColor: "#38bdf8",  // Electric Cyan Accent
-    accentHover: "#0284c7",  // Hover Cobalt Blue
+    primaryColor: "#fdfbf7", // Soft Organic Warm Cream
+    cardBg: "rgba(255, 255, 255, 0.92)", // Pure Warm White Card
+    accentColor: "#059669",  // Deep Emerald Green Accent
+    accentHover: "#047857",  // Dark Forest Emerald
     borderRadius: "14px",
     fontFamily: "'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif"
   }
