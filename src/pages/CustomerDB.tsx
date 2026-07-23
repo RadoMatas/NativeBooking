@@ -191,24 +191,28 @@ export default function CustomerDB() {
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '16px',
-            background: 'rgba(20, 20, 23, 0.95)',
-            borderLeft: `4px solid ${
+            background: 'rgba(253, 251, 247, 0.98)',
+            border: '1px solid rgba(120, 53, 15, 0.3)',
+            borderRadius: '16px',
+            boxShadow: '0 12px 36px rgba(120, 53, 15, 0.12)',
+            borderLeft: `5px solid ${
               toastVariant === 'success'
-                ? '#4ade80'
+                ? '#059669'
                 : toastVariant === 'error'
-                ? '#f87171'
-                : '#facc15'
+                ? '#dc2626'
+                : '#78350f'
             }`,
             padding: '16px 20px',
+            color: '#1c1917',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
             <div
               style={{
-                width: '32px',
-                height: '32px',
+                width: '34px',
+                height: '34px',
                 borderRadius: '50%',
-                background: 'rgba(255, 255, 255, 0.05)',
+                background: 'rgba(5, 150, 105, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -216,13 +220,13 @@ export default function CustomerDB() {
                 fontWeight: 700,
                 color:
                   toastVariant === 'success'
-                    ? '#4ade80'
+                    ? '#059669'
                     : toastVariant === 'error'
-                    ? '#f87171'
-                    : '#facc15',
+                    ? '#dc2626'
+                    : '#78350f',
               }}
             >
-              {toastVariant === 'success' ? '✓' : '!'}
+              {toastVariant === 'success' ? '✓' : toastVariant === 'error' ? '✕' : 'ℹ'}
             </div>
             <div>
               <p
@@ -232,17 +236,17 @@ export default function CustomerDB() {
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  color: 'var(--text-secondary)',
+                  color: '#78350f',
                 }}
               >
-                Booking Update
+                Academic Lesson Alert
               </p>
               <p
                 style={{
                   margin: '2px 0 0 0',
                   fontSize: '14px',
-                  fontWeight: 500,
-                  color: 'var(--text-primary)',
+                  fontWeight: 600,
+                  color: '#1c1917',
                 }}
               >
                 {toastMessage}
