@@ -1,9 +1,5 @@
 {
-  "routes": [
-    { "src": "/faraon", "dest": "/faraon/index.html" },
-    { "src": "/faraon/", "dest": "/faraon/index.html" },
-    { "src": "/faraon/(.*)", "dest": "/faraon/$1" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
