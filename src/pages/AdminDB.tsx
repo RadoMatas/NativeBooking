@@ -340,10 +340,10 @@ export default function AdminDB() {
                     </div>
                   ) : (
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', margin: '10px 0' }}>
-                      <span style={{ fontSize: '13px', fontWeight: 800, color: '#ffffff', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-color)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 800, color: '#0f172a', background: 'rgba(14, 165, 233, 0.12)', border: '1px solid rgba(14, 165, 233, 0.35)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
                         📅 {booking.date}
                       </span>
-                      <span style={{ fontSize: '13px', fontWeight: 900, color: '#34d399', background: 'rgba(16, 185, 129, 0.18)', border: '1px solid rgba(16, 185, 129, 0.45)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
+                      <span style={{ fontSize: '13px', fontWeight: 900, color: '#0284c7', background: 'rgba(14, 165, 233, 0.25)', border: '1px solid rgba(14, 165, 233, 0.5)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
                         🕒 {booking.time}
                       </span>
                     </div>
