@@ -394,9 +394,47 @@ export default function CustomerDB() {
                       </h3>
                     </div>
 
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff' }}>📅 {job.date}</div>
-                      <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--accent-color)' }}>🕒 {job.time}</div>
+                    {/* High-Visibility Date & Time Ticket Badge */}
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        background: 'rgba(0, 0, 0, 0.65)',
+                        border: '1px solid rgba(245, 158, 11, 0.45)',
+                        borderRadius: '14px',
+                        overflow: 'hidden',
+                        boxShadow: '0 4px 16px rgba(245, 158, 11, 0.15)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          padding: '8px 14px',
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+                          textAlign: 'center',
+                        }}
+                      >
+                        <span style={{ fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-secondary)', display: 'block' }}>
+                          DATE
+                        </span>
+                        <span style={{ fontSize: '14px', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap' }}>
+                          📅 {job.date}
+                        </span>
+                      </div>
+                      <div
+                        style={{
+                          padding: '8px 16px',
+                          background: 'rgba(245, 158, 11, 0.2)',
+                          textAlign: 'center',
+                        }}
+                      >
+                        <span style={{ fontSize: '9px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--accent-color)', display: 'block' }}>
+                          TIME
+                        </span>
+                        <span style={{ fontSize: '16px', fontWeight: 900, color: 'var(--accent-color)', whiteSpace: 'nowrap' }}>
+                          🕒 {job.time}
+                        </span>
+                      </div>
                     </div>
                   </div>
 

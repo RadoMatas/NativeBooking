@@ -535,13 +535,14 @@ export default function AdminDB() {
                           {job.service}
                         </h3>
                       </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--accent-color)' }}>
+                      {/* High-Visibility Date & Time Badge */}
+                      <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#ffffff', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-color)', padding: '4px 10px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
                           📅 {job.date}
-                        </div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                        </span>
+                        <span style={{ fontSize: '12px', fontWeight: 900, color: 'var(--accent-color)', background: 'rgba(245, 158, 11, 0.18)', border: '1px solid rgba(245, 158, 11, 0.45)', padding: '4px 10px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
                           🕒 {job.time}
-                        </div>
+                        </span>
                       </div>
                     </div>
 
@@ -654,9 +655,12 @@ export default function AdminDB() {
                   )}
                 </div>
 
-                <div>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Scheduled Time:</strong>{' '}
-                  <span>{selectedBooking.date} at {selectedBooking.time}</span>
+                <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '12px 16px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '13px' }}>📅 Scheduled Appointment:</span>
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 800, color: '#ffffff' }}>📅 {selectedBooking.date}</span>
+                    <span style={{ fontSize: '14px', fontWeight: 900, color: 'var(--accent-color)', background: 'rgba(245, 158, 11, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>🕒 {selectedBooking.time}</span>
+                  </div>
                 </div>
 
                 {selectedBooking.declineReason && (
