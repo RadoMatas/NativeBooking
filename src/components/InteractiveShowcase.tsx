@@ -4,10 +4,7 @@ import {
   ClinicIcon,
   AcademicIcon,
   ContractorIcon,
-  CheckIcon,
-  UsersIcon,
-  CalendarIcon,
-  CreditCardIcon
+  CheckIcon
 } from './ui/Icons'
 
 type TabKey = 'studio' | 'clinic' | 'academic' | 'contractor'
