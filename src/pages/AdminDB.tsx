@@ -250,13 +250,13 @@ export default function AdminDB() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <span style={{ fontSize: '26px' }}>⚡</span>
+              <span style={{ fontSize: '26px' }}>🎨</span>
               <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#facc15', margin: 0 }}>
-                  Action Queue ({pendingRequests.length} Pending Request{pendingRequests.length > 1 ? 's' : ''})
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#10b981', margin: 0 }}>
+                  Studio Action Queue ({pendingRequests.length} Pending Request{pendingRequests.length > 1 ? 's' : ''})
                 </h3>
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                  Clients submitted new slot requests or bookings needing admin action.
+                  Artist Schedule Board, Custom Flash Artwork & Aftercare Consent Verification.
                 </span>
               </div>
             </div>
