@@ -351,6 +351,28 @@ export default function BookAppointment() {
               </div>
             </div>
 
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                marginTop: '16px',
+                padding: '8px 12px',
+                borderRadius: '8px',
+                background: 'rgba(16, 185, 129, 0.06)',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+                fontSize: '11px',
+                color: 'var(--text-secondary)',
+              }}
+            >
+              <span style={{ color: '#10b981', fontWeight: 800 }}>🔒 256-Bit SSL Encrypted</span>
+              <span>·</span>
+              <span>Powered by Stripe</span>
+              <span>·</span>
+              <span>Instant Confirmation</span>
+            </div>
+
             <div style={{ display: 'flex', gap: '12px', marginTop: '28px', justifyContent: 'flex-end' }}>
               <button
                 type="button"
