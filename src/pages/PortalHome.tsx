@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import InteractiveShowcase from '../components/InteractiveShowcase'
+import SavingsCalculator from '../components/SavingsCalculator'
+import WhiteLabelComparison from '../components/WhiteLabelComparison'
 import {
   StudioIcon,
   ClinicIcon,
@@ -95,10 +97,10 @@ export default function PortalHome() {
   ]
 
   const steps = [
-    { num: '01', icon: <SparklesIcon size={20} style={{ color: '#10b981' }} />, title: 'Discovery', desc: 'We get on a call, talk about how your business runs day to day, and figure out exactly what to build.' },
-    { num: '02', icon: <SettingsIcon size={20} style={{ color: '#10b981' }} />, title: 'Build', desc: 'We build it. Your name on it, your colors, your domain, your way of working.' },
-    { num: '03', icon: <ArrowRightIcon size={20} style={{ color: '#10b981' }} />, title: 'Handover', desc: 'You get everything — the domain, the database, the source code. We stay around if you need us.' },
-    { num: '04', icon: <CheckIcon size={20} style={{ color: '#10b981' }} />, title: 'The Result', desc: 'Your clients book. You manage. NativeBooking handles the rest. Less admin, more business.' },
+    { num: '01', icon: <SparklesIcon size={20} style={{ color: '#10b981' }} />, title: 'Blueprint', desc: 'We map your specific operational workflow, booking rules, staff rosters, and payment requirements.' },
+    { num: '02', icon: <SettingsIcon size={20} style={{ color: '#10b981' }} />, title: 'Tailored Build', desc: 'We engineer your custom software. Your brand identity, your domain name, your custom database.' },
+    { num: '03', icon: <ArrowRightIcon size={20} style={{ color: '#10b981' }} />, title: 'Handover', desc: 'Full system handover — domain, database, and source code control with zero monthly commission fees.' },
+    { num: '04', icon: <CheckIcon size={20} style={{ color: '#10b981' }} />, title: 'Operational Launch', desc: 'Your clients book, your crews dispatch, and your operations run on autopilot with zero per-booking cuts.' },
   ]
 
   const scrollToDemo = () => {
@@ -112,11 +114,9 @@ export default function PortalHome() {
         backgroundColor: t.bg,
         color: t.textPrimary,
         fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-        background: `radial-gradient(circle at top right, rgba(16, 185, 129, 0.12), transparent 50%),
-                     radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.08), transparent 50%),
-                     radial-gradient(rgba(16, 185, 129, 0.2) 1.5px, transparent 1.5px),
-                     #09090b`,
-        backgroundSize: '100% 100%, 100% 100%, 36px 36px, 100% 100%',
+        background: `radial-gradient(circle at top right, rgba(16, 185, 129, 0.08), transparent 50%),
+                     radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.05), transparent 50%),
+                     #0c0d10`,
         backgroundAttachment: 'fixed',
       }}
     >
@@ -182,7 +182,7 @@ export default function PortalHome() {
           alignItems: 'center',
           padding: '16px 32px',
           borderBottom: `1px solid ${t.border}`,
-          background: 'rgba(9, 9, 11, 0.85)',
+          background: 'rgba(12, 13, 16, 0.88)',
           backdropFilter: 'blur(16px)',
         }}
       >
@@ -339,6 +339,16 @@ export default function PortalHome() {
       {/* ─── INTERACTIVE SHOWCASE SECTION ──────────────────────── */}
       <section id="demos" style={{ padding: '0 24px 80px 24px' }}>
         <InteractiveShowcase />
+      </section>
+
+      {/* ─── SAVINGS CALCULATOR SECTION ───────────────────────── */}
+      <section style={{ padding: '0 24px 80px 24px' }}>
+        <SavingsCalculator />
+      </section>
+
+      {/* ─── WHITE LABEL COMPARISON SECTION ───────────────────── */}
+      <section style={{ padding: '0 24px 80px 24px' }}>
+        <WhiteLabelComparison />
       </section>
 
       {/* ─── FEATURED PLATFORM DEMO VIDEO ──────────────────────── */}

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { login, register, currentUserRole } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
+import { UsersIcon, SettingsIcon } from '../components/ui/Icons'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -137,40 +138,82 @@ export default function Login() {
           </div>
         )}
 
-        {/* Quick Demo Access */}
+        {/* Quick Demo Persona Access */}
         {!isSignUpMode && (
           <div style={{ marginBottom: '24px' }}>
-            <p
+            <div
               style={{
-                fontSize: '11px',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                color: 'var(--text-secondary)',
-                textAlign: 'center',
-                marginBottom: '10px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '12px',
               }}
             >
-              Jump straight in
-            </p>
-            <div style={{ display: 'flex', gap: '10px' }}>
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  color: 'var(--accent-color)',
+                }}
+              >
+                ⚡ Instant Test-Drive
+              </span>
+              <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                No password required
+              </span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <button
                 type="button"
                 onClick={() => handleDemoLogin('customer')}
                 disabled={isLoggingIn}
-                className="btn btn-primary"
-                style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '14px 12px',
+                  borderRadius: '12px',
+                  background: 'rgba(16, 185, 129, 0.08)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  color: '#ffffff',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
               >
-                👤 Try as Customer
+                <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', display: 'flex' }}>
+                  <UsersIcon size={18} />
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 700 }}>Client Test-Drive</div>
+                <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Customer Reservation View</div>
               </button>
+
               <button
                 type="button"
                 onClick={() => handleDemoLogin('admin')}
                 disabled={isLoggingIn}
-                className="btn btn-secondary"
-                style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '14px 12px',
+                  borderRadius: '12px',
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  color: '#ffffff',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
               >
-                ⚙️ Try as Admin
+                <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.08)', color: '#ffffff', display: 'flex' }}>
+                  <SettingsIcon size={18} />
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: 700 }}>Manager Board</div>
+                <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Admin Control Panel</div>
               </button>
             </div>
           </div>

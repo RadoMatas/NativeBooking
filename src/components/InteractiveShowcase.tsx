@@ -8,27 +8,15 @@ import {
 } from './ui/Icons'
 
 type TabKey = 'studio' | 'clinic' | 'academic' | 'contractor'
+type ViewMode = 'customer' | 'admin'
 
 export default function InteractiveShowcase() {
   const [activeTab, setActiveTab] = useState<TabKey>('studio')
+  const [viewMode, setViewMode] = useState<ViewMode>('admin')
 
-  const tabs: {
-    key: TabKey
-    label: string
-    subtitle: string
-    icon: React.ReactNode
-    accent: string
-    badge: string
-    demoUrl: string
-    features: string[]
-    mockData: {
-      title: string
-      badge: string
-      rows: { label: string; detail: string; status: string; statusBg: string; statusColor: string }[]
-    }
-  }[] = [
+  const tabs = [
     {
-      key: 'studio',
+      key: 'studio' as TabKey,
       label: 'Creative Studios',
       subtitle: 'Tattoo, Piercing & Craft Studios',
       icon: <StudioIcon size={18} />,
@@ -41,18 +29,28 @@ export default function InteractiveShowcase() {
         'Custom consent & aftercare notes',
         'Multi-artist schedule synchronization'
       ],
-      mockData: {
-        title: 'Ink & Art Studio — Live Queue',
-        badge: '4 Appointments Today',
+      adminData: {
+        title: 'Ink & Art Studio — Admin Operations Board',
+        badge: '4 Active Appointments Today',
         rows: [
           { label: 'Marcel S. — Sleeve Tattoo Session', detail: '10:00 AM · Artist: Marcel · Deposit Paid ($50)', status: 'Confirmed', statusBg: 'rgba(16, 185, 129, 0.12)', statusColor: '#34d399' },
           { label: 'Elena R. — Wrist Fine Line', detail: '01:30 PM · Artist: Sophia · Deposit Paid ($30)', status: 'In Progress', statusBg: 'rgba(14, 165, 233, 0.12)', statusColor: '#38bdf8' },
           { label: 'David K. — Custom Consult', detail: '04:00 PM · Artist: Marcel · Consult Only', status: 'Upcoming', statusBg: 'rgba(245, 158, 11, 0.12)', statusColor: '#fbbf24' }
         ]
+      },
+      customerData: {
+        title: 'Ink & Art Studio — Direct Guest Booking',
+        badge: 'Select Artist & Slot',
+        fields: [
+          { label: 'Selected Service', val: 'Custom Full Sleeve Session (4 hrs)' },
+          { label: 'Choose Artist', val: 'Marcel S. (Sleeve & Realism Specialist)' },
+          { label: 'Date & Time', val: 'Tomorrow · 10:00 AM (CET)' },
+          { label: 'Deposit Due Today', val: '$50.00 (Powered by Stripe 256-bit SSL)' }
+        ]
       }
     },
     {
-      key: 'clinic',
+      key: 'clinic' as TabKey,
       label: 'Clinics & Medical',
       subtitle: 'Dental, Chiropractic & Wellness',
       icon: <ClinicIcon size={18} />,
@@ -65,18 +63,28 @@ export default function InteractiveShowcase() {
         'No-deposit flexible booking option',
         'Automated patient appointment reminders'
       ],
-      mockData: {
-        title: 'Apex Dental & Health — Patient Board',
+      adminData: {
+        title: 'Apex Dental & Health — Patient Clinical Board',
         badge: '6 Patients Scheduled',
         rows: [
           { label: 'Dr. Aris V. — Teeth Cleaning & X-Ray', detail: '09:00 AM · Room 2 · Intake Form Completed', status: 'Checked In', statusBg: 'rgba(14, 165, 233, 0.12)', statusColor: '#38bdf8' },
           { label: 'Dr. Maya L. — Orthodontic Check', detail: '11:15 AM · Room 1 · Follow-up Session', status: 'Confirmed', statusBg: 'rgba(16, 185, 129, 0.12)', statusColor: '#34d399' },
           { label: 'Dr. Aris V. — Emergency Consult', detail: '02:00 PM · Room 3 · Symptom Note Attached', status: 'Pending', statusBg: 'rgba(245, 158, 11, 0.12)', statusColor: '#fbbf24' }
         ]
+      },
+      customerData: {
+        title: 'Apex Dental & Health — Patient Booking Portal',
+        badge: 'Zero Deposit Required',
+        fields: [
+          { label: 'Requested Service', val: 'Comprehensive Dental Exam & Cleaning' },
+          { label: 'Attending Practitioner', val: 'Dr. Aris V. (Lead Dentist)' },
+          { label: 'Preferred Time', val: 'Friday · 09:00 AM (CET)' },
+          { label: 'Intake Questionnaire', val: 'Medical History & Symptoms Form Attached' }
+        ]
       }
     },
     {
-      key: 'academic',
+      key: 'academic' as TabKey,
       label: 'Education & Academies',
       subtitle: 'Schools, Tutors & Training Hubs',
       icon: <AcademicIcon size={18} />,
@@ -89,17 +97,27 @@ export default function InteractiveShowcase() {
         'Automated attendance & lesson logs',
         'Multi-student class slot capacity'
       ],
-      mockData: {
-        title: 'Vanguard Academy — Class Roster',
+      adminData: {
+        title: 'Vanguard Academy — Class Roster & Instructor Board',
         badge: '18 Students Enrolled',
         rows: [
           { label: 'Advanced Coding Boot Camp — Module 4', detail: '10:00 AM · Instructor: Alex · 12/15 Seats Filled', status: 'Active Class', statusBg: 'rgba(16, 185, 129, 0.12)', statusColor: '#34d399' },
           { label: 'UX Design Workshop — Session 2', detail: '02:00 PM · Instructor: Sarah · 8/10 Seats Filled', status: 'Open Slots', statusBg: 'rgba(14, 165, 233, 0.12)', statusColor: '#38bdf8' }
         ]
+      },
+      customerData: {
+        title: 'Vanguard Academy — Student Course Registration',
+        badge: 'Instant Seat Reservation',
+        fields: [
+          { label: 'Selected Course', val: 'Full-Stack Software Architecture' },
+          { label: 'Lead Instructor', val: 'Alex M. (Senior Architect)' },
+          { label: 'Schedule', val: 'Mon & Wed · 10:00 AM (CET)' },
+          { label: 'Enrollment Fee', val: '$250.00 (Includes Course Materials)' }
+        ]
       }
     },
     {
-      key: 'contractor',
+      key: 'contractor' as TabKey,
       label: 'Contractors & Crews',
       subtitle: 'HVAC, Construction & Home Services',
       icon: <ContractorIcon size={18} />,
@@ -112,12 +130,22 @@ export default function InteractiveShowcase() {
         'Timing & job site labor bookkeeping',
         'Internal operational pipeline (no guest portal needed)'
       ],
-      mockData: {
-        title: 'Apex HVAC & Trade Dispatch Board',
+      adminData: {
+        title: 'Apex HVAC & Trade — Field Dispatch Board',
         badge: '3 Active Field Crews',
         rows: [
           { label: 'Crew A (John & Pete) — Commercial HVAC Repair', detail: '08:00 AM - 12:00 PM · Site: 144 Oak St · Parts On-Site', status: 'On Site', statusBg: 'rgba(16, 185, 129, 0.12)', statusColor: '#34d399' },
           { label: 'Crew B (Mark) — Residential Duct Inspection', detail: '01:00 PM - 03:30 PM · Site: 88 Elm Ave · Labor Hours Tracked', status: 'Dispatched', statusBg: 'rgba(245, 158, 11, 0.12)', statusColor: '#fbbf24' }
+        ]
+      },
+      customerData: {
+        title: 'Apex HVAC & Trade — Service Request Portal',
+        badge: 'Job Site Dispatch',
+        fields: [
+          { label: 'Requested Service', val: 'Emergency HVAC Heating System Repair' },
+          { label: 'Assigned Dispatch Crew', val: 'Crew A (Commercial Specialist Team)' },
+          { label: 'Site Address', val: '144 Oak St, Building B, Floor 2' },
+          { label: 'Labor Booking Status', val: 'Scheduled · Priority Field Dispatch' }
         ]
       }
     }
@@ -134,7 +162,7 @@ export default function InteractiveShowcase() {
         background: 'rgba(22, 24, 29, 0.85)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
         borderRadius: '20px',
-        padding: '32px 24px',
+        padding: '36px 28px',
         boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
       }}
     >
@@ -150,13 +178,13 @@ export default function InteractiveShowcase() {
             marginBottom: '8px',
           }}
         >
-          Tailored Workflow Engine
+          Dual-View Operational Workbench
         </span>
         <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
-          One Platform. Unlimited Industry Workflows.
+          Experience Customer Booking & Admin Control Side-by-Side
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
-          Select an industry below to see how NativeBooking configures custom rules, rosters, timing, and customer portals.
+          Select an industry below and toggle between the Customer Booking Portal and Admin Operations Board.
         </p>
       </div>
 
@@ -166,7 +194,7 @@ export default function InteractiveShowcase() {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: '10px',
-          marginBottom: '28px',
+          marginBottom: '24px',
         }}
       >
         {tabs.map((tab) => {
@@ -209,6 +237,49 @@ export default function InteractiveShowcase() {
             </button>
           )
         })}
+      </div>
+
+      {/* View Mode Toggle Header */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '10px',
+          marginBottom: '24px',
+        }}
+      >
+        <button
+          onClick={() => setViewMode('admin')}
+          style={{
+            padding: '8px 18px',
+            borderRadius: '8px',
+            fontSize: '13px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            border: viewMode === 'admin' ? `1px solid ${currentTab.accent}` : '1px solid rgba(255,255,255,0.08)',
+            background: viewMode === 'admin' ? `${currentTab.accent}22` : 'rgba(255,255,255,0.02)',
+            color: viewMode === 'admin' ? '#ffffff' : 'var(--text-secondary)',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          🖥️ Admin Control Board
+        </button>
+        <button
+          onClick={() => setViewMode('customer')}
+          style={{
+            padding: '8px 18px',
+            borderRadius: '8px',
+            fontSize: '13px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            border: viewMode === 'customer' ? `1px solid ${currentTab.accent}` : '1px solid rgba(255,255,255,0.08)',
+            background: viewMode === 'customer' ? `${currentTab.accent}22` : 'rgba(255,255,255,0.02)',
+            color: viewMode === 'customer' ? '#ffffff' : 'var(--text-secondary)',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          📱 Customer Booking View
+        </button>
       </div>
 
       {/* Active Tab Workspace Interactive Panel */}
@@ -293,52 +364,91 @@ export default function InteractiveShowcase() {
             boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px' }}>
-            <div>
-              <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>{currentTab.mockData.title}</div>
-              <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Central Operational Dashboard</div>
-            </div>
-            <span style={{ fontSize: '11px', fontWeight: 600, color: currentTab.accent, background: `${currentTab.accent}15`, padding: '3px 8px', borderRadius: '6px' }}>
-              {currentTab.mockData.badge}
-            </span>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            {currentTab.mockData.rows.map((row, index) => (
-              <div
-                key={index}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  border: '1px solid rgba(255, 255, 255, 0.05)',
-                  borderRadius: '8px',
-                  padding: '12px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
-              >
+          {viewMode === 'admin' ? (
+            /* Admin Operations Board View */
+            <>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px' }}>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', marginBottom: '2px' }}>
-                    {row.label}
-                  </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{row.detail}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>{currentTab.adminData.title}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Central Manager Control Hub</div>
                 </div>
-                <span
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    padding: '3px 8px',
-                    borderRadius: '6px',
-                    background: row.statusBg,
-                    color: row.statusColor,
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {row.status}
+                <span style={{ fontSize: '11px', fontWeight: 600, color: currentTab.accent, background: `${currentTab.accent}15`, padding: '3px 8px', borderRadius: '6px' }}>
+                  {currentTab.adminData.badge}
                 </span>
               </div>
-            ))}
-          </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {currentTab.adminData.rows.map((row, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.02)',
+                      border: '1px solid rgba(255, 255, 255, 0.05)',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', marginBottom: '2px' }}>
+                        {row.label}
+                      </div>
+                      <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{row.detail}</div>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        background: row.statusBg,
+                        color: row.statusColor,
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {row.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            /* Customer Direct Booking Portal View */
+            <>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px' }}>
+                <div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>{currentTab.customerData.title}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Client Self-Service Experience</div>
+                </div>
+                <span style={{ fontSize: '11px', fontWeight: 600, color: currentTab.accent, background: `${currentTab.accent}15`, padding: '3px 8px', borderRadius: '6px' }}>
+                  {currentTab.customerData.badge}
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {currentTab.customerData.fields.map((f, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.02)',
+                      border: '1px solid rgba(255, 255, 255, 0.05)',
+                      borderRadius: '8px',
+                      padding: '10px 14px',
+                    }}
+                  >
+                    <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '3px' }}>
+                      {f.label}
+                    </div>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff' }}>
+                      {f.val}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
