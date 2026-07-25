@@ -38,17 +38,20 @@ export default function BookAppointment() {
   }
 
   const [customerName, setCustomerName] = useState(() => {
-    if (isReschedule && latestBooking) return latestBooking.customerName || 'Jane Doe'
-    return 'Jane Doe'
+    if (isReschedule && latestBooking) return latestBooking.customerName || ''
+    return ''
   })
   const [customerEmail, setCustomerEmail] = useState(() => {
-    if (isReschedule && latestBooking) return latestBooking.customerEmail || 'customer@test.com'
-    return sessionStorage.getItem('currentUserEmail') || currentUserEmail || 'customer@test.com'
+    if (isReschedule && latestBooking) return latestBooking.customerEmail || ''
+    return sessionStorage.getItem('currentUserEmail') || currentUserEmail || ''
   })
   const [customerPhone, setCustomerPhone] = useState(() => {
-    if (isReschedule && latestBooking) return latestBooking.customerPhone || '+48 555 123 456'
-    return '+48 555 123 456'
+    if (isReschedule && latestBooking) return latestBooking.customerPhone || ''
+    return ''
   })
+
+  const [formErrorMsg, setFormErrorMsg] = useState('')
+  const [checkoutErrorMsg, setCheckoutErrorMsg] = useState('')
 
   const [service, setService] = useState(
     isReschedule && latestBooking ? latestBooking.service : ''
@@ -102,33 +105,18 @@ export default function BookAppointment() {
     return slotDate > now
   })
 
-  // Date and Roster validation
-  const getDateValidationError = (dateString: string) => {
-    if (!dateString) return ''
-    const d = new Date(dateString)
-    const dayOfWeek = d.getDay() // 0=Sunday, 1=Monday... 6=Saturday
-
+  let dateError = ''
+  if (date) {
+    const selectedObj = new Date(date)
+    const dayOfWeek = selectedObj.getDay()
     if (BUSINESS_CONFIG.closedDays.includes(dayOfWeek)) {
-      return `The studio is closed on Sundays.`
+      dateError = 'We are closed on weekends. Please pick a weekday.'
     }
-
-    if (artistId) {
-      const artist = BUSINESS_CONFIG.artists.find((a) => a.id === artistId)
-      if (artist && !artist.workingDays.includes(dayOfWeek)) {
-        const daysMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-        const workingNames = artist.workingDays.map((dayNum) => daysMap[dayNum]).join(', ')
-        return `${artist.name} only works on: ${workingNames}.`
-      }
-    }
-
-    return ''
   }
 
-  const selectedService = BUSINESS_CONFIG.services.find((s) => s.name === service)
-  const servicePrice = selectedService ? selectedService.price : 0
+  const selectedServiceObj = BUSINESS_CONFIG.services.find((s) => s.id === service)
+  const servicePrice = selectedServiceObj ? selectedServiceObj.price : 0
   const depositAmount = (servicePrice * BUSINESS_CONFIG.depositPercentage) / 100
-
-  const dateError = getDateValidationError(date)
 
   const processBooking = () => {
     const matchedArtist = BUSINESS_CONFIG.artists.find((a) => a.id === artistId)
@@ -136,15 +124,11 @@ export default function BookAppointment() {
     if (isReschedule && latestBooking) {
       const bookingData = {
         ...latestBooking,
-        ownerEmail: currentUserEmail || customerEmail || latestBooking.ownerEmail,
-        customerName,
-        customerEmail,
-        customerPhone,
         service,
         artistId,
         artistName: matchedArtist ? matchedArtist.name : '',
-        depositAmount: latestBooking.depositAmount ?? depositAmount,
-        depositPaid: latestBooking.depositPaid ?? (depositAmount > 0),
+        date,
+        time,
         notes,
         status: 'Pending',
         adminStatus: 'Reschedule Requested',
@@ -163,9 +147,9 @@ export default function BookAppointment() {
       const bookingData = {
         id: crypto.randomUUID(),
         ownerEmail: activeEmail,
-        customerName,
-        customerEmail,
-        customerPhone,
+        customerName: customerName || 'Valued Guest',
+        customerEmail: customerEmail || activeEmail,
+        customerPhone: customerPhone || 'Not provided',
         service,
         artistId,
         artistName: matchedArtist ? matchedArtist.name : '',
@@ -187,29 +171,30 @@ export default function BookAppointment() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    setFormErrorMsg('')
 
     if (!service) {
-      alert('Please select a service before proceeding.')
+      setFormErrorMsg('Please select a service before proceeding.')
       return
     }
 
     if (!artistId) {
-      alert(`Please select a ${BUSINESS_CONFIG.staffLabel.toLowerCase()} before proceeding.`)
+      setFormErrorMsg(`Please select a ${BUSINESS_CONFIG.staffLabel.toLowerCase()} before proceeding.`)
       return
     }
 
     if (!date) {
-      alert('Please select a date before proceeding.')
+      setFormErrorMsg('Please select a date before proceeding.')
       return
     }
 
     if (!time) {
-      alert('Please select a time slot before proceeding.')
+      setFormErrorMsg('Please select a time slot before proceeding.')
       return
     }
 
     if (dateError) {
-      alert(dateError)
+      setFormErrorMsg(dateError)
       return
     }
 
@@ -222,8 +207,9 @@ export default function BookAppointment() {
   }
 
   const handleConfirmPayment = () => {
+    setCheckoutErrorMsg('')
     if (!cardNumber || !cardExpiry || !cardCvc) {
-      alert('Please fill in card details to complete the payment.')
+      setCheckoutErrorMsg('Please fill in card details to complete the payment.')
       return
     }
 
@@ -271,12 +257,51 @@ export default function BookAppointment() {
               boxShadow: '0 0 30px rgba(16, 185, 129, 0.15)',
             }}
           >
-            <h2 style={{ fontSize: '24px', marginBottom: '8px', color: 'var(--accent-color)' }}>
-              Secure Checkout
+            <h2 style={{ fontSize: '24px', marginBottom: '8px', color: 'var(--accent-color)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>🔒</span> Secure Checkout
             </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '20px' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '16px' }}>
               Confirm your booking by completing the card authorization for the required deposit.
             </p>
+
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                padding: '10px 14px',
+                borderRadius: '8px',
+                background: 'rgba(16, 185, 129, 0.08)',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+                fontSize: '12px',
+                color: 'var(--accent-color)',
+                marginBottom: '20px',
+              }}
+            >
+              <span>🛡️ 256-bit SSL Encryption</span>
+              <span>•</span>
+              <span>💳 Powered by Stripe</span>
+              <span>•</span>
+              <span>Instant Confirmation</span>
+            </div>
+
+            {checkoutErrorMsg && (
+              <div
+                style={{
+                  padding: '12px 16px',
+                  borderRadius: '10px',
+                  background: 'rgba(239, 68, 68, 0.12)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  color: '#f87171',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  textAlign: 'center',
+                  marginBottom: '20px',
+                }}
+              >
+                {checkoutErrorMsg}
+              </div>
+            )}
 
             <div
               style={{
@@ -413,6 +438,24 @@ export default function BookAppointment() {
           <span style={{ color: 'var(--text-secondary)' }}>➔</span>
           <span style={{ color: 'var(--text-secondary)' }}>③ Confirm</span>
         </div>
+
+        {formErrorMsg && (
+          <div
+            style={{
+              padding: '12px 16px',
+              borderRadius: '10px',
+              background: 'rgba(239, 68, 68, 0.12)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              color: '#f87171',
+              fontSize: '13px',
+              fontWeight: 600,
+              textAlign: 'center',
+              marginBottom: '24px',
+            }}
+          >
+            {formErrorMsg}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">

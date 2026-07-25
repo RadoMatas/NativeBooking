@@ -7,23 +7,25 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoggingIn(true)
+    setErrorMsg('')
 
     const ok = await login(email, password)
     setIsLoggingIn(false)
 
     if (!ok) {
-      alert('Invalid admin credentials.')
+      setErrorMsg('Invalid admin credentials.')
       return
     }
 
     if (currentUserRole === 'admin') {
       navigate('/admin')
     } else {
-      alert('Access denied: Admin credentials required.')
+      setErrorMsg('Access denied: Admin credentials required.')
     }
   }
 
@@ -80,6 +82,23 @@ export default function AdminLogin() {
             Protected Admin Access · Authorized Personnel Only
           </p>
         </div>
+
+        {errorMsg && (
+          <div
+            style={{
+              padding: '12px 14px',
+              borderRadius: '10px',
+              background: 'rgba(239, 68, 68, 0.12)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              color: '#f87171',
+              fontSize: '13px',
+              fontWeight: 600,
+              textAlign: 'center',
+            }}
+          >
+            {errorMsg}
+          </div>
+        )}
 
         <div>
           <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '6px' }}>

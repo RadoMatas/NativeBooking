@@ -1,107 +1,38 @@
-import { useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  StudioIcon,
+  ClinicIcon,
+  AcademicIcon,
+  ContractorIcon,
+  CreditCardIcon,
+  CalendarIcon,
+  UsersIcon,
+  ShieldIcon,
+  SettingsIcon,
+  SparklesIcon,
+  CheckIcon,
+  ArrowRightIcon
+} from '../components/ui/Icons'
 
 export default function PortalHome() {
   const navigate = useNavigate()
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    let animId = 0
-    let snakeHead = 0
-    let waveOffset = 0
-    const SNAKE_LEN = 22
-    const SEG = 9          // px between perimeter steps
-    const GRID = 38        // dot grid spacing
-    const ACCENT = '16, 185, 129'
-
-    const resize = () => {
-      canvas.width  = canvas.offsetWidth
-      canvas.height = canvas.offsetHeight
-    }
-    resize()
-    window.addEventListener('resize', resize)
-
-    // Build perimeter point list clockwise
-    const buildPerim = () => {
-      const w = canvas.width
-      const h = canvas.height
-      const pts: { x: number; y: number }[] = []
-      for (let x = 0; x <= w; x += SEG) pts.push({ x, y: 0 })
-      for (let y = 0; y <= h; y += SEG) pts.push({ x: w, y })
-      for (let x = w; x >= 0; x -= SEG) pts.push({ x, y: h })
-      for (let y = h; y >= 0; y -= SEG) pts.push({ x: 0, y })
-      return pts
-    }
-
-    const draw = () => {
-      const w = canvas.width
-      const h = canvas.height
-      ctx.clearRect(0, 0, w, h)
-
-      // ── Dot grid with sine-wave pulse ──────────────────────
-      waveOffset += 0.018
-      for (let x = 0; x <= w; x += GRID) {
-        for (let y = 0; y <= h; y += GRID) {
-          const dist  = Math.sqrt((x - w * 0.5) ** 2 + (y - h * 0.45) ** 2)
-          const pulse = Math.sin(dist * 0.018 - waveOffset)
-          const alpha = Math.max(0.1, 0.18 + pulse * 0.12)
-          ctx.beginPath()
-          ctx.arc(x, y, 1.8, 0, Math.PI * 2)
-          ctx.fillStyle = `rgba(${ACCENT}, ${alpha})`
-          ctx.fill()
-        }
-      }
-
-      // ── Snake along perimeter ──────────────────────────────
-      const perim = buildPerim()
-      const total = perim.length
-      snakeHead = (snakeHead + 0.35) % total
-
-      for (let i = 0; i < SNAKE_LEN; i++) {
-        const idx   = (Math.floor(snakeHead) - i + total * 2) % total
-        const pt    = perim[idx]
-        const ratio = 1 - i / SNAKE_LEN          // 1 at head → 0 at tail
-        const alpha = ratio * 0.65
-        const size  = 3 + ratio * 4
-
-        ctx.shadowColor = `rgba(${ACCENT}, 0.9)`
-        ctx.shadowBlur  = i === 0 ? 14 : 5
-        ctx.fillStyle   = `rgba(${ACCENT}, ${alpha})`
-        ctx.fillRect(pt.x - size / 2, pt.y - size / 2, size, size)
-      }
-      ctx.shadowBlur = 0
-
-      animId = requestAnimationFrame(draw)
-    }
-
-    draw()
-    return () => {
-      cancelAnimationFrame(animId)
-      window.removeEventListener('resize', resize)
-    }
-  }, [])
 
   const t = {
     bg: '#09090b',
-    cardBg: 'rgba(20, 20, 23, 0.6)',
+    cardBg: 'rgba(20, 20, 23, 0.75)',
     strip: 'rgba(255,255,255,0.025)',
-    border: 'rgba(255, 255, 255, 0.07)',
+    border: 'rgba(255, 255, 255, 0.08)',
     accent: '#10b981',
     accentSoft: 'rgba(16, 185, 129, 0.1)',
     textPrimary: '#f4f4f5',
     textSecondary: '#a1a1aa',
-    textMuted: 'rgba(255,255,255,0.35)',
+    textMuted: 'rgba(255,255,255,0.5)',
   }
 
   const industries = [
     {
       title: 'Tattoo & Creative Studios',
-      icon: '🎨',
+      icon: <StudioIcon size={22} style={{ color: '#10b981' }} />,
       status: 'Live Sandbox',
       statusColor: '#10b981',
       statusBg: 'rgba(16, 185, 129, 0.1)',
@@ -111,7 +42,7 @@ export default function PortalHome() {
     },
     {
       title: 'Dental & Chiropractic Clinics',
-      icon: '🩺',
+      icon: <ClinicIcon size={22} style={{ color: '#0ea5e9' }} />,
       status: 'Live Sandbox',
       statusColor: '#0ea5e9',
       statusBg: 'rgba(14, 165, 233, 0.1)',
@@ -121,7 +52,7 @@ export default function PortalHome() {
     },
     {
       title: 'Education & Academies',
-      icon: '📚',
+      icon: <AcademicIcon size={22} style={{ color: '#0d9488' }} />,
       status: 'Live Sandbox',
       statusColor: '#0d9488',
       statusBg: 'rgba(13, 148, 136, 0.1)',
@@ -131,7 +62,7 @@ export default function PortalHome() {
     },
     {
       title: 'HVAC & Home Services',
-      icon: '🛠️',
+      icon: <ContractorIcon size={22} style={{ color: '#f59e0b' }} />,
       status: 'Live Sandbox',
       statusColor: '#f59e0b',
       statusBg: 'rgba(245, 158, 11, 0.1)',
@@ -142,31 +73,31 @@ export default function PortalHome() {
   ]
 
   const features = [
-    { icon: '💳', title: 'Payments & Deposits', desc: 'Stripe checkout built in. Collect deposits, authorise cards, and handle refunds — all without leaving the app.' },
-    { icon: '📅', title: 'Smart Scheduling', desc: 'Picks open slots, blocks taken times, and respects your working hours, days off, and staff availability.' },
-    { icon: '👥', title: 'Staff & Roster', desc: 'Each team member gets their own schedule, profile, and service list. Clients pick who they want.' },
-    { icon: '🧑‍💼', title: 'Client Portal', desc: 'Clients log in, see their bookings, request a reschedule, and track the status — no phone call needed.' },
-    { icon: '⚙️', title: 'Admin Control Hub', desc: 'See every booking, approve changes, leave notes on completed sessions, and keep the whole team on track.' },
-    { icon: '🔐', title: 'Login & Access', desc: 'Email and password auth out of the box. Google Sign-in can be wired in for customer-facing builds. Role-based access keeps admin and client views fully separate.' },
+    { icon: <CreditCardIcon size={20} style={{ color: '#10b981' }} />, title: 'Payments & Deposits', desc: 'Stripe checkout built in. Collect deposits, authorise cards, and handle refunds — all without leaving the app.' },
+    { icon: <CalendarIcon size={20} style={{ color: '#10b981' }} />, title: 'Smart Scheduling', desc: 'Picks open slots, blocks taken times, and respects your working hours, days off, and staff availability.' },
+    { icon: <UsersIcon size={20} style={{ color: '#10b981' }} />, title: 'Staff & Roster', desc: 'Each team member gets their own schedule, profile, and service list. Clients pick who they want.' },
+    { icon: <UsersIcon size={20} style={{ color: '#10b981' }} />, title: 'Client Portal', desc: 'Clients log in, see their bookings, request a reschedule, and track the status — no phone call needed.' },
+    { icon: <SettingsIcon size={20} style={{ color: '#10b981' }} />, title: 'Admin Control Hub', desc: 'See every booking, approve changes, leave notes on completed sessions, and keep the whole team on track.' },
+    { icon: <ShieldIcon size={20} style={{ color: '#10b981' }} />, title: 'Login & Access', desc: 'Email and password auth out of the box. Google Sign-in can be wired in for customer-facing builds. Role-based access keeps admin and client views fully separate.' },
   ]
 
   const pills = [
-    { icon: '🎨', label: 'Custom Branding' },
-    { icon: '🌐', label: 'Your Own Domain' },
-    { icon: '💳', label: 'Payments On/Off' },
-    { icon: '💰', label: 'Deposits On/Off' },
-    { icon: '👥', label: 'Multi-Staff' },
-    { icon: '📱', label: 'Mobile PWA' },
-    { icon: '🔥', label: 'Firebase Database' },
-    { icon: '🎨', label: 'Custom Colors' },
-    { icon: '📧', label: 'Email Notifications' },
+    { icon: <StudioIcon size={16} />, label: 'Custom Branding' },
+    { icon: <SparklesIcon size={16} />, label: 'Your Own Domain' },
+    { icon: <CreditCardIcon size={16} />, label: 'Payments On/Off' },
+    { icon: <CreditCardIcon size={16} />, label: 'Deposits On/Off' },
+    { icon: <UsersIcon size={16} />, label: 'Multi-Staff' },
+    { icon: <SparklesIcon size={16} />, label: 'Mobile PWA' },
+    { icon: <ShieldIcon size={16} />, label: 'Firebase Database' },
+    { icon: <StudioIcon size={16} />, label: 'Custom Colors' },
+    { icon: <CheckIcon size={16} />, label: 'Email Notifications' },
   ]
 
   const steps = [
-    { num: '01', icon: '🤝', title: 'Discovery', desc: 'We get on a call, talk about how your business runs day to day, and figure out exactly what to build.' },
-    { num: '02', icon: '🔨', title: 'Build', desc: 'We build it. Your name on it, your colors, your domain, your way of working.' },
-    { num: '03', icon: '🚀', title: 'Handover', desc: 'You get everything — the domain, the database, the source code. We stay around if you need us.' },
-    { num: '04', icon: '🎯', title: 'The Result', desc: 'Your clients book. You manage. NativeBooking handles the rest. Less admin, more business.' },
+    { num: '01', icon: <SparklesIcon size={20} style={{ color: '#10b981' }} />, title: 'Discovery', desc: 'We get on a call, talk about how your business runs day to day, and figure out exactly what to build.' },
+    { num: '02', icon: <SettingsIcon size={20} style={{ color: '#10b981' }} />, title: 'Build', desc: 'We build it. Your name on it, your colors, your domain, your way of working.' },
+    { num: '03', icon: <ArrowRightIcon size={20} style={{ color: '#10b981' }} />, title: 'Handover', desc: 'You get everything — the domain, the database, the source code. We stay around if you need us.' },
+    { num: '04', icon: <CheckIcon size={20} style={{ color: '#10b981' }} />, title: 'The Result', desc: 'Your clients book. You manage. NativeBooking handles the rest. Less admin, more business.' },
   ]
 
   const scrollToDemo = () => {
@@ -317,19 +248,7 @@ export default function PortalHome() {
           overflow: 'hidden',
         }}
       >
-        {/* Snake + dot grid canvas */}
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            pointerEvents: 'none',
-            zIndex: 0,
-          }}
-        />
-        {/* Hero content sits above canvas */}
+        {/* Hero content */}
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div
           style={{

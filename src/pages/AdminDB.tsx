@@ -47,7 +47,7 @@ export default function AdminDB() {
       `NativeBooking Discovery Call — ${call.name}`
     )}&details=${encodeURIComponent(
       `Discovery call with ${call.name}\nIndustry: ${call.industry}\nPhone/WhatsApp: ${call.phone}\nNotes: ${call.notes || 'None'}`
-    )}&dates=${gcalDateStr}/${gcalEndDateStr}&add=${encodeURIComponent(call.email)}&authuser=info@nativebooking.co`
+    )}&dates=${gcalDateStr}/${gcalEndDateStr}&add=${encodeURIComponent(call.email)}`
 
     window.open(gcalUrl, '_blank')
 
@@ -252,9 +252,38 @@ export default function AdminDB() {
               border: `1px solid ${t.border}`,
               borderRadius: '20px',
               color: t.textSecondary,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '16px',
             }}
           >
-            No intro call requests found matching <strong>{statusFilter}</strong> status.
+            <div style={{ fontSize: '36px' }}>📋</div>
+            <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+              No {statusFilter === 'all' ? '' : statusFilter} Discovery Calls
+            </h3>
+            <p style={{ fontSize: '14px', maxWidth: '420px', lineHeight: '1.5' }}>
+              {statusFilter === 'all'
+                ? 'No discovery call requests have been submitted yet. New client inquiries will appear here automatically.'
+                : `There are currently no discovery call requests categorized as "${statusFilter}".`}
+            </p>
+            {statusFilter !== 'all' && (
+              <button
+                onClick={() => setStatusFilter('all')}
+                style={{
+                  padding: '8px 18px',
+                  borderRadius: '8px',
+                  background: t.accent,
+                  color: '#ffffff',
+                  border: 'none',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Reset Filter to All
+              </button>
+            )}
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>

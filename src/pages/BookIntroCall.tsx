@@ -28,6 +28,7 @@ export default function BookIntroCall() {
   const [phone, setPhone] = useState('')
   const [industry, setIndustry] = useState('Tattoo / Creative Studio')
   const [notes, setNotes] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
 
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submittedBooking, setSubmittedBooking] = useState<IntroCallBooking | null>(null)
@@ -36,8 +37,9 @@ export default function BookIntroCall() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrorMessage('')
     if (!name || !email || !phone) {
-      alert('Please fill in your name, email, and phone number.')
+      setErrorMessage('Please fill in your name, email, and phone number.')
       return
     }
 
@@ -55,13 +57,17 @@ export default function BookIntroCall() {
 
       // Send instant email notification via EmailJS REST API
       try {
+        const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_jfrd3cr'
+        const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_4e7ipi1'
+        const userId = import.meta.env.VITE_EMAILJS_USER_ID || 'SWLupKhyJ1aMBxMI-'
+
         await fetch('https://api.emailjs.com/api/v1.0/email/send', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            service_id: 'service_jfrd3cr',
-            template_id: 'template_4e7ipi1',
-            user_id: 'SWLupKhyJ1aMBxMI-',
+            service_id: serviceId,
+            template_id: templateId,
+            user_id: userId,
             template_params: {
               from_name: name,
               name: name,
@@ -83,7 +89,7 @@ export default function BookIntroCall() {
       setSubmittedBooking(result)
     } catch (err) {
       console.error(err)
-      alert('Failed to submit call request. Please try again.')
+      setErrorMessage('Failed to submit call request. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -335,6 +341,21 @@ export default function BookIntroCall() {
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {errorMessage && (
+                <div
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: '10px',
+                    background: 'rgba(239, 68, 68, 0.12)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    color: '#f87171',
+                    fontSize: '13px',
+                    fontWeight: 600,
+                  }}
+                >
+                  {errorMessage}
+                </div>
+              )}
               {/* Date Selection */}
               <div>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: t.textPrimary, marginBottom: '8px' }}>
