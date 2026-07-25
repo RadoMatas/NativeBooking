@@ -275,10 +275,10 @@ export default function BookAppointment() {
             }}
           >
             <h2 style={{ fontSize: '24px', marginBottom: '8px', color: 'var(--accent-color)' }}>
-              Secure Checkout
+              Sanatorium Studio Deposit Authorization
             </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '20px' }}>
-              Confirm your booking by completing the card authorization for the required deposit.
+            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '16px', lineHeight: '1.5' }}>
+              Confirm your tattoo session by securing your artist's schedule. 20% deposit goes directly toward your total studio session cost. Free cancellation up to 48 hours prior.
             </p>
 
             <div
