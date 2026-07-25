@@ -657,7 +657,7 @@ export default function BookAppointment() {
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Anything we should know?"
+              placeholder="Describe your technical background, programming experience, or specific course learning goals..."
               className="form-textarea"
               style={{ minHeight: '100px', resize: 'vertical' }}
             />
