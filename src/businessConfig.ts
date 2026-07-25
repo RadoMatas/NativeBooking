@@ -19,6 +19,7 @@ export interface BusinessConfig {
   tagline: string
   address: string
   contact: string
+  dbPrefix?: string
   openingHour: number
   closingHour: number
   slotInterval: number
