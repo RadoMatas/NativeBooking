@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import InteractiveShowcase from '../components/InteractiveShowcase'
+import SavingsCalculator from '../components/SavingsCalculator'
+import WhiteLabelComparison from '../components/WhiteLabelComparison'
 import {
   StudioIcon,
   ClinicIcon,
@@ -339,6 +341,16 @@ export default function PortalHome() {
       {/* ─── INTERACTIVE SHOWCASE SECTION ──────────────────────── */}
       <section id="demos" style={{ padding: '0 24px 80px 24px' }}>
         <InteractiveShowcase />
+      </section>
+
+      {/* ─── SAVINGS CALCULATOR SECTION ───────────────────────── */}
+      <section style={{ padding: '0 24px 80px 24px' }}>
+        <SavingsCalculator />
+      </section>
+
+      {/* ─── WHITE LABEL COMPARISON SECTION ───────────────────── */}
+      <section style={{ padding: '0 24px 80px 24px' }}>
+        <WhiteLabelComparison />
       </section>
 
       {/* ─── FEATURED PLATFORM DEMO VIDEO ──────────────────────── */}
