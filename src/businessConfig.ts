@@ -45,36 +45,44 @@ export interface BusinessConfig {
 }
 
 export const BUSINESS_CONFIG: BusinessConfig = {
-  name: "NativeBooking",
-  tagline: "Custom Reservation & Operations Software",
-  address: "NativeBooking HQ · Global Remote Operations",
-  contact: "info@nativebooking.co",
-  openingHour: 9,
+  name: "Apex Dental & Health Clinic",
+  tagline: "Pristine Clinical & Family Healthcare Engine",
+  address: "42 Healthcare Ave, Medical District, NY 10001",
+  contact: "+1 (800) 555-APEX",
+  dbPrefix: "dental",
+  openingHour: 8,
   closingHour: 18,
   slotInterval: 30,
-  closedDays: [0, 6], // Sat, Sun closed
-  depositPercentage: 0,
+  closedDays: [0], // Sunday closed
+  depositPercentage: 0, // No deposit required for medical intake
   currencySymbol: "$",
   services: [
-    { id: "intro_call", name: "Discovery Intro Call", price: 0, durationMin: 30 },
+    { id: "exam", name: "Comprehensive Dental Exam & X-Rays", price: 150, durationMin: 45 },
+    { id: "cleaning", name: "Teeth Cleaning & Fluoride Polish", price: 95, durationMin: 30 },
+    { id: "ortho", name: "Orthodontic & Invisalign Consultation", price: 200, durationMin: 60 },
+    { id: "emergency", name: "Emergency Tooth Repair & Pain Care", price: 180, durationMin: 45 }
   ],
   artists: [
-    { id: "founder", name: "NativeBooking Team", specialty: "Software Architecture", avatarEmoji: "⚡", workingDays: [1, 2, 3, 4, 5] },
+    { id: "aris", name: "Dr. Aris Vance", specialty: "Lead Dentist & Oral Surgeon", avatarEmoji: "🩺", workingDays: [1, 2, 3, 4, 5] },
+    { id: "maya", name: "Dr. Maya Lin", specialty: "Orthodontics & Invisalign", avatarEmoji: "🦷", workingDays: [1, 2, 3, 4] },
+    { id: "elena", name: "Dr. Elena Rostova", specialty: "Periodontics & Gum Health", avatarEmoji: "🔬", workingDays: [2, 3, 4, 5, 6] }
   ],
-  staffLabel: "Team Member",
-  staffLabelPlural: "Team Members",
-  notesLabel: "Project Notes",
-  adminNotesLabel: "Follow-up Notes",
-  internalNotesLabel: "Internal Lead Notes",
+  staffLabel: "Doctor",
+  staffLabelPlural: "Doctors",
+  notesLabel: "Symptom Notes / Medical Allergies",
+  adminNotesLabel: "Treatment Plan & Clinical Notes",
+  internalNotesLabel: "Internal Medical Record Notes",
   checklist: [
-    "Review prospect business type and requested slot.",
-    "Prepare custom feature breakdown for discovery call.",
+    "Complete online patient intake questionnaire before arrival.",
+    "Bring valid medical ID and dental insurance card.",
+    "List current prescriptions and any antibiotic allergies.",
+    "Arrive 5 minutes early for Room 1 or Room 2 check-in."
   ],
   theme: {
-    primaryColor: "#0c0d10",
-    cardBg: "rgba(22, 24, 29, 0.8)",
-    accentColor: "#10b981",
-    accentHover: "#34d399",
+    primaryColor: "#080e1a", // Deep medical navy background
+    cardBg: "rgba(14, 165, 233, 0.08)", // Translucent clinical panel
+    accentColor: "#0ea5e9", // Clinical Sky Blue accent
+    accentHover: "#38bdf8",
     borderRadius: "12px",
     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
   }
