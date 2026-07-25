@@ -657,7 +657,7 @@ export default function BookAppointment() {
             <textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Anything we should know?"
+              placeholder="Medical history, antibiotic allergies, current prescriptions, or specific dental symptoms..."
               className="form-textarea"
               style={{ minHeight: '100px', resize: 'vertical' }}
             />
