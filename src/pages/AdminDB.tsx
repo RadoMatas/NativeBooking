@@ -250,13 +250,13 @@ export default function AdminDB() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <span style={{ fontSize: '26px' }}>⚡</span>
+              <span style={{ fontSize: '26px' }}>🩺</span>
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0284c7', margin: 0 }}>
-                  Action Queue ({pendingRequests.length} Pending Request{pendingRequests.length > 1 ? 's' : ''})
+                  Clinical Patient Queue ({pendingRequests.length} Scheduled Patient{pendingRequests.length > 1 ? 's' : ''})
                 </h3>
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                  Patients submitted new slot requests or appointments needing admin action.
+                  Assigned Doctors, Intake Symptoms & Clinical Room Allocations (Room 1 & Room 2).
                 </span>
               </div>
             </div>
