@@ -79,10 +79,10 @@ export const BUSINESS_CONFIG: BusinessConfig = {
     "Review syllabus and instructor office hours."
   ],
   theme: {
-    primaryColor: "#071215", // Deep campus teal background
-    cardBg: "rgba(13, 148, 136, 0.08)", // Translucent teal panel
+    primaryColor: "#0c0d10", // Clean deep slate background
+    cardBg: "rgba(20, 20, 23, 0.85)", // High contrast dark card surface
     accentColor: "#0d9488", // Deep Campus Teal accent
-    accentHover: "#14b8a6",
+    accentHover: "#0f766e",
     borderRadius: "12px",
     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
   }

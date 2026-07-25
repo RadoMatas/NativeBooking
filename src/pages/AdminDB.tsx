@@ -243,9 +243,9 @@ export default function AdminDB() {
             style={{
               marginBottom: '28px',
               padding: '22px 26px',
-              border: '1px solid #059669',
-              background: 'rgba(5, 150, 105, 0.06)',
-              boxShadow: '0 8px 32px rgba(5, 150, 105, 0.12)',
+              border: '1px solid #0d9488',
+              background: 'rgba(13, 148, 136, 0.08)',
+              boxShadow: '0 8px 32px rgba(13, 148, 136, 0.16)',
               borderRadius: '20px',
             }}
           >
@@ -266,8 +266,8 @@ export default function AdminDB() {
                 <div
                   key={req.id}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.92)',
-                    border: '1px solid rgba(120, 53, 15, 0.2)',
+                    background: 'rgba(13, 148, 136, 0.06)',
+                    border: '1px solid rgba(13, 148, 136, 0.3)',
                     borderRadius: '14px',
                     padding: '16px 20px',
                     display: 'flex',
@@ -288,7 +288,7 @@ export default function AdminDB() {
                           🆕 NEW LESSON REQUEST
                         </span>
                       )}
-                      <strong style={{ color: '#1c1917', fontSize: '15px' }}>{req.service}</strong>
+                      <strong style={{ color: '#f8fafc', fontSize: '15px' }}>{req.service}</strong>
                       <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                         — {req.customerName || 'Student'} ({req.customerEmail})
                       </span>
