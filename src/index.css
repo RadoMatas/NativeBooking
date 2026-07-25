@@ -2,8 +2,8 @@
 
 :root {
   /* Default Branding Colors - will be overridden dynamically by App.tsx */
-  --primary-color: #09090b;
-  --card-bg: rgba(20, 20, 23, 0.8);
+  --primary-color: #0c0d10;
+  --card-bg: rgba(22, 24, 29, 0.85);
   --accent-color: #10b981;
   --accent-hover: #34d399;
   --border-radius: 12px;
@@ -11,9 +11,9 @@
   --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
 
   /* Standard Colors */
-  --text-primary: #f4f4f5;
-  --text-secondary: #a1a1aa;
-  --text-inverse: #09090b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-inverse: #0c0d10;
   --border-color: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(255, 255, 255, 0.16);
 
@@ -249,7 +249,7 @@ button:active, .btn:active {
   padding-left: 16px !important;
 }
 
-/* Toast Notifications */
+/* Toast Notifications & Micro-Animations */
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -261,10 +261,34 @@ button:active, .btn:active {
   }
 }
 
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(16, 185, 129, 0.4);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .toast-container {
   animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pulse-accent {
+  animation: pulseGlow 3s infinite ease-in-out;
 }
 
 /* Scrollbars */
@@ -277,12 +301,12 @@ button:active, .btn:active {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Dashboard Split Layout responsive classes */
