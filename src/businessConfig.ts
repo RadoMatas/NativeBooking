@@ -44,45 +44,36 @@ export interface BusinessConfig {
 }
 
 export const BUSINESS_CONFIG: BusinessConfig = {
-  name: "Apex Field Services",
-  tagline: "HVAC, Plumbing, Electrical & Contractor Dispatch",
-  address: "Field Operations & Dispatch Hub",
-  contact: "+48 123 456 789",
-  openingHour: 7,
-  closingHour: 19,
-  slotInterval: 60,
-  closedDays: [0], // Sunday closed
+  name: "NativeBooking",
+  tagline: "Custom Reservation & Operations Software",
+  address: "Poland",
+  contact: "info@nativebooking.co",
+  openingHour: 9,
+  closingHour: 18,
+  slotInterval: 30,
+  closedDays: [0, 6], // Sat, Sun closed
   depositPercentage: 0,
   currencySymbol: "$",
   services: [
-    { id: "hvac", name: "HVAC Diagnostics & Repair", price: 150, durationMin: 120 },
-    { id: "renovation", name: "Bathroom & Interior Renovation", price: 1200, durationMin: 480 },
-    { id: "electrical", name: "Electrical Rewiring & Panel Upgrade", price: 350, durationMin: 180 },
-    { id: "plumbing", name: "Emergency Plumbing & Pipe Repair", price: 200, durationMin: 90 },
-    { id: "roofing", name: "Roof Inspection & Waterproofing", price: 450, durationMin: 240 }
+    { id: "intro_call", name: "Discovery Intro Call", price: 0, durationMin: 30 },
   ],
   artists: [
-    { id: "marek", name: "Marek Kowal", specialty: "Master Plumber & HVAC Specialist", avatarEmoji: "🔧", workingDays: [1, 2, 3, 4, 5] },
-    { id: "piotr", name: "Piotr Nowak", specialty: "Licensed Master Electrician", avatarEmoji: "⚡", workingDays: [1, 2, 3, 4, 5] },
-    { id: "tomek", name: "Tomek Wisniewski", specialty: "General Contractor & Renovation Lead", avatarEmoji: "🔨", workingDays: [1, 2, 3, 4, 6] },
-    { id: "viktor", name: "Viktor Dubczak", specialty: "Roofing & Structural Inspector", avatarEmoji: "🏗️", workingDays: [1, 2, 3, 5, 6] }
+    { id: "founder", name: "NativeBooking Team", specialty: "Software Architecture", avatarEmoji: "⚡", workingDays: [1, 2, 3, 4, 5] },
   ],
-  staffLabel: "Technician",
-  staffLabelPlural: "Technicians",
-  notesLabel: "Job Site Address & Work Specs",
-  adminNotesLabel: "Dispatched Equipment & Site Instructions",
-  internalNotesLabel: "Required Materials Checklist",
+  staffLabel: "Team Member",
+  staffLabelPlural: "Team Members",
+  notesLabel: "Project Notes",
+  adminNotesLabel: "Follow-up Notes",
+  internalNotesLabel: "Internal Lead Notes",
   checklist: [
-    "Verify site access and safety gear (hard hat, steel boots).",
-    "Confirm required tools and replacement parts in van inventory.",
-    "Call client 15 minutes before arrival at job site.",
-    "Document before and after site photos upon completion."
+    "Review prospect business type and requested slot.",
+    "Prepare custom feature breakdown for discovery call.",
   ],
   theme: {
-    primaryColor: "#0f172a", // slate 900
-    cardBg: "rgba(30, 41, 59, 0.8)", // slate 800 glass
-    accentColor: "#f59e0b", // amber gold
-    accentHover: "#fbbf24", // bright amber
+    primaryColor: "#0c0d10",
+    cardBg: "rgba(22, 24, 29, 0.8)",
+    accentColor: "#10b981",
+    accentHover: "#34d399",
     borderRadius: "12px",
     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
   }
