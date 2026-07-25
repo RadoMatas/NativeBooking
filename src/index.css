@@ -2,8 +2,8 @@
 
 :root {
   /* Default Branding Colors - will be overridden dynamically by App.tsx */
-  --primary-color: #09090b;
-  --card-bg: rgba(20, 20, 23, 0.8);
+  --primary-color: #0c0d10;
+  --card-bg: rgba(22, 24, 29, 0.85);
   --accent-color: #10b981;
   --accent-hover: #34d399;
   --border-radius: 12px;
@@ -11,9 +11,9 @@
   --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
 
   /* Standard Colors */
-  --text-primary: #f4f4f5;
-  --text-secondary: #a1a1aa;
-  --text-inverse: #09090b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-inverse: #0c0d10;
   --border-color: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(255, 255, 255, 0.16);
 

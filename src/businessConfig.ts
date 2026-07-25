@@ -70,8 +70,8 @@ export const BUSINESS_CONFIG: BusinessConfig = {
     "Prepare custom feature breakdown for discovery call.",
   ],
   theme: {
-    primaryColor: "#09090b",
-    cardBg: "rgba(20, 20, 23, 0.8)",
+    primaryColor: "#0c0d10",
+    cardBg: "rgba(22, 24, 29, 0.8)",
     accentColor: "#10b981",
     accentHover: "#34d399",
     borderRadius: "12px",

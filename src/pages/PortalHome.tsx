@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import InteractiveShowcase from '../components/InteractiveShowcase'
 import {
   StudioIcon,
   ClinicIcon,
@@ -18,14 +19,14 @@ export default function PortalHome() {
   const navigate = useNavigate()
 
   const t = {
-    bg: '#09090b',
-    cardBg: 'rgba(20, 20, 23, 0.75)',
+    bg: '#0c0d10',
+    cardBg: 'rgba(22, 24, 29, 0.85)',
     strip: 'rgba(255,255,255,0.025)',
     border: 'rgba(255, 255, 255, 0.08)',
     accent: '#10b981',
     accentSoft: 'rgba(16, 185, 129, 0.1)',
-    textPrimary: '#f4f4f5',
-    textSecondary: '#a1a1aa',
+    textPrimary: '#f8fafc',
+    textSecondary: '#94a3b8',
     textMuted: 'rgba(255,255,255,0.5)',
   }
 
@@ -243,104 +244,101 @@ export default function PortalHome() {
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
-          padding: '100px 24px 90px 24px',
+          padding: '80px 24px 60px 24px',
           animation: 'fadeInUp 0.7s ease both',
-          overflow: 'hidden',
         }}
       >
-        {/* Hero content */}
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '5px 14px',
-            borderRadius: '9999px',
-            border: `1px solid rgba(16,185,129,0.3)`,
-            background: 'rgba(16,185,129,0.07)',
-            fontSize: '12px',
-            fontWeight: 600,
-            color: t.accent,
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            marginBottom: '28px',
-          }}
-        >
-          <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: t.accent, display: 'inline-block' }} />
-          Custom Software for Modern Businesses
-        </div>
-
-        <h1
-          className="nb-hero-title"
-          style={{
-            fontSize: '54px',
-            fontWeight: 800,
-            lineHeight: '1.15',
-            letterSpacing: '-0.025em',
-            color: '#ffffff',
-            maxWidth: '760px',
-            marginBottom: '36px',
-          }}
-        >
-          Reservation Software{' '}
-          <span style={{ color: t.accent }}>Built Around</span>{' '}
-          Your Business
-        </h1>
-
-        <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
-          <button
-            onClick={scrollToDemo}
+          <div
             style={{
-              padding: '14px 32px',
-              fontSize: '15px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '6px 16px',
+              borderRadius: '9999px',
+              border: `1px solid rgba(16,185,129,0.35)`,
+              background: 'rgba(16,185,129,0.08)',
+              fontSize: '12px',
               fontWeight: 700,
-              borderRadius: '10px',
-              background: t.accent,
-              color: '#ffffff',
-              border: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(16,185,129,0.3)',
-              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'
-              ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '0 8px 28px rgba(16,185,129,0.4)'
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'
-              ;(e.currentTarget as HTMLButtonElement).style.boxShadow = '0 4px 20px rgba(16,185,129,0.3)'
+              color: t.accent,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              marginBottom: '24px',
             }}
           >
-            Explore Live Demos ↓
-          </button>
-          <button
-            onClick={() => navigate('/book-call')}
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: t.accent, display: 'inline-block' }} />
+            White-Label Reservation & Operations Engine
+          </div>
+
+          <h1
+            className="nb-hero-title"
             style={{
-              padding: '14px 28px',
-              fontSize: '15px',
-              fontWeight: 700,
-              borderRadius: '10px',
-              background: 'rgba(255, 255, 255, 0.05)',
+              fontSize: '52px',
+              fontWeight: 800,
+              lineHeight: '1.15',
+              letterSpacing: '-0.025em',
               color: '#ffffff',
-              border: `1px solid ${t.border}`,
-              cursor: 'pointer',
-              backdropFilter: 'blur(10px)',
-              transition: 'transform 0.2s ease, background 0.2s ease',
-            }}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(-2px)'
-              ;(e.currentTarget as HTMLButtonElement).style.background = 'rgba(255, 255, 255, 0.1)'
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.transform = 'translateY(0)'
-              ;(e.currentTarget as HTMLButtonElement).style.background = 'rgba(255, 255, 255, 0.05)'
+              maxWidth: '820px',
+              marginBottom: '20px',
             }}
           >
-            Schedule Discovery Call 📅
-          </button>
+            Custom Reservation & Dispatch Systems{' '}
+            <span style={{ color: t.accent }}>Built for Your Workflow</span>
+          </h1>
+
+          <p
+            style={{
+              fontSize: '17px',
+              color: t.textSecondary,
+              maxWidth: '680px',
+              lineHeight: '1.6',
+              marginBottom: '36px',
+            }}
+          >
+            Tailored software for service businesses and contractor crews. Own your domain, your operational rules, and your client data — zero monthly per-booking commissions.
+          </p>
+
+          <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button
+              onClick={() => navigate('/book-call')}
+              style={{
+                padding: '14px 32px',
+                fontSize: '15px',
+                fontWeight: 700,
+                borderRadius: '10px',
+                background: t.accent,
+                color: '#ffffff',
+                border: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 20px rgba(16,185,129,0.35)',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+              }}
+            >
+              Book 15-Min Blueprint Call ➔
+            </button>
+            <button
+              onClick={scrollToDemo}
+              style={{
+                padding: '14px 28px',
+                fontSize: '15px',
+                fontWeight: 600,
+                borderRadius: '10px',
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: '#ffffff',
+                border: `1px solid ${t.border}`,
+                cursor: 'pointer',
+                backdropFilter: 'blur(10px)',
+              }}
+            >
+              Explore Live Demos
+            </button>
+          </div>
         </div>
-        </div>
+      </section>
+
+      {/* ─── INTERACTIVE SHOWCASE SECTION ──────────────────────── */}
+      <section id="demos" style={{ padding: '0 24px 80px 24px' }}>
+        <InteractiveShowcase />
       </section>
 
       {/* ─── FEATURED PLATFORM DEMO VIDEO ──────────────────────── */}

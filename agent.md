@@ -53,3 +53,20 @@ Check:
 - responsiveness
 
 If something feels generic, improve it.
+
+# Redesign Authority
+
+When reviewing existing pages:
+
+Do not preserve poor design decisions just because they exist.
+
+You are allowed to:
+
+- remove sections
+- restructure layouts
+- rewrite copy
+- change hierarchy
+- replace components
+- simplify the page
+
+A better user experience is more important than keeping existing structure.

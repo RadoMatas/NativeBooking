@@ -2,16 +2,15 @@
 
 ## Product
 
-NativeBooking helps property owners and managers handle direct bookings.
+NativeBooking builds custom-made, white-label reservation and operations software for any service business relying on bookings, scheduling, or contractor crew dispatch and timing.
 
 ## Users
 
 Primary users:
 
-- property owners
-- hosts
-- property managers
-- guests
+- service business owners (studios, clinics, academies, hospitality)
+- contractors & field managers handling crews & schedules
+- clients and guests booking services directly
 
 
 ## Brand personality
