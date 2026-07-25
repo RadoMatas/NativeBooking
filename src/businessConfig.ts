@@ -11,7 +11,7 @@ export interface Artist {
   specialty: string
   avatarEmoji: string
   avatarUrl?: string
-  workingDays: number[] // days of week: 0=Sunday, 1=Monday... 6=Saturday
+  workingDays: number[]
 }
 
 export interface BusinessConfig {
@@ -19,11 +19,12 @@ export interface BusinessConfig {
   tagline: string
   address: string
   contact: string
-  openingHour: number // 24h format, e.g. 11
-  closingHour: number // 24h format, e.g. 20
-  slotInterval: number // in minutes, e.g. 30
-  closedDays: number[] // days of week the shop is closed
-  depositPercentage: number // e.g. 20 for 20%
+  openingHour: number
+  closingHour: number
+  slotInterval: number
+  closedDays: number[]
+  depositPercentage: number
+  currencySymbol?: string
   services: Service[]
   artists: Artist[]
   staffLabel: string
@@ -32,8 +33,6 @@ export interface BusinessConfig {
   adminNotesLabel: string
   internalNotesLabel: string
   checklist: string[]
-  dbPrefix: string
-  currencySymbol: string
   theme: {
     primaryColor: string
     cardBg: string
@@ -45,44 +44,37 @@ export interface BusinessConfig {
 }
 
 export const BUSINESS_CONFIG: BusinessConfig = {
-  name: "Apex Language Academy",
-  tagline: "Premium Language Courses & Academic Tutoring",
-  address: "88 Education Way, Suite 100, Dallas, TX 75201",
-  contact: "+1 (214) 555-0152",
+  name: "NativeBooking",
+  tagline: "Custom Reservation & Operations Software",
+  address: "Poland",
+  contact: "info@nativebooking.co",
   openingHour: 9,
-  closingHour: 20,
+  closingHour: 18,
   slotInterval: 30,
-  closedDays: [0], // Sunday closed
-  depositPercentage: 0, // 0% deposit
-  dbPrefix: "academic",
+  closedDays: [0, 6], // Sat, Sun closed
+  depositPercentage: 0,
   currencySymbol: "$",
   services: [
-    { id: "english-gen", name: "English General Course", price: 50, durationMin: 45 },
-    { id: "spanish-int", name: "Spanish Intensive Class", price: 75, durationMin: 60 },
-    { id: "sat-prep", name: "Private SAT Prep Tutoring", price: 90, durationMin: 60 },
-    { id: "french-conv", name: "French Conversation Practice", price: 60, durationMin: 45 }
+    { id: "intro_call", name: "Discovery Intro Call", price: 0, durationMin: 30 },
   ],
   artists: [
-    { id: "sarah", name: "Prof. Sarah Jenkins", specialty: "English & French Literature", avatarEmoji: "👩‍🏫", workingDays: [1, 2, 3, 4, 5] },
-    { id: "alan", name: "Prof. Alan Sterling", specialty: "Spanish Philology & SAT Mathematics", avatarEmoji: "👨‍🏫", workingDays: [1, 2, 3, 4] }
+    { id: "founder", name: "NativeBooking Team", specialty: "Software Architecture", avatarEmoji: "⚡", workingDays: [1, 2, 3, 4, 5] },
   ],
-  staffLabel: "Instructor",
-  staffLabelPlural: "Instructors",
-  notesLabel: "Special Learning Requests / Accommodations",
-  adminNotesLabel: "Homework Assignments & Study Material",
-  internalNotesLabel: "Internal Faculty Assessment Notes",
+  staffLabel: "Team Member",
+  staffLabelPlural: "Team Members",
+  notesLabel: "Project Notes",
+  adminNotesLabel: "Follow-up Notes",
+  internalNotesLabel: "Internal Lead Notes",
   checklist: [
-    "Download the digital textbook PDF sent to your email.",
-    "Bring a notebook, pen, and your laptop or tablet.",
-    "Complete any pre-assigned reading or homework.",
-    "Join the virtual student portal 5 minutes before class starts (if online)."
+    "Review prospect business type and requested slot.",
+    "Prepare custom feature breakdown for discovery call.",
   ],
   theme: {
-    primaryColor: "#fdfbf7", // Soft Organic Warm Cream
-    cardBg: "rgba(255, 255, 255, 0.92)", // Pure Warm White Card
-    accentColor: "#059669",  // Deep Emerald Green Accent
-    accentHover: "#047857",  // Dark Forest Emerald
-    borderRadius: "14px",
-    fontFamily: "'Plus Jakarta Sans', 'Outfit', system-ui, sans-serif"
+    primaryColor: "#0c0d10",
+    cardBg: "rgba(22, 24, 29, 0.8)",
+    accentColor: "#10b981",
+    accentHover: "#34d399",
+    borderRadius: "12px",
+    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
   }
 }

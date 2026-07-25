@@ -2,30 +2,30 @@
 
 :root {
   /* Default Branding Colors - will be overridden dynamically by App.tsx */
-  --primary-color: #fbfbfa;
-  --card-bg: rgba(255, 255, 255, 0.85);
-  --accent-color: #0d9488;
-  --accent-hover: #115e59;
+  --primary-color: #0c0d10;
+  --card-bg: rgba(22, 24, 29, 0.85);
+  --accent-color: #10b981;
+  --accent-hover: #34d399;
   --border-radius: 12px;
   --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
 
   /* Standard Colors */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-inverse: #ffffff;
-  --border-color: rgba(0, 0, 0, 0.08);
-  --border-hover: rgba(0, 0, 0, 0.16);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-inverse: #0c0d10;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.16);
 
   /* Status Colors */
-  --status-pending-bg: rgba(217, 119, 6, 0.08);
-  --status-pending-text: #b45309;
-  --status-confirmed-bg: rgba(4, 120, 87, 0.08);
-  --status-confirmed-text: #047857;
-  --status-completed-bg: rgba(37, 99, 235, 0.08);
-  --status-completed-text: #1d4ed8;
-  --status-cancelled-bg: rgba(220, 38, 38, 0.08);
-  --status-cancelled-text: #b91c1c;
+  --status-pending-bg: rgba(234, 179, 8, 0.12);
+  --status-pending-text: #facc15;
+  --status-confirmed-bg: rgba(16, 185, 129, 0.12);
+  --status-confirmed-text: #34d399;
+  --status-completed-bg: rgba(59, 130, 246, 0.12);
+  --status-completed-text: #60a5fa;
+  --status-cancelled-bg: rgba(239, 68, 68, 0.12);
+  --status-cancelled-text: #f87171;
 
   background-color: var(--primary-color);
   color: var(--text-primary);
@@ -45,8 +45,8 @@
 
 body {
   min-height: 100vh;
-  background: radial-gradient(circle at top right, rgba(13, 148, 136, 0.05), transparent 40%),
-              radial-gradient(circle at bottom left, rgba(13, 148, 136, 0.03), transparent 45%),
+  background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.05), transparent 40%),
+              radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.03), transparent 45%),
               var(--primary-color);
   background-attachment: fixed;
 }
@@ -84,7 +84,7 @@ p {
 
 .premium-card:hover {
   border-color: var(--border-hover);
-  box-shadow: 0 12px 40px 0 rgba(79, 70, 229, 0.04);
+  box-shadow: 0 12px 40px 0 rgba(16, 185, 129, 0.04);
 }
 
 /* Input Fields & Form Elements */
@@ -105,7 +105,7 @@ p {
 
 .form-input, .form-select, .form-textarea {
   width: 100%;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 12px 16px;
@@ -117,17 +117,17 @@ p {
 }
 
 .form-input:focus, .form-select:focus, .form-textarea:focus {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
 }
 
 .form-input::placeholder, .form-textarea::placeholder {
-  color: rgba(15, 23, 42, 0.4);
+  color: rgba(255, 255, 255, 0.25);
 }
 
 .form-select option {
-  background-color: #ffffff;
+  background-color: #121214;
   color: var(--text-primary);
 }
 
@@ -152,13 +152,13 @@ p {
 .btn-primary {
   background: var(--accent-color);
   color: #ffffff;
-  box-shadow: 0 4px 14px 0 rgba(13, 148, 136, 0.2);
+  box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.25);
 }
 
 .btn-primary:hover {
   background: var(--accent-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px 0 rgba(13, 148, 136, 0.3);
+  box-shadow: 0 6px 20px 0 rgba(16, 185, 129, 0.35);
 }
 
 .btn-primary:active {
@@ -166,13 +166,13 @@ p {
 }
 
 .btn-secondary {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.1);
   border-color: var(--border-hover);
   transform: translateY(-2px);
 }
@@ -233,10 +233,10 @@ p {
 }
 
 .status-badge.upcoming {
-  background-color: rgba(13, 148, 136, 0.15);
-  color: #14b8a6;
-  border: 1px solid rgba(13, 148, 136, 0.3);
-  box-shadow: 0 0 12px rgba(13, 148, 136, 0.25);
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
 }
 
 /* Button Active Scale Micro-Interactions */
@@ -249,7 +249,7 @@ button:active, .btn:active {
   padding-left: 16px !important;
 }
 
-/* Toast Notifications */
+/* Toast Notifications & Micro-Animations */
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -261,10 +261,34 @@ button:active, .btn:active {
   }
 }
 
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(16, 185, 129, 0.4);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .toast-container {
   animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pulse-accent {
+  animation: pulseGlow 3s infinite ease-in-out;
 }
 
 /* Scrollbars */
@@ -277,12 +301,12 @@ button:active, .btn:active {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* Dashboard Split Layout responsive classes */
