@@ -12,7 +12,7 @@
  *  - Brand green #10b981 at very low opacity
  */
 
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 
 const ACCENT = '#10b981'
 

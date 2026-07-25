@@ -174,7 +174,6 @@ export default function PixelFlowSnake() {
       for (let i = 0; i < nodeXs.length - 1; i++) {
         const x1 = nodeXs[i]  + (GRID * px) / 2 + 4
         const x2 = nodeXs[i + 1] - (GRID * px) / 2 - 4
-        const mid = (x1 + x2) / 2
         const y   = pathY + px / 2
         ctx.beginPath()
         ctx.moveTo(x1, y)
