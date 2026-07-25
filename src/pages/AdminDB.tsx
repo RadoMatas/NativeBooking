@@ -266,8 +266,8 @@ export default function AdminDB() {
                 <div
                   key={req.id}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.85)',
-                    border: '1px solid rgba(14, 165, 233, 0.3)',
+                    background: 'rgba(15, 23, 42, 0.6)',
+                    border: '1px solid rgba(2, 132, 199, 0.3)',
                     borderRadius: '14px',
                     padding: '16px 20px',
                     display: 'flex',
@@ -288,7 +288,7 @@ export default function AdminDB() {
                           🆕 NEW BOOKING REQUEST
                         </span>
                       )}
-                      <strong style={{ color: '#0f172a', fontSize: '15px' }}>{req.service}</strong>
+                      <strong style={{ color: '#f8fafc', fontSize: '15px' }}>{req.service}</strong>
                       <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                         — {req.customerName || 'Patient'} ({req.customerEmail})
                       </span>

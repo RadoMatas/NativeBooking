@@ -79,10 +79,10 @@ export const BUSINESS_CONFIG: BusinessConfig = {
     "Arrive 5 minutes early for Room 1 or Room 2 check-in."
   ],
   theme: {
-    primaryColor: "#080e1a", // Deep medical navy background
-    cardBg: "rgba(14, 165, 233, 0.08)", // Translucent clinical panel
-    accentColor: "#0ea5e9", // Clinical Sky Blue accent
-    accentHover: "#38bdf8",
+    primaryColor: "#0c0d10", // Clean deep slate background
+    cardBg: "rgba(20, 20, 23, 0.85)", // High contrast dark card surface
+    accentColor: "#0284c7", // Clinical Sky Blue accent
+    accentHover: "#0369a1",
     borderRadius: "12px",
     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
   }
