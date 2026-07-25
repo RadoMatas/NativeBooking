@@ -45,36 +45,44 @@ export interface BusinessConfig {
 }
 
 export const BUSINESS_CONFIG: BusinessConfig = {
-  name: "NativeBooking",
-  tagline: "Custom Reservation & Operations Software",
-  address: "NativeBooking HQ · Global Remote Operations",
-  contact: "info@nativebooking.co",
-  openingHour: 9,
-  closingHour: 18,
-  slotInterval: 30,
-  closedDays: [0, 6], // Sat, Sun closed
+  name: "Apex Trade & Field Crew Dispatch",
+  tagline: "Industrial Dispatch Board & Crew Timing Operations",
+  address: "500 Industrial Parkway, Dispatch Hub 12, TX 75001",
+  contact: "+1 (800) 555-TRADE",
+  dbPrefix: "contractor",
+  openingHour: 7,
+  closingHour: 19,
+  slotInterval: 60,
+  closedDays: [0], // Sunday closed
   depositPercentage: 0,
   currencySymbol: "$",
   services: [
-    { id: "intro_call", name: "Discovery Intro Call", price: 0, durationMin: 30 },
+    { id: "hvac_comm", name: "Commercial HVAC System Repair & Overhaul", price: 280, durationMin: 180 },
+    { id: "duct_res", name: "Residential Heating & Air Inspection", price: 140, durationMin: 90 },
+    { id: "elec_emerg", name: "Emergency Electrical Panel Repair", price: 220, durationMin: 120 },
+    { id: "plumb_site", name: "Job Site Plumbing & Pipe Maintenance", price: 350, durationMin: 240 }
   ],
   artists: [
-    { id: "founder", name: "NativeBooking Team", specialty: "Software Architecture", avatarEmoji: "⚡", workingDays: [1, 2, 3, 4, 5] },
+    { id: "crew_a", name: "Crew A (John & Pete)", specialty: "Commercial HVAC & Heat Pumps", avatarEmoji: "🏗️", workingDays: [1, 2, 3, 4, 5] },
+    { id: "crew_b", name: "Crew B (Mark & Dave)", specialty: "Residential Air & Ductwork", avatarEmoji: "🔧", workingDays: [1, 2, 3, 4, 5] },
+    { id: "crew_c", name: "Crew C (Sam)", specialty: "Master Electrical Specialist", avatarEmoji: "⚡", workingDays: [1, 2, 3, 4, 5, 6] }
   ],
-  staffLabel: "Team Member",
-  staffLabelPlural: "Team Members",
-  notesLabel: "Project Notes",
-  adminNotesLabel: "Follow-up Notes",
-  internalNotesLabel: "Internal Lead Notes",
+  staffLabel: "Field Crew",
+  staffLabelPlural: "Field Crews",
+  notesLabel: "Site Address & Gate Code Notes",
+  adminNotesLabel: "Labor Hours & Dispatch Timing Log",
+  internalNotesLabel: "Internal Dispatch & Parts Bookkeeping",
   checklist: [
-    "Review prospect business type and requested slot.",
-    "Prepare custom feature breakdown for discovery call.",
+    "Verify site address, gate codes, and building contact.",
+    "Confirm parts & heavy tool inventory pre-loaded on truck.",
+    "Log technician start time upon arrival at job site.",
+    "Obtain client signature upon completion of work order."
   ],
   theme: {
-    primaryColor: "#0c0d10",
-    cardBg: "rgba(22, 24, 29, 0.8)",
-    accentColor: "#10b981",
-    accentHover: "#34d399",
+    primaryColor: "#110f0a", // Industrial charcoal background
+    cardBg: "rgba(245, 158, 11, 0.08)", // Translucent industrial amber panel
+    accentColor: "#f59e0b", // Industrial Amber Accent
+    accentHover: "#fbbf24",
     borderRadius: "12px",
     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
   }
