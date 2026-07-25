@@ -1,4 +1,6 @@
 import { useNavigate } from 'react-router-dom'
+import HeroFlowDiagram from '../components/HeroFlowDiagram'
+import PixelFlowSnake from '../components/PixelFlowSnake'
 import InteractiveShowcase from '../components/InteractiveShowcase'
 import SavingsCalculator from '../components/SavingsCalculator'
 import WhiteLabelComparison from '../components/WhiteLabelComparison'
@@ -240,6 +242,7 @@ export default function PortalHome() {
       <section
         style={{
           position: 'relative',
+          overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -248,6 +251,9 @@ export default function PortalHome() {
           animation: 'fadeInUp 0.7s ease both',
         }}
       >
+        {/* ── Ambient background: signal-flow diagram ── */}
+        <HeroFlowDiagram />
+
         <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <div
             style={{
@@ -335,6 +341,10 @@ export default function PortalHome() {
           </div>
         </div>
       </section>
+
+      {/* ─── PIXEL FLOW SNAKE ────────────────────────────────────── */}
+      {/* Neon pixel snake bridging the hero to the demos section */}
+      <PixelFlowSnake />
 
       {/* ─── INTERACTIVE SHOWCASE SECTION ──────────────────────── */}
       <section id="demos" style={{ padding: '0 24px 80px 24px' }}>
