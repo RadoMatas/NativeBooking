@@ -45,37 +45,46 @@ export interface BusinessConfig {
 }
 
 export const BUSINESS_CONFIG: BusinessConfig = {
-  name: "NativeBooking",
-  tagline: "Custom Reservation & Operations Software",
-  address: "NativeBooking HQ · Global Remote Operations",
-  contact: "info@nativebooking.co",
-  openingHour: 9,
-  closingHour: 18,
+  name: "Sanatorium Tattoo Studio",
+  tagline: "Award-Winning Tattoo & Fine Body Art",
+  address: "8 Drummond St, Edinburgh, EH8 9TU",
+  contact: "+44 7765 899429",
+  dbPrefix: "tattoo",
+  openingHour: 11,
+  closingHour: 20,
   slotInterval: 30,
-  closedDays: [0, 6], // Sat, Sun closed
-  depositPercentage: 0,
+  closedDays: [0], // Sunday closed
+  depositPercentage: 20, // 20% deposit
   currencySymbol: "$",
   services: [
-    { id: "intro_call", name: "Discovery Intro Call", price: 0, durationMin: 30 },
+    { id: "tattoo", name: "Custom Tattoo Session", price: 120, durationMin: 60 },
+    { id: "permanent", name: "Permanent Make-up", price: 200, durationMin: 120 },
+    { id: "laser", name: "Laser Removal Session", price: 80, durationMin: 30 },
+    { id: "piercing", name: "Body Piercing Session", price: 40, durationMin: 20 }
   ],
   artists: [
-    { id: "founder", name: "NativeBooking Team", specialty: "Software Architecture", avatarEmoji: "⚡", workingDays: [1, 2, 3, 4, 5] },
+    { id: "marcel", name: "Marcel", specialty: "Black & Grey Realism", avatarEmoji: "🎨", workingDays: [1, 2, 3, 4, 5] },
+    { id: "tomek", name: "Tomek", specialty: "Traditional & Neo-Traditional", avatarEmoji: "✒️", workingDays: [1, 2, 3, 4] },
+    { id: "konrad", name: "Konrad", specialty: "Geometric & Dotwork", avatarEmoji: "📐", workingDays: [3, 4, 5, 6] },
+    { id: "viktor", name: "Viktor", specialty: "Japanese Realism", avatarEmoji: "🐉", workingDays: [5, 6] }
   ],
-  staffLabel: "Team Member",
-  staffLabelPlural: "Team Members",
-  notesLabel: "Project Notes",
-  adminNotesLabel: "Follow-up Notes",
-  internalNotesLabel: "Internal Lead Notes",
+  staffLabel: "Artist",
+  staffLabelPlural: "Artists",
+  notesLabel: "Special Notes / Design Ideas",
+  adminNotesLabel: "Aftercare Instructions",
+  internalNotesLabel: "Internal Studio Notes",
   checklist: [
-    "Review prospect business type and requested slot.",
-    "Prepare custom feature breakdown for discovery call.",
+    "Arrive 10 minutes prior to your scheduled slot.",
+    "Bring reference photos or custom artwork files.",
+    "Ensure you have eaten and are well hydrated.",
+    "Wear comfortable clothing exposing the target area."
   ],
   theme: {
-    primaryColor: "#0c0d10",
-    cardBg: "rgba(22, 24, 29, 0.8)",
-    accentColor: "#10b981",
+    primaryColor: "#09090b",
+    cardBg: "rgba(20, 20, 23, 0.85)",
+    accentColor: "#10b981", // Emerald accent
     accentHover: "#34d399",
     borderRadius: "12px",
-    fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
+    fontFamily: "'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif"
   }
 }
