@@ -79,8 +79,8 @@ export const BUSINESS_CONFIG: BusinessConfig = {
     "Obtain client signature upon completion of work order."
   ],
   theme: {
-    primaryColor: "#110f0a", // Industrial charcoal background
-    cardBg: "rgba(245, 158, 11, 0.08)", // Translucent industrial amber panel
+    primaryColor: "#0c0d10", // Clean deep slate background
+    cardBg: "rgba(20, 20, 23, 0.85)", // High contrast dark card surface
     accentColor: "#f59e0b", // Industrial Amber Accent
     accentHover: "#fbbf24",
     borderRadius: "12px",
