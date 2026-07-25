@@ -47,7 +47,7 @@ export interface BusinessConfig {
 export const BUSINESS_CONFIG: BusinessConfig = {
   name: "NativeBooking",
   tagline: "Custom Reservation & Operations Software",
-  address: "Poland",
+  address: "NativeBooking HQ · Global Remote Operations",
   contact: "info@nativebooking.co",
   openingHour: 9,
   closingHour: 18,
