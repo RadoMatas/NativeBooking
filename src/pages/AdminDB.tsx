@@ -250,13 +250,13 @@ export default function AdminDB() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <span style={{ fontSize: '26px' }}>⚡</span>
+              <span style={{ fontSize: '26px' }}>🎓</span>
               <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#047857', margin: 0 }}>
-                  Action Queue ({pendingRequests.length} Pending Request{pendingRequests.length > 1 ? 's' : ''})
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0d9488', margin: 0 }}>
+                  Course Enrollment Roster ({pendingRequests.length} Student Reservation{pendingRequests.length > 1 ? 's' : ''})
                 </h3>
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                  Students submitted new lesson requests or bookings needing admin action.
+                  Cohort Seat Allocations (12/15 Seats Filled), Instructor Syllabi & Pre-Course Assessments.
                 </span>
               </div>
             </div>
