@@ -45,36 +45,44 @@ export interface BusinessConfig {
 }
 
 export const BUSINESS_CONFIG: BusinessConfig = {
-  name: "NativeBooking",
-  tagline: "Custom Reservation & Operations Software",
-  address: "NativeBooking HQ · Global Remote Operations",
-  contact: "info@nativebooking.co",
+  name: "Vanguard Academy & Learning Hub",
+  tagline: "High-Impact Software Architecture & Design Courses",
+  address: "100 Tech University Way, Innovation Park, CA 94107",
+  contact: "+1 (415) 555-VANGUARD",
+  dbPrefix: "academic",
   openingHour: 9,
-  closingHour: 18,
-  slotInterval: 30,
-  closedDays: [0, 6], // Sat, Sun closed
-  depositPercentage: 0,
+  closingHour: 21,
+  slotInterval: 60,
+  closedDays: [0], // Sunday closed
+  depositPercentage: 10, // 10% enrollment seat deposit
   currencySymbol: "$",
   services: [
-    { id: "intro_call", name: "Discovery Intro Call", price: 0, durationMin: 30 },
+    { id: "bootcamp", name: "Full-Stack Software Architecture Bootcamp", price: 250, durationMin: 120 },
+    { id: "ux_intensive", name: "UX/UI Design & Product Intensive", price: 180, durationMin: 90 },
+    { id: "data_seminar", name: "Data Engineering & AI Systems Seminar", price: 200, durationMin: 120 },
+    { id: "mentorship", name: "1-on-1 Code Review & Career Mentorship", price: 90, durationMin: 60 }
   ],
   artists: [
-    { id: "founder", name: "NativeBooking Team", specialty: "Software Architecture", avatarEmoji: "⚡", workingDays: [1, 2, 3, 4, 5] },
+    { id: "alex", name: "Alex Mercer", specialty: "Senior Systems Architect", avatarEmoji: "💻", workingDays: [1, 2, 3, 4, 5] },
+    { id: "sarah", name: "Sarah Jenkins", specialty: "Lead UX Researcher & Designer", avatarEmoji: "🎨", workingDays: [1, 2, 3, 4] },
+    { id: "david", name: "David Kim", specialty: "Principal Data Engineer", avatarEmoji: "📊", workingDays: [2, 3, 4, 5, 6] }
   ],
-  staffLabel: "Team Member",
-  staffLabelPlural: "Team Members",
-  notesLabel: "Project Notes",
-  adminNotesLabel: "Follow-up Notes",
-  internalNotesLabel: "Internal Lead Notes",
+  staffLabel: "Instructor",
+  staffLabelPlural: "Instructors",
+  notesLabel: "Pre-Requisite Knowledge / Goals",
+  adminNotesLabel: "Attendance & Syllabus Notes",
+  internalNotesLabel: "Internal Student Progress Log",
   checklist: [
-    "Review prospect business type and requested slot.",
-    "Prepare custom feature breakdown for discovery call.",
+    "Verify laptop specs & development environment setup.",
+    "Complete initial pre-course code assessment.",
+    "Join the dedicated Discord student workspace.",
+    "Review syllabus and instructor office hours."
   ],
   theme: {
-    primaryColor: "#0c0d10",
-    cardBg: "rgba(22, 24, 29, 0.8)",
-    accentColor: "#10b981",
-    accentHover: "#34d399",
+    primaryColor: "#071215", // Deep campus teal background
+    cardBg: "rgba(13, 148, 136, 0.08)", // Translucent teal panel
+    accentColor: "#0d9488", // Deep Campus Teal accent
+    accentHover: "#14b8a6",
     borderRadius: "12px",
     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif"
   }
