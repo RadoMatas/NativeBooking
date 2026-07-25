@@ -10,10 +10,12 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [isSignUpMode, setIsSignUpMode] = useState(false)
   const [isLoggingIn, setIsLoggingIn] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoggingIn(true)
+    setErrorMsg('')
 
     let ok = false
     if (isSignUpMode) {
@@ -24,7 +26,7 @@ export default function Login() {
     setIsLoggingIn(false)
 
     if (!ok) {
-      alert(
+      setErrorMsg(
         isSignUpMode
           ? 'Registration failed (password must be at least 6 characters, or email is already registered).'
           : 'Invalid email or password.'
@@ -41,13 +43,14 @@ export default function Login() {
 
   const handleDemoLogin = async (role: 'customer' | 'admin') => {
     setIsLoggingIn(true)
+    setErrorMsg('')
     const demoEmail    = role === 'admin' ? 'admin@test.com'    : 'customer@test.com'
     const demoPassword = role === 'admin' ? 'admin123'          : 'cust123'
     const ok = await login(demoEmail, demoPassword)
     setIsLoggingIn(false)
 
     if (!ok) {
-      alert('Demo login failed — please try again.')
+      setErrorMsg('Demo login failed — please try again.')
       return
     }
 
@@ -115,6 +118,24 @@ export default function Login() {
             {isSignUpMode ? 'Join us and start booking your sessions.' : BUSINESS_CONFIG.tagline}
           </p>
         </div>
+
+        {errorMsg && (
+          <div
+            style={{
+              padding: '12px 14px',
+              borderRadius: '10px',
+              background: 'rgba(239, 68, 68, 0.12)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              color: '#f87171',
+              fontSize: '13px',
+              fontWeight: 600,
+              textAlign: 'center',
+              marginBottom: '20px',
+            }}
+          >
+            {errorMsg}
+          </div>
+        )}
 
         {/* Quick Demo Access */}
         {!isSignUpMode && (
