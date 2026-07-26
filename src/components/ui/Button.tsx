@@ -1,7 +1,7 @@
 import React from 'react'
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'purple'
   size?: 'sm' | 'md' | 'lg'
   isLoading?: boolean
 }
@@ -43,6 +43,11 @@ export function Button({
       background: 'var(--accent-color)',
       color: '#000000',
       boxShadow: '0 2px 10px rgba(16, 185, 129, 0.25)',
+    },
+    purple: {
+      background: '#a855f7',
+      color: '#ffffff',
+      boxShadow: '0 2px 10px rgba(168, 85, 247, 0.25)',
     },
     secondary: {
       background: 'rgba(255, 255, 255, 0.08)',

@@ -2,9 +2,10 @@ import React from 'react'
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   variant?: 'success' | 'warning' | 'info' | 'error' | 'neutral' | 'confirmed' | 'pending' | 'in_progress' | 'cancelled'
+  icon?: React.ReactNode
 }
 
-export function Badge({ children, variant = 'neutral', style, ...props }: BadgeProps) {
+export function Badge({ children, variant = 'neutral', icon, style, ...props }: BadgeProps) {
   const baseStyles: React.CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
@@ -75,6 +76,7 @@ export function Badge({ children, variant = 'neutral', style, ...props }: BadgeP
       }}
       {...props}
     >
+      {icon && icon}
       {children}
     </span>
   )
