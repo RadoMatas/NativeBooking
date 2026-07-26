@@ -105,6 +105,9 @@ body {
     gap: 16px !important;
     padding: 14px 10px !important;
   }
+  .showcase-tab-subtitle {
+    display: none !important;
+  }
   .showcase-toggle-bar {
     flex-direction: column !important;
     width: 100% !important;

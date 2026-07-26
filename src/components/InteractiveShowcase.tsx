@@ -232,10 +232,10 @@ export default function InteractiveShowcase() {
                 {tab.icon}
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: isActive ? '#ffffff' : 'var(--text-primary)' }}>
+                <div style={{ fontSize: '13px', fontWeight: 700, color: isActive ? '#ffffff' : 'var(--text-primary)', wordBreak: 'break-word' }}>
                   {tab.label}
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{tab.subtitle}</div>
+                <div className="showcase-tab-subtitle" style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{tab.subtitle}</div>
               </div>
             </button>
           )

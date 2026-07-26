@@ -1,7 +1,7 @@
 import React from 'react'
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'success' | 'warning' | 'info' | 'error' | 'neutral'
+  variant?: 'success' | 'warning' | 'info' | 'error' | 'neutral' | 'confirmed' | 'pending' | 'in_progress' | 'cancelled'
 }
 
 export function Badge({ children, variant = 'neutral', style, ...props }: BadgeProps) {
@@ -22,7 +22,17 @@ export function Badge({ children, variant = 'neutral', style, ...props }: BadgeP
       color: '#34d399',
       border: '1px solid rgba(16, 185, 129, 0.3)',
     },
+    confirmed: {
+      background: 'rgba(16, 185, 129, 0.12)',
+      color: '#34d399',
+      border: '1px solid rgba(16, 185, 129, 0.3)',
+    },
     warning: {
+      background: 'rgba(245, 158, 11, 0.12)',
+      color: '#fbbf24',
+      border: '1px solid rgba(245, 158, 11, 0.3)',
+    },
+    pending: {
       background: 'rgba(245, 158, 11, 0.12)',
       color: '#fbbf24',
       border: '1px solid rgba(245, 158, 11, 0.3)',
@@ -32,7 +42,17 @@ export function Badge({ children, variant = 'neutral', style, ...props }: BadgeP
       color: '#38bdf8',
       border: '1px solid rgba(14, 165, 233, 0.3)',
     },
+    in_progress: {
+      background: 'rgba(14, 165, 233, 0.12)',
+      color: '#38bdf8',
+      border: '1px solid rgba(14, 165, 233, 0.3)',
+    },
     error: {
+      background: 'rgba(239, 68, 68, 0.12)',
+      color: '#f87171',
+      border: '1px solid rgba(239, 68, 68, 0.3)',
+    },
+    cancelled: {
       background: 'rgba(239, 68, 68, 0.12)',
       color: '#f87171',
       border: '1px solid rgba(239, 68, 68, 0.3)',
@@ -44,11 +64,13 @@ export function Badge({ children, variant = 'neutral', style, ...props }: BadgeP
     },
   }
 
+  const selectedVariantStyle = variantStyles[variant] || variantStyles.neutral
+
   return (
     <span
       style={{
         ...baseStyles,
-        ...variantStyles[variant],
+        ...selectedVariantStyle,
         ...style,
       }}
       {...props}
@@ -57,3 +79,4 @@ export function Badge({ children, variant = 'neutral', style, ...props }: BadgeP
     </span>
   )
 }
+
