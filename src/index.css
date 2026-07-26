@@ -66,10 +66,10 @@ body {
   overflow-x: hidden !important;
 }
 
-.desktop-table-container {
+.showcase-tab-subtitle-desktop {
   display: block;
 }
-.mobile-cards-container {
+.showcase-tab-subtitle-mobile {
   display: none !important;
 }
 
@@ -80,6 +80,13 @@ body {
   }
   .mobile-cards-container {
     display: flex !important;
+  }
+
+  .showcase-tab-subtitle-desktop {
+    display: none !important;
+  }
+  .showcase-tab-subtitle-mobile {
+    display: block !important;
   }
 
   * {
@@ -104,9 +111,6 @@ body {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
     padding: 14px 10px !important;
-  }
-  .showcase-tab-subtitle {
-    display: none !important;
   }
   .showcase-toggle-bar {
     flex-direction: column !important;

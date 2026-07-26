@@ -19,6 +19,7 @@ export default function InteractiveShowcase() {
       key: 'studio' as TabKey,
       label: 'Creative Studios',
       subtitle: 'Tattoo, Piercing & Craft Studios',
+      shortSubtitle: 'Tattoo & Craft',
       icon: <StudioIcon size={18} />,
       accent: '#10b981',
       badge: 'Client & Deposit Engine',
@@ -53,6 +54,7 @@ export default function InteractiveShowcase() {
       key: 'clinic' as TabKey,
       label: 'Clinics & Medical',
       subtitle: 'Dental, Chiropractic & Wellness',
+      shortSubtitle: 'Dental & Health',
       icon: <ClinicIcon size={18} />,
       accent: '#0ea5e9',
       badge: 'Patient Intake & Roster',
@@ -87,6 +89,7 @@ export default function InteractiveShowcase() {
       key: 'academic' as TabKey,
       label: 'Education & Academies',
       subtitle: 'Schools, Tutors & Training Hubs',
+      shortSubtitle: 'Courses & Hubs',
       icon: <AcademicIcon size={18} />,
       accent: '#0d9488',
       badge: 'Class & Student Portal',
@@ -120,6 +123,7 @@ export default function InteractiveShowcase() {
       key: 'contractor' as TabKey,
       label: 'Contractors & Crews',
       subtitle: 'HVAC, Construction & Home Services',
+      shortSubtitle: 'Crews & Dispatch',
       icon: <ContractorIcon size={18} />,
       accent: '#f59e0b',
       badge: 'Crew Dispatch & Timing',
@@ -235,7 +239,8 @@ export default function InteractiveShowcase() {
                 <div style={{ fontSize: '13px', fontWeight: 700, color: isActive ? '#ffffff' : 'var(--text-primary)', wordBreak: 'break-word' }}>
                   {tab.label}
                 </div>
-                <div className="showcase-tab-subtitle" style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{tab.subtitle}</div>
+                <div className="showcase-tab-subtitle-desktop" style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{tab.subtitle}</div>
+                <div className="showcase-tab-subtitle-mobile" style={{ fontSize: '11px', color: isActive ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.45)', fontWeight: 500 }}>{tab.shortSubtitle}</div>
               </div>
             </button>
           )
