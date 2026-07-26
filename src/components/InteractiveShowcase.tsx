@@ -155,32 +155,33 @@ export default function InteractiveShowcase() {
 
   return (
     <div
+      className="showcase-outer-card"
       style={{
         width: '100%',
         maxWidth: '1080px',
         margin: '0 auto',
         background: 'rgba(22, 24, 29, 0.85)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '20px',
+        borderRadius: '24px',
         padding: '36px 28px',
         boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+        backdropFilter: 'blur(20px)',
       }}
     >
       <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-        <span
-          style={{
-            fontSize: '12px',
-            fontWeight: 700,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: 'var(--accent-color)',
-            display: 'block',
-            marginBottom: '8px',
-          }}
-        >
-          Dual-View Operational Workbench
-        </span>
-        <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+        <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+          <span style={{ 
+            padding: '6px 14px', 
+            fontSize: '11px', 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.08em', 
+            color: 'var(--accent-color)', 
+            fontWeight: 700 
+          }}>
+            Dual-View Operational Workbench
+          </span>
+        </div>
+        <h2 className="aave-section-title" style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px', letterSpacing: '-0.02em' }}>
           Experience Customer Booking & Admin Control Side-by-Side
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
@@ -190,10 +191,11 @@ export default function InteractiveShowcase() {
 
       {/* Tab Navigation */}
       <div
+        className="showcase-tabs-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '10px',
+          gap: '12px',
           marginBottom: '24px',
         }}
       >
@@ -206,21 +208,22 @@ export default function InteractiveShowcase() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px',
-                padding: '12px 16px',
-                borderRadius: '12px',
+                gap: '12px',
+                padding: '14px 18px',
+                borderRadius: '16px',
                 background: isActive ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.02)',
                 border: `1px solid ${isActive ? tab.accent : 'rgba(255, 255, 255, 0.06)'}`,
                 color: isActive ? '#ffffff' : 'var(--text-secondary)',
                 cursor: 'pointer',
                 textAlign: 'left',
-                transition: 'all 0.2s ease',
+                transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                boxShadow: isActive ? `0 4px 20px ${tab.accent}20` : 'none',
               }}
             >
               <div
                 style={{
                   padding: '8px',
-                  borderRadius: '8px',
+                  borderRadius: '10px',
                   background: isActive ? `${tab.accent}22` : 'rgba(255, 255, 255, 0.04)',
                   color: isActive ? tab.accent : 'var(--text-secondary)',
                   display: 'flex',
@@ -241,6 +244,7 @@ export default function InteractiveShowcase() {
 
       {/* View Mode Toggle Header */}
       <div
+        className="showcase-toggle-bar"
         style={{
           display: 'flex',
           justifyContent: 'center',
@@ -251,8 +255,8 @@ export default function InteractiveShowcase() {
         <button
           onClick={() => setViewMode('admin')}
           style={{
-            padding: '8px 18px',
-            borderRadius: '8px',
+            padding: '8px 20px',
+            borderRadius: '9999px',
             fontSize: '13px',
             fontWeight: 700,
             cursor: 'pointer',
@@ -267,8 +271,8 @@ export default function InteractiveShowcase() {
         <button
           onClick={() => setViewMode('customer')}
           style={{
-            padding: '8px 18px',
-            borderRadius: '8px',
+            padding: '8px 20px',
+            borderRadius: '9999px',
             fontSize: '13px',
             fontWeight: 700,
             cursor: 'pointer',
@@ -284,13 +288,14 @@ export default function InteractiveShowcase() {
 
       {/* Active Tab Workspace Interactive Panel */}
       <div
+        className="showcase-workspace-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1.3fr',
           gap: '24px',
           background: 'rgba(12, 13, 16, 0.7)',
           border: '1px solid rgba(255, 255, 255, 0.06)',
-          borderRadius: '16px',
+          borderRadius: '20px',
           padding: '24px',
         }}
       >
@@ -340,14 +345,18 @@ export default function InteractiveShowcase() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '8px',
-              padding: '10px 18px',
-              borderRadius: '8px',
+              padding: '12px 18px',
+              borderRadius: '9999px',
               background: currentTab.accent,
               color: '#ffffff',
               fontWeight: 700,
               fontSize: '13px',
               textDecoration: 'none',
-              transition: 'opacity 0.2s ease',
+              transition: 'all 0.2s ease',
+              boxShadow: `0 4px 16px ${currentTab.accent}40`,
+              maxWidth: '100%',
+              boxSizing: 'border-box',
+              textAlign: 'center',
             }}
           >
             Launch Live {currentTab.label} Sandbox ➔
@@ -367,12 +376,12 @@ export default function InteractiveShowcase() {
           {viewMode === 'admin' ? (
             /* Admin Operations Board View */
             <>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px' }}>
+              <div className="showcase-mock-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px', gap: '10px' }}>
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>{currentTab.adminData.title}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', wordBreak: 'break-word' }}>{currentTab.adminData.title}</div>
                   <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Central Manager Control Hub</div>
                 </div>
-                <span style={{ fontSize: '11px', fontWeight: 600, color: currentTab.accent, background: `${currentTab.accent}15`, padding: '3px 8px', borderRadius: '6px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 600, color: currentTab.accent, background: `${currentTab.accent}15`, padding: '3px 8px', borderRadius: '6px', whiteSpace: 'nowrap' }}>
                   {currentTab.adminData.badge}
                 </span>
               </div>
@@ -381,6 +390,7 @@ export default function InteractiveShowcase() {
                 {currentTab.adminData.rows.map((row, index) => (
                   <div
                     key={index}
+                    className="showcase-mock-row"
                     style={{
                       background: 'rgba(255, 255, 255, 0.02)',
                       border: '1px solid rgba(255, 255, 255, 0.05)',
@@ -389,13 +399,14 @@ export default function InteractiveShowcase() {
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
+                      gap: '8px',
                     }}
                   >
                     <div>
-                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', marginBottom: '2px' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', marginBottom: '2px', wordBreak: 'break-word' }}>
                         {row.label}
                       </div>
-                      <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{row.detail}</div>
+                      <div style={{ fontSize: '11px', color: 'var(--text-secondary)', wordBreak: 'break-word' }}>{row.detail}</div>
                     </div>
                     <span
                       style={{
@@ -417,12 +428,12 @@ export default function InteractiveShowcase() {
           ) : (
             /* Customer Direct Booking Portal View */
             <>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px' }}>
+              <div className="showcase-mock-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px', gap: '10px' }}>
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>{currentTab.customerData.title}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff', wordBreak: 'break-word' }}>{currentTab.customerData.title}</div>
                   <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Client Self-Service Experience</div>
                 </div>
-                <span style={{ fontSize: '11px', fontWeight: 600, color: currentTab.accent, background: `${currentTab.accent}15`, padding: '3px 8px', borderRadius: '6px' }}>
+                <span style={{ fontSize: '11px', fontWeight: 600, color: currentTab.accent, background: `${currentTab.accent}15`, padding: '3px 8px', borderRadius: '6px', whiteSpace: 'nowrap' }}>
                   {currentTab.customerData.badge}
                 </span>
               </div>
@@ -441,7 +452,7 @@ export default function InteractiveShowcase() {
                     <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '3px' }}>
                       {f.label}
                     </div>
-                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 600, color: '#ffffff', wordBreak: 'break-word' }}>
                       {f.val}
                     </div>
                   </div>

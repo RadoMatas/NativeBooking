@@ -36,6 +36,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100% !important;
+  position: relative !important;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -53,9 +60,142 @@ body {
 }
 
 #root {
-  width: 100%;
+  width: 100% !important;
+  max-width: 100vw !important;
   margin: 0 auto;
+  overflow-x: hidden !important;
 }
+
+.desktop-table-container {
+  display: block;
+}
+.mobile-cards-container {
+  display: none !important;
+}
+
+/* ─── MOBILE RESPONSIVE ADAPTABILITY RULES ─── */
+@media (max-width: 868px) {
+  .desktop-table-container {
+    display: none !important;
+  }
+  .mobile-cards-container {
+    display: flex !important;
+  }
+
+  * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .aave-hero-glow-emerald, .aave-hero-glow-purple {
+    display: none !important;
+  }
+
+  .showcase-outer-card {
+    padding: 16px 10px !important;
+    border-radius: 16px !important;
+    width: 100% !important;
+  }
+  .showcase-tabs-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .showcase-workspace-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    padding: 14px 10px !important;
+  }
+  .showcase-toggle-bar {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  .showcase-toggle-bar button {
+    width: 100% !important;
+  }
+  .showcase-mock-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  .showcase-mock-row {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 6px !important;
+  }
+
+  .calculator-outer-card {
+    padding: 16px 10px !important;
+    border-radius: 16px !important;
+    width: 100% !important;
+  }
+  .calculator-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  .comparison-outer-card {
+    padding: 16px 10px !important;
+    border-radius: 16px !important;
+    width: 100% !important;
+  }
+
+  .aave-header {
+    padding: 12px 14px !important;
+  }
+  .aave-header-logo-text {
+    font-size: 14px !important;
+  }
+  .aave-hero-section {
+    padding: 40px 14px 30px !important;
+    overflow: hidden !important;
+  }
+  .aave-hero-title {
+    font-size: 30px !important;
+    line-height: 1.15 !important;
+  }
+  .aave-hero-desc {
+    font-size: 14px !important;
+    margin-bottom: 24px !important;
+  }
+  .aave-hero-buttons {
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto 28px !important;
+  }
+  .aave-hero-buttons button,
+  .aave-hero-buttons a {
+    width: 100% !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+  }
+  .aave-section-padding {
+    padding: 40px 14px 30px !important;
+    overflow: hidden !important;
+  }
+  .aave-section-title {
+    font-size: 26px !important;
+  }
+  .aave-markets-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+  .aave-footer {
+    padding: 30px 14px 24px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .showcase-tabs-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .aave-hero-title {
+    font-size: 24px !important;
+  }
+}
+
+
+
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
