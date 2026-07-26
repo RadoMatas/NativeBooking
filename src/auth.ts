@@ -34,8 +34,8 @@ export async function login(email: string, password: string): Promise<boolean> {
       return true;
     }
     // Admin credentials (strictly admin@nativebooking.co)
-    const isAdminEmail = email === 'admin@nativebooking.co' || email === 'admin@test.com'
-    const isAdminPass  = password === 'NativeBooking2026!Admin' || password === 'admin123'
+    const isAdminEmail = email === 'admin@nativebooking.co' 
+    const isAdminPass  = password === 'NativeBooking2026!Admin' 
 
     if (isAdminEmail && isAdminPass) {
       currentUserRole = 'admin';
@@ -154,7 +154,7 @@ async function syncUserProfile(user: FirebaseUser) {
   sessionStorage.setItem('currentUserEmail', user.email || '')
 
   let role: 'admin' | 'customer' = 'customer'
-  if (user.email === 'admin@nativebooking.co' || user.email === 'admin@test.com') {
+  if (user.email === 'admin@nativebooking.co' ) {
     role = 'admin'
   }
 

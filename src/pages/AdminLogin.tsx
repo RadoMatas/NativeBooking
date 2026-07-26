@@ -100,44 +100,6 @@ export default function AdminLogin() {
           </div>
         )}
 
-        {/* 1-Click Demo Admin Quick Access */}
-        <div style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.25)', borderRadius: '12px', padding: '16px', textAlign: 'center' }}>
-          <div style={{ fontSize: '11px', fontWeight: 700, color: t.accent, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
-            ⚡ Instant Admin Test-Drive
-          </div>
-          <p style={{ fontSize: '12px', color: t.textSecondary, marginBottom: '12px' }}>
-            Bypass manual login to test the Central Admin Operations Hub instantly.
-          </p>
-          <button
-            type="button"
-            onClick={async () => {
-              setIsLoggingIn(true)
-              setErrorMsg('')
-              const ok = await login('admin@test.com', 'admin123')
-              setIsLoggingIn(false)
-              if (ok && currentUserRole === 'admin') {
-                navigate('/admin')
-              } else {
-                setErrorMsg('Demo Admin access failed.')
-              }
-            }}
-            disabled={isLoggingIn}
-            style={{
-              width: '100%',
-              padding: '10px',
-              fontSize: '13px',
-              fontWeight: 700,
-              borderRadius: '8px',
-              background: t.accent,
-              color: '#ffffff',
-              border: 'none',
-              cursor: 'pointer',
-            }}
-          >
-            Enter Admin Control Board ➔
-          </button>
-        </div>
-
         <div>
           <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, marginBottom: '6px' }}>
             Admin Email
