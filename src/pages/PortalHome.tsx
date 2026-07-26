@@ -252,14 +252,7 @@ export default function PortalHome() {
               Schedule, dispatch, collect deposits, and manage staff rosters. Built on NativeBooking core engine.
             </p>
 
-            <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', marginTop: '32px' }}>
-              <Button variant="purple" size="lg" onClick={() => navigate('/adminlogin')}>
-                Open Control Board ➔
-              </Button>
-              <Button variant="secondary" size="lg" onClick={() => navigate('/book-call')}>
-                Talk to Sales
-              </Button>
-            </div>
+        
           </div>
 
           {/* Market Cards Grid */}
@@ -286,7 +279,7 @@ export default function PortalHome() {
               {/* Market Card 1 */}
               <div className="aave-market-card">
                 <div style={{ marginBottom: '20px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c084fc', display: 'block', marginBottom: '6px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#54bffd', display: 'block', marginBottom: '6px' }}>
                     General Purpose Market
                   </span>
                   <h4 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
