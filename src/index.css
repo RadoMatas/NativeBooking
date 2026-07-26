@@ -98,6 +98,10 @@ body {
     display: none !important;
   }
 
+  .aave-header-buttons {
+    display: none !important;
+  }
+
   .showcase-outer-card {
     padding: 16px 10px !important;
     border-radius: 16px !important;
