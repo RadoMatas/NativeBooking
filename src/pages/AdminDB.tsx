@@ -2,6 +2,8 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { currentUserRole, logout } from '../auth'
 import { fetchIntroCalls, updateIntroCallStatus, type IntroCallBooking } from '../introCallHelpers'
+import { Badge } from '../components/ui/Badge'
+
 
 export default function AdminDB() {
   const navigate = useNavigate()
@@ -33,7 +35,6 @@ export default function AdminDB() {
   const handleAcceptCall = async (call: IntroCallBooking) => {
     await updateIntroCallStatus(call.id, 'confirmed')
 
-    // 2. Open Google Calendar to add event to BOTH admin & prospect calendars
     const [startHourStr] = call.timeSlot.split(':')
     const startHour = parseInt(startHourStr, 10) || 9
     const endHour = startHour + 1
@@ -57,7 +58,6 @@ export default function AdminDB() {
   const handleDeclineCall = async (call: IntroCallBooking) => {
     await updateIntroCallStatus(call.id, 'declined')
 
-    // Open email draft for admin to type reason why call is declined
     const mailtoSubject = encodeURIComponent(`Update on your NativeBooking Discovery Call Request`)
     const mailtoBody = encodeURIComponent(
       `Hi ${call.name},\n\nThank you for requesting a discovery call with NativeBooking for ${call.date} at ${call.timeSlot} CET.\n\n[Please enter your decline / reschedule reason here]\n\nBest regards,\nNativeBooking Team`
@@ -98,63 +98,60 @@ export default function AdminDB() {
                      ${t.bg}`,
       }}
     >
-      <style>{`
-        @media (max-width: 640px) {
-          .nb-admin-header { margin-bottom: 24px !important; padding-bottom: 16px !important; gap: 12px !important; }
-          .nb-admin-logo-title { font-size: 15px !important; }
-          .nb-admin-btn { padding: 6px 12px !important; font-size: 12px !important; }
-        }
-      `}</style>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-        {/* ─── TOP BAR ─────────────────────────────────────────── */}
         <header
-          className="nb-admin-header"
           style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '40px',
-            paddingBottom: '20px',
+            marginBottom: '32px',
             borderBottom: `1px solid ${t.border}`,
-            flexWrap: 'wrap',
-            gap: '16px',
+            paddingBottom: '20px',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <img
-              src="/logo-icon.jpg"
-              alt="NativeBooking"
-              style={{ height: '40px', width: '40px', borderRadius: '10px', display: 'block' }}
-            />
+            <span style={{ fontSize: '24px' }}>🛡️</span>
             <div>
-              <span className="nb-admin-logo-title" style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '0.05em', color: '#ffffff', display: 'block' }}>
-                NATIVEBOOKING
-              </span>
-              <span style={{ fontSize: '12px', color: t.textSecondary, fontWeight: 500 }}>
-                Central Control Hub · Poland
+              <span style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff' }}>NativeBooking</span>
+              <span style={{ fontSize: '12px', color: t.accent, fontWeight: 700, marginLeft: '8px' }}>
+                ADMIN CONTROL HUB
               </span>
             </div>
           </div>
-
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '12px' }}>
             <button
               onClick={() => navigate('/')}
-              className="btn btn-secondary nb-admin-btn"
-              style={{ padding: '8px 16px', fontSize: '13px', borderRadius: '8px' }}
+              style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                color: t.textPrimary,
+                border: `1px solid ${t.border}`,
+                padding: '8px 16px',
+                borderRadius: '10px',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
             >
-              ← Portal Homepage
+              ← Back to Portal
             </button>
             <button
               onClick={handleLogout}
-              className="btn btn-secondary nb-admin-btn"
-              style={{ padding: '8px 16px', fontSize: '13px', borderRadius: '8px', color: '#f87171' }}
+              style={{
+                background: 'rgba(239, 68, 68, 0.1)',
+                color: '#f87171',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
+                padding: '8px 16px',
+                borderRadius: '10px',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+              }}
             >
               Logout
             </button>
           </div>
         </header>
 
-        {/* ─── DASHBOARD HEADER & STATS ──────────────────────── */}
         <div style={{ marginBottom: '32px' }}>
           <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#ffffff', marginBottom: '6px' }}>
             Client Discovery Calls
@@ -164,7 +161,6 @@ export default function AdminDB() {
           </p>
         </div>
 
-        {/* Stats Row */}
         <div
           style={{
             display: 'grid',
@@ -191,12 +187,13 @@ export default function AdminDB() {
               <span style={{ fontSize: '13px', color: t.textSecondary, fontWeight: 600, display: 'block', marginBottom: '4px' }}>
                 {stat.label}
               </span>
-              <span style={{ fontSize: '32px', fontWeight: 800, color: stat.color }}>{stat.count}</span>
+              <span style={{ fontSize: '32px', fontWeight: 800, color: stat.color }}>
+                {stat.count}
+              </span>
             </div>
           ))}
         </div>
 
-        {/* ─── FILTER TABS ───────────────────────────────────── */}
         <div
           style={{
             display: 'flex',
@@ -209,12 +206,7 @@ export default function AdminDB() {
         >
           {(['all', 'pending', 'confirmed', 'declined'] as const).map((filterKey) => {
             const isActive = statusFilter === filterKey
-            const labelMap = {
-              all: `All Requests (${introCalls.length})`,
-              pending: `⏳ Pending (${countPending})`,
-              confirmed: `✅ Confirmed (${countConfirmed})`,
-              declined: `❌ Declined (${countDeclined})`,
-            }
+            const count = filterKey === 'all' ? introCalls.length : filterKey === 'pending' ? countPending : filterKey === 'confirmed' ? countConfirmed : countDeclined
 
             return (
               <button
@@ -222,23 +214,26 @@ export default function AdminDB() {
                 onClick={() => setStatusFilter(filterKey)}
                 style={{
                   background: isActive ? t.accent : 'rgba(255,255,255,0.03)',
-                  color: isActive ? '#ffffff' : t.textSecondary,
+                  color: isActive ? '#000000' : t.textSecondary,
                   border: `1px solid ${isActive ? t.accent : t.border}`,
                   padding: '8px 18px',
-                  borderRadius: '10px',
+                  borderRadius: '9999px',
                   fontSize: '13px',
                   fontWeight: 700,
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
                 }}
               >
-                {labelMap[filterKey]}
+                <span>{filterKey === 'all' ? 'All Requests' : filterKey === 'pending' ? '⏳ Pending' : filterKey === 'confirmed' ? '✅ Confirmed' : '❌ Declined'}</span>
+                ({count})
               </button>
             )
           })}
         </div>
 
-        {/* ─── CALL REQUESTS LIST ────────────────────────────── */}
         {loading ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: t.textSecondary }}>
             Loading discovery calls...
@@ -252,38 +247,9 @@ export default function AdminDB() {
               border: `1px solid ${t.border}`,
               borderRadius: '20px',
               color: t.textSecondary,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '16px',
             }}
           >
-            <div style={{ fontSize: '36px' }}>📋</div>
-            <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
-              No {statusFilter === 'all' ? '' : statusFilter} Discovery Calls
-            </h3>
-            <p style={{ fontSize: '14px', maxWidth: '420px', lineHeight: '1.5' }}>
-              {statusFilter === 'all'
-                ? 'No discovery call requests have been submitted yet. New client inquiries will appear here automatically.'
-                : `There are currently no discovery call requests categorized as "${statusFilter}".`}
-            </p>
-            {statusFilter !== 'all' && (
-              <button
-                onClick={() => setStatusFilter('all')}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: '8px',
-                  background: t.accent,
-                  color: '#ffffff',
-                  border: 'none',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-              >
-                Reset Filter to All
-              </button>
-            )}
+            No {statusFilter === 'all' ? '' : statusFilter} Discovery Calls
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -301,7 +267,7 @@ export default function AdminDB() {
                 `NativeBooking Discovery Call — ${call.name}`
               )}&details=${encodeURIComponent(
                 `Discovery call with ${call.name}\nIndustry: ${call.industry}\nPhone/WhatsApp: ${call.phone}\nNotes: ${call.notes || 'None'}`
-              )}&dates=${gcalDateStr}/${gcalEndDateStr}&add=${encodeURIComponent(call.email)}&authuser=info@nativebooking.co`
+              )}&dates=${gcalDateStr}/${gcalEndDateStr}&add=${encodeURIComponent(call.email)}`
 
               return (
                 <div
@@ -318,32 +284,11 @@ export default function AdminDB() {
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
                     <div>
-                      <span
-                        style={{
-                          fontSize: '11px',
-                          fontWeight: 700,
-                          textTransform: 'uppercase',
-                          letterSpacing: '0.05em',
-                          padding: '4px 12px',
-                          borderRadius: '12px',
-                          background:
-                            call.status === 'confirmed'
-                              ? 'rgba(16, 185, 129, 0.15)'
-                              : call.status === 'declined'
-                              ? 'rgba(239, 68, 68, 0.15)'
-                              : 'rgba(234, 179, 8, 0.15)',
-                          color:
-                            call.status === 'confirmed'
-                              ? '#34d399'
-                              : call.status === 'declined'
-                              ? '#f87171'
-                              : '#facc15',
-                          display: 'inline-block',
-                          marginBottom: '8px',
-                        }}
-                      >
-                        {call.status === 'pending' ? '⏳ Pending Review' : call.status === 'confirmed' ? '✅ Confirmed' : '❌ Declined'}
-                      </span>
+                      <div style={{ marginBottom: '8px' }}>
+                        <Badge variant={call.status === 'confirmed' ? 'confirmed' : call.status === 'declined' ? 'cancelled' : 'pending'}>
+                          {call.status === 'pending' ? 'Pending Review' : call.status === 'confirmed' ? 'Confirmed' : 'Declined'}
+                        </Badge>
+                      </div>
                       <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', margin: 0 }}>
                         {call.name}
                       </h3>
@@ -352,7 +297,6 @@ export default function AdminDB() {
                       </span>
                     </div>
 
-                    {/* High-Visibility Date & Time Ticket Badge */}
                     <div
                       style={{
                         display: 'flex',

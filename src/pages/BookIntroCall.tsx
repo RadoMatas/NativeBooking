@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { submitIntroCallRequest, type IntroCallBooking } from '../introCallHelpers'
+import { Badge } from '../components/ui/Badge'
+
+
 
 export default function BookIntroCall() {
   const navigate = useNavigate()
@@ -245,22 +248,9 @@ export default function BookIntroCall() {
                 <span style={{ color: t.textSecondary }}>Industry:</span>
                 <span style={{ fontWeight: 600, color: '#ffffff' }}>{submittedBooking.industry}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: t.textSecondary }}>Status:</span>
-                <span
-                  style={{
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    padding: '3px 10px',
-                    borderRadius: '12px',
-                    background: 'rgba(234, 179, 8, 0.15)',
-                    color: '#eab308',
-                    border: '1px solid rgba(234, 179, 8, 0.3)',
-                  }}
-                >
-                  Pending Review
-                </span>
+                <Badge variant="pending">Pending Review</Badge>
               </div>
             </div>
 

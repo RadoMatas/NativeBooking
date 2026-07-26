@@ -5,6 +5,8 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
+import { Badge } from '../components/ui/Badge'
+
 
 export default function CustomerDB() {
   const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
@@ -364,9 +366,9 @@ export default function CustomerDB() {
                 )}
                 <p style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <strong style={{ color: 'var(--text-secondary)' }}>Status:</strong>{' '}
-                  <span className={`status-badge ${getDisplayStatus(latestBooking).toLowerCase()}`}>
+                  <Badge variant={getDisplayStatus(latestBooking).toLowerCase() as any}>
                     {getDisplayStatus(latestBooking)}
-                  </span>
+                  </Badge>
                 </p>
                 {latestBooking.adminStatus === 'Reschedule Requested' && (
                   <p style={{ color: '#facc15', fontWeight: 600, fontSize: '13px', marginTop: '4px' }}>

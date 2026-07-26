@@ -5,6 +5,8 @@ import { currentUserRole, currentUserEmail } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 
+
+
 export default function BookAppointment() {
   const navigate = useNavigate()
   const activeRole = currentUserRole || sessionStorage.getItem('currentUserRole')

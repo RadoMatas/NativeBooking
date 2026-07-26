@@ -6,6 +6,7 @@ import {
   ContractorIcon,
   CheckIcon
 } from './ui/Icons'
+import { Badge } from './ui/Badge'
 
 type TabKey = 'studio' | 'clinic' | 'academic' | 'contractor'
 type ViewMode = 'customer' | 'admin'
@@ -33,9 +34,9 @@ export default function InteractiveShowcase() {
         title: 'Ink & Art Studio — Admin Operations Board',
         badge: '4 Active Appointments Today',
         rows: [
-          { label: 'Marcel S. — Sleeve Tattoo Session', detail: '10:00 AM · Artist: Marcel · Deposit Paid ($50)', status: 'Confirmed', statusBg: 'rgba(16, 185, 129, 0.12)', statusColor: '#34d399' },
-          { label: 'Elena R. — Wrist Fine Line', detail: '01:30 PM · Artist: Sophia · Deposit Paid ($30)', status: 'In Progress', statusBg: 'rgba(14, 165, 233, 0.12)', statusColor: '#38bdf8' },
-          { label: 'David K. — Custom Consult', detail: '04:00 PM · Artist: Marcel · Consult Only', status: 'Upcoming', statusBg: 'rgba(245, 158, 11, 0.12)', statusColor: '#fbbf24' }
+          { label: 'Marcel S. — Sleeve Tattoo Session', detail: '10:00 AM · Artist: Marcel · Deposit Paid ($50)', status: 'Confirmed', variant: 'confirmed' as const },
+          { label: 'Elena R. — Wrist Fine Line', detail: '01:30 PM · Artist: Sophia · Deposit Paid ($30)', status: 'In Progress', variant: 'in_progress' as const },
+          { label: 'David K. — Custom Consult', detail: '04:00 PM · Artist: Marcel · Consult Only', status: 'Upcoming', variant: 'warning' as const }
         ]
       },
       customerData: {
@@ -67,9 +68,9 @@ export default function InteractiveShowcase() {
         title: 'Apex Dental & Health — Patient Clinical Board',
         badge: '6 Patients Scheduled',
         rows: [
-          { label: 'Dr. Aris V. — Teeth Cleaning & X-Ray', detail: '09:00 AM · Room 2 · Intake Form Completed', status: 'Checked In', statusBg: 'rgba(14, 165, 233, 0.12)', statusColor: '#38bdf8' },
-          { label: 'Dr. Maya L. — Orthodontic Check', detail: '11:15 AM · Room 1 · Follow-up Session', status: 'Confirmed', statusBg: 'rgba(16, 185, 129, 0.12)', statusColor: '#34d399' },
-          { label: 'Dr. Aris V. — Emergency Consult', detail: '02:00 PM · Room 3 · Symptom Note Attached', status: 'Pending', statusBg: 'rgba(245, 158, 11, 0.12)', statusColor: '#fbbf24' }
+          { label: 'Dr. Aris V. — Teeth Cleaning & X-Ray', detail: '09:00 AM · Room 2 · Intake Form Completed', status: 'Checked In', variant: 'info' as const },
+          { label: 'Dr. Maya L. — Orthodontic Check', detail: '11:15 AM · Room 1 · Follow-up Session', status: 'Confirmed', variant: 'confirmed' as const },
+          { label: 'Dr. Aris V. — Emergency Consult', detail: '02:00 PM · Room 3 · Symptom Note Attached', status: 'Pending', variant: 'pending' as const }
         ]
       },
       customerData: {
@@ -101,8 +102,8 @@ export default function InteractiveShowcase() {
         title: 'Vanguard Academy — Class Roster & Instructor Board',
         badge: '18 Students Enrolled',
         rows: [
-          { label: 'Advanced Coding Boot Camp — Module 4', detail: '10:00 AM · Instructor: Alex · 12/15 Seats Filled', status: 'Active Class', statusBg: 'rgba(16, 185, 129, 0.12)', statusColor: '#34d399' },
-          { label: 'UX Design Workshop — Session 2', detail: '02:00 PM · Instructor: Sarah · 8/10 Seats Filled', status: 'Open Slots', statusBg: 'rgba(14, 165, 233, 0.12)', statusColor: '#38bdf8' }
+          { label: 'Advanced Coding Boot Camp — Module 4', detail: '10:00 AM · Instructor: Alex · 12/15 Seats Filled', status: 'Active Class', variant: 'confirmed' as const },
+          { label: 'UX Design Workshop — Session 2', detail: '02:00 PM · Instructor: Sarah · 8/10 Seats Filled', status: 'Open Slots', variant: 'info' as const }
         ]
       },
       customerData: {
@@ -134,8 +135,8 @@ export default function InteractiveShowcase() {
         title: 'Apex HVAC & Trade — Field Dispatch Board',
         badge: '3 Active Field Crews',
         rows: [
-          { label: 'Crew A (John & Pete) — Commercial HVAC Repair', detail: '08:00 AM - 12:00 PM · Site: 144 Oak St · Parts On-Site', status: 'On Site', statusBg: 'rgba(16, 185, 129, 0.12)', statusColor: '#34d399' },
-          { label: 'Crew B (Mark) — Residential Duct Inspection', detail: '01:00 PM - 03:30 PM · Site: 88 Elm Ave · Labor Hours Tracked', status: 'Dispatched', statusBg: 'rgba(245, 158, 11, 0.12)', statusColor: '#fbbf24' }
+          { label: 'Crew A (John & Pete) — Commercial HVAC Repair', detail: '08:00 AM - 12:00 PM · Site: 144 Oak St · Parts On-Site', status: 'On Site', variant: 'confirmed' as const },
+          { label: 'Crew B (Mark) — Residential Duct Inspection', detail: '01:00 PM - 03:30 PM · Site: 88 Elm Ave · Labor Hours Tracked', status: 'Dispatched', variant: 'warning' as const }
         ]
       },
       customerData: {
@@ -161,26 +162,19 @@ export default function InteractiveShowcase() {
         margin: '0 auto',
         background: 'rgba(22, 24, 29, 0.85)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
-        borderRadius: '20px',
+        borderRadius: '24px',
         padding: '36px 28px',
         boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+        backdropFilter: 'blur(20px)',
       }}
     >
       <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-        <span
-          style={{
-            fontSize: '12px',
-            fontWeight: 700,
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            color: 'var(--accent-color)',
-            display: 'block',
-            marginBottom: '8px',
-          }}
-        >
-          Dual-View Operational Workbench
-        </span>
-        <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+        <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'center' }}>
+          <Badge variant="confirmed" style={{ padding: '6px 14px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            Dual-View Operational Workbench
+          </Badge>
+        </div>
+        <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px', letterSpacing: '-0.02em' }}>
           Experience Customer Booking & Admin Control Side-by-Side
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
@@ -193,7 +187,7 @@ export default function InteractiveShowcase() {
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '10px',
+          gap: '12px',
           marginBottom: '24px',
         }}
       >
@@ -206,21 +200,22 @@ export default function InteractiveShowcase() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '10px',
-                padding: '12px 16px',
-                borderRadius: '12px',
+                gap: '12px',
+                padding: '14px 18px',
+                borderRadius: '16px',
                 background: isActive ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.02)',
                 border: `1px solid ${isActive ? tab.accent : 'rgba(255, 255, 255, 0.06)'}`,
                 color: isActive ? '#ffffff' : 'var(--text-secondary)',
                 cursor: 'pointer',
                 textAlign: 'left',
-                transition: 'all 0.2s ease',
+                transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                boxShadow: isActive ? `0 4px 20px ${tab.accent}20` : 'none',
               }}
             >
               <div
                 style={{
                   padding: '8px',
-                  borderRadius: '8px',
+                  borderRadius: '10px',
                   background: isActive ? `${tab.accent}22` : 'rgba(255, 255, 255, 0.04)',
                   color: isActive ? tab.accent : 'var(--text-secondary)',
                   display: 'flex',
@@ -251,8 +246,8 @@ export default function InteractiveShowcase() {
         <button
           onClick={() => setViewMode('admin')}
           style={{
-            padding: '8px 18px',
-            borderRadius: '8px',
+            padding: '8px 20px',
+            borderRadius: '9999px',
             fontSize: '13px',
             fontWeight: 700,
             cursor: 'pointer',
@@ -267,8 +262,8 @@ export default function InteractiveShowcase() {
         <button
           onClick={() => setViewMode('customer')}
           style={{
-            padding: '8px 18px',
-            borderRadius: '8px',
+            padding: '8px 20px',
+            borderRadius: '9999px',
             fontSize: '13px',
             fontWeight: 700,
             cursor: 'pointer',
@@ -290,29 +285,17 @@ export default function InteractiveShowcase() {
           gap: '24px',
           background: 'rgba(12, 13, 16, 0.7)',
           border: '1px solid rgba(255, 255, 255, 0.06)',
-          borderRadius: '16px',
+          borderRadius: '20px',
           padding: '24px',
         }}
       >
         {/* Features Column */}
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '4px 10px',
-                borderRadius: '9999px',
-                background: `${currentTab.accent}18`,
-                border: `1px solid ${currentTab.accent}40`,
-                color: currentTab.accent,
-                fontSize: '11px',
-                fontWeight: 700,
-                marginBottom: '14px',
-              }}
-            >
-              {currentTab.badge}
+            <div style={{ marginBottom: '14px' }}>
+              <Badge variant="info" style={{ background: `${currentTab.accent}18`, borderColor: `${currentTab.accent}40`, color: currentTab.accent }}>
+                {currentTab.badge}
+              </Badge>
             </div>
             <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginBottom: '12px' }}>
               {currentTab.label} System
@@ -340,14 +323,15 @@ export default function InteractiveShowcase() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '8px',
-              padding: '10px 18px',
-              borderRadius: '8px',
+              padding: '12px 20px',
+              borderRadius: '9999px',
               background: currentTab.accent,
               color: '#ffffff',
               fontWeight: 700,
               fontSize: '13px',
               textDecoration: 'none',
-              transition: 'opacity 0.2s ease',
+              transition: 'all 0.2s ease',
+              boxShadow: `0 4px 16px ${currentTab.accent}40`,
             }}
           >
             Launch Live {currentTab.label} Sandbox ➔
@@ -359,7 +343,7 @@ export default function InteractiveShowcase() {
           style={{
             background: 'rgba(20, 22, 27, 0.95)',
             border: '1px solid rgba(255, 255, 255, 0.08)',
-            borderRadius: '12px',
+            borderRadius: '16px',
             padding: '20px',
             boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
           }}
@@ -369,12 +353,14 @@ export default function InteractiveShowcase() {
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px' }}>
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>{currentTab.adminData.title}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>
+                    {currentTab.adminData.title}
+                  </div>
                   <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Central Manager Control Hub</div>
                 </div>
-                <span style={{ fontSize: '11px', fontWeight: 600, color: currentTab.accent, background: `${currentTab.accent}15`, padding: '3px 8px', borderRadius: '6px' }}>
+                <Badge variant="info">
                   {currentTab.adminData.badge}
-                </span>
+                </Badge>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -384,8 +370,8 @@ export default function InteractiveShowcase() {
                     style={{
                       background: 'rgba(255, 255, 255, 0.02)',
                       border: '1px solid rgba(255, 255, 255, 0.05)',
-                      borderRadius: '8px',
-                      padding: '12px',
+                      borderRadius: '12px',
+                      padding: '12px 14px',
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center',
@@ -397,19 +383,9 @@ export default function InteractiveShowcase() {
                       </div>
                       <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{row.detail}</div>
                     </div>
-                    <span
-                      style={{
-                        fontSize: '11px',
-                        fontWeight: 700,
-                        padding: '3px 8px',
-                        borderRadius: '6px',
-                        background: row.statusBg,
-                        color: row.statusColor,
-                        whiteSpace: 'nowrap',
-                      }}
-                    >
+                    <Badge variant={row.variant}>
                       {row.status}
-                    </span>
+                    </Badge>
                   </div>
                 ))}
               </div>
@@ -419,12 +395,14 @@ export default function InteractiveShowcase() {
             <>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px' }}>
                 <div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>{currentTab.customerData.title}</div>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#ffffff' }}>
+                    {currentTab.customerData.title}
+                  </div>
                   <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Client Self-Service Experience</div>
                 </div>
-                <span style={{ fontSize: '11px', fontWeight: 600, color: currentTab.accent, background: `${currentTab.accent}15`, padding: '3px 8px', borderRadius: '6px' }}>
+                <Badge variant="confirmed">
                   {currentTab.customerData.badge}
-                </span>
+                </Badge>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -434,7 +412,7 @@ export default function InteractiveShowcase() {
                     style={{
                       background: 'rgba(255, 255, 255, 0.02)',
                       border: '1px solid rgba(255, 255, 255, 0.05)',
-                      borderRadius: '8px',
+                      borderRadius: '12px',
                       padding: '10px 14px',
                     }}
                   >
@@ -454,3 +432,5 @@ export default function InteractiveShowcase() {
     </div>
   )
 }
+
+

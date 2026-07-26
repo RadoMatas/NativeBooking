@@ -1,787 +1,473 @@
 import { useNavigate } from 'react-router-dom'
-import HeroFlowDiagram from '../components/HeroFlowDiagram'
-import PixelFlowSnake from '../components/PixelFlowSnake'
 import InteractiveShowcase from '../components/InteractiveShowcase'
 import SavingsCalculator from '../components/SavingsCalculator'
 import WhiteLabelComparison from '../components/WhiteLabelComparison'
-import {
-  StudioIcon,
-  ClinicIcon,
-  AcademicIcon,
-  ContractorIcon,
-  CreditCardIcon,
-  CalendarIcon,
-  UsersIcon,
-  ShieldIcon,
-  SettingsIcon,
-  SparklesIcon,
-  CheckIcon,
-  ArrowRightIcon
-} from '../components/ui/Icons'
+import { Badge } from '../components/ui/Badge'
+import { Button } from '../components/ui/Button'
 
 export default function PortalHome() {
   const navigate = useNavigate()
-
-  const t = {
-    bg: '#0c0d10',
-    cardBg: 'rgba(22, 24, 29, 0.85)',
-    strip: 'rgba(255,255,255,0.025)',
-    border: 'rgba(255, 255, 255, 0.08)',
-    accent: '#10b981',
-    accentSoft: 'rgba(16, 185, 129, 0.1)',
-    textPrimary: '#f8fafc',
-    textSecondary: '#94a3b8',
-    textMuted: 'rgba(255,255,255,0.5)',
-  }
-
-  const industries = [
-    {
-      title: 'Tattoo & Creative Studios',
-      icon: <StudioIcon size={22} style={{ color: '#10b981' }} />,
-      status: 'Live Sandbox',
-      statusColor: '#10b981',
-      statusBg: 'rgba(16, 185, 129, 0.1)',
-      description: 'Client queue split-view, artist profiles, deposit collection, aftercare notes, and a full admin schedule panel.',
-      link: 'https://tattoo.nativebooking.co',
-      badge: 'Creative Niche',
-    },
-    {
-      title: 'Dental & Chiropractic Clinics',
-      icon: <ClinicIcon size={22} style={{ color: '#0ea5e9' }} />,
-      status: 'Live Sandbox',
-      statusColor: '#0ea5e9',
-      statusBg: 'rgba(14, 165, 233, 0.1)',
-      description: 'Clean clinical look, doctor roster, symptom intake notes, appointment tracking, and no-deposit scheduling.',
-      link: 'https://dental.nativebooking.co',
-      badge: 'Medical Niche',
-    },
-    {
-      title: 'Education & Academies',
-      icon: <AcademicIcon size={22} style={{ color: '#0d9488' }} />,
-      status: 'Live Sandbox',
-      statusColor: '#0d9488',
-      statusBg: 'rgba(13, 148, 136, 0.1)',
-      description: 'Course enrollments, instructor assignments, class scheduling, and a student-facing lesson portal.',
-      link: 'https://academic.nativebooking.co',
-      badge: 'Academic Niche',
-    },
-    {
-      title: 'HVAC & Home Services',
-      icon: <ContractorIcon size={22} style={{ color: '#f59e0b' }} />,
-      status: 'Live Sandbox',
-      statusColor: '#f59e0b',
-      statusBg: 'rgba(245, 158, 11, 0.1)',
-      description: 'Internal job dispatch board, field technician assignments, job site addresses, and status pipelines — no customer portal needed.',
-      link: 'https://contractor.nativebooking.co',
-      badge: 'Contractor Niche',
-    },
-  ]
-
-  const features = [
-    { icon: <CreditCardIcon size={20} style={{ color: '#10b981' }} />, title: 'Payments & Deposits', desc: 'Stripe checkout built in. Collect deposits, authorise cards, and handle refunds — all without leaving the app.' },
-    { icon: <CalendarIcon size={20} style={{ color: '#10b981' }} />, title: 'Smart Scheduling', desc: 'Picks open slots, blocks taken times, and respects your working hours, days off, and staff availability.' },
-    { icon: <UsersIcon size={20} style={{ color: '#10b981' }} />, title: 'Staff & Roster', desc: 'Each team member gets their own schedule, profile, and service list. Clients pick who they want.' },
-    { icon: <UsersIcon size={20} style={{ color: '#10b981' }} />, title: 'Client Portal', desc: 'Clients log in, see their bookings, request a reschedule, and track the status — no phone call needed.' },
-    { icon: <SettingsIcon size={20} style={{ color: '#10b981' }} />, title: 'Admin Control Hub', desc: 'See every booking, approve changes, leave notes on completed sessions, and keep the whole team on track.' },
-    { icon: <ShieldIcon size={20} style={{ color: '#10b981' }} />, title: 'Login & Access', desc: 'Email and password auth out of the box. Google Sign-in can be wired in for customer-facing builds. Role-based access keeps admin and client views fully separate.' },
-  ]
-
-  const pills = [
-    { icon: <StudioIcon size={16} />, label: 'Custom Branding' },
-    { icon: <SparklesIcon size={16} />, label: 'Your Own Domain' },
-    { icon: <CreditCardIcon size={16} />, label: 'Payments On/Off' },
-    { icon: <CreditCardIcon size={16} />, label: 'Deposits On/Off' },
-    { icon: <UsersIcon size={16} />, label: 'Multi-Staff' },
-    { icon: <SparklesIcon size={16} />, label: 'Mobile PWA' },
-    { icon: <ShieldIcon size={16} />, label: 'Firebase Database' },
-    { icon: <StudioIcon size={16} />, label: 'Custom Colors' },
-    { icon: <CheckIcon size={16} />, label: 'Email Notifications' },
-  ]
-
-  const steps = [
-    { num: '01', icon: <SparklesIcon size={20} style={{ color: '#10b981' }} />, title: 'Blueprint', desc: 'We map your specific operational workflow, booking rules, staff rosters, and payment requirements.' },
-    { num: '02', icon: <SettingsIcon size={20} style={{ color: '#10b981' }} />, title: 'Tailored Build', desc: 'We engineer your custom software. Your brand identity, your domain name, your custom database.' },
-    { num: '03', icon: <ArrowRightIcon size={20} style={{ color: '#10b981' }} />, title: 'Handover', desc: 'Full system handover — domain, database, and source code control with zero monthly commission fees.' },
-    { num: '04', icon: <CheckIcon size={20} style={{ color: '#10b981' }} />, title: 'Operational Launch', desc: 'Your clients book, your crews dispatch, and your operations run on autopilot with zero per-booking cuts.' },
-  ]
-
-  const scrollToDemo = () => {
-    document.getElementById('demos')?.scrollIntoView({ behavior: 'smooth' })
-  }
 
   return (
     <div
       style={{
         minHeight: '100vh',
-        backgroundColor: t.bg,
-        color: t.textPrimary,
-        fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-        background: `radial-gradient(circle at top right, rgba(16, 185, 129, 0.08), transparent 50%),
-                     radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.05), transparent 50%),
-                     #0c0d10`,
-        backgroundAttachment: 'fixed',
+        backgroundColor: '#090a0f',
+        color: '#f8fafc',
+        fontFamily: "'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif",
+        overflowX: 'hidden',
       }}
     >
       <style>{`
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(24px); }
-          to   { opacity: 1; transform: translateY(0); }
+        @keyframes pulseGlow {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 0.7; transform: scale(1.05); }
         }
-        .nb-card {
-          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        .aave-hero-glow-emerald {
+          position: absolute;
+          width: 600px;
+          height: 600px;
+          top: -150px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.02) 60%, transparent 80%);
+          filter: blur(80px);
+          pointer-events: none;
+          z-index: 0;
+          animation: pulseGlow 8s ease-in-out infinite;
         }
-        .nb-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 16px 48px rgba(16, 185, 129, 0.12) !important;
-          border-color: rgba(16, 185, 129, 0.35) !important;
+        .aave-hero-glow-purple {
+          position: absolute;
+          width: 700px;
+          height: 700px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.02) 60%, transparent 80%);
+          filter: blur(90px);
+          pointer-events: none;
+          z-index: 0;
+          animation: pulseGlow 10s ease-in-out infinite;
         }
-        .nb-pill {
-          transition: background 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        .aave-text-gradient-emerald {
+          background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
-        .nb-pill:hover {
-          background: rgba(16, 185, 129, 0.12) !important;
-          border-color: rgba(16, 185, 129, 0.4) !important;
-          box-shadow: 0 0 16px rgba(16, 185, 129, 0.15);
+        .aave-text-gradient-purple {
+          background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
         }
-        .nb-demo-card {
-          transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        .aave-market-card {
+          background: rgba(20, 22, 28, 0.75);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 20px;
+          padding: 28px;
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          backdrop-filter: blur(16px);
         }
-        .nb-demo-card:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 20px 56px rgba(0,0,0,0.4) !important;
-        }
-        .nb-step {
-          transition: transform 0.3s ease, border-color 0.3s ease;
-        }
-        .nb-step:hover {
+        .aave-market-card:hover {
+          border-color: rgba(255, 255, 255, 0.18);
           transform: translateY(-4px);
-          border-color: rgba(16, 185, 129, 0.3) !important;
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
         }
-        @media (max-width: 640px) {
-          .nb-hero-title { font-size: 32px !important; }
-          .nb-section-title { font-size: 26px !important; }
-          .nb-feature-grid { grid-template-columns: 1fr !important; }
-          .nb-nav { padding: 12px 16px !important; }
-          .nb-logo-img { height: 34px !important; width: 34px !important; }
-          .nb-logo-title { font-size: 14px !important; letter-spacing: 0.04em !important; }
-          .nb-nav-actions { gap: 8px !important; }
-          .nb-nav-btn { padding: 5px 10px !important; font-size: 11px !important; }
+        .aave-token-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border-radius: 9999px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          font-size: 12px;
+          font-weight: 600;
+          color: #f8fafc;
         }
-        @media (max-width: 900px) {
-          .nb-feature-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        @media (max-width: 768px) {
+          .aave-hero-title { font-size: 38px !important; }
         }
       `}</style>
 
-      {/* ─── NAV ──────────────────────────────────────────────── */}
-      <nav
-        className="nb-nav"
+      {/* ─── AAVE STICKY HEADER NAV BAR ───────────────────────── */}
+      <header
         style={{
           position: 'sticky',
           top: 0,
           zIndex: 100,
+          background: 'rgba(9, 10, 15, 0.85)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          padding: '16px 36px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '16px 32px',
-          borderBottom: `1px solid ${t.border}`,
-          background: 'rgba(12, 13, 16, 0.88)',
-          backdropFilter: 'blur(16px)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {/* Brand Logo */}
+        <div 
+          onClick={() => navigate('/')} 
+          style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+        >
           <img
             src="/logo-icon.jpg"
-            alt="NativeBooking"
-            className="nb-logo-img"
-            style={{ height: '44px', width: '44px', borderRadius: '10px', display: 'block' }}
+            alt="NativeBooking Logo"
+            style={{ width: '36px', height: '36px', borderRadius: '10px', display: 'block' }}
           />
-          <span className="nb-logo-title" style={{ fontSize: '16px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>
+          <span style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
             NATIVEBOOKING
           </span>
         </div>
-        <div className="nb-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button
-            onClick={() => navigate('/book-call')}
-            className="nb-nav-btn"
-            style={{
-              fontSize: '12px',
-              fontWeight: 700,
-              color: '#ffffff',
-              background: t.accent,
-              border: 'none',
-              borderRadius: '8px',
-              padding: '6px 12px',
-              cursor: 'pointer',
-              boxShadow: '0 2px 10px rgba(16,185,129,0.25)',
-              fontFamily: 'inherit',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Intro Call
-          </button>
-          <a
-            href="mailto:info@nativebooking.co"
-            className="nb-nav-btn"
-            style={{
-              fontSize: '13px',
-              fontWeight: 600,
-              color: t.accent,
-              textDecoration: 'none',
-              padding: '7px 16px',
-              border: `1px solid rgba(16,185,129,0.35)`,
-              borderRadius: '8px',
-              transition: 'background 0.2s ease',
-            }}
-          >
-            Contact Us
-          </a>
-        </div>
-      </nav>
 
-      {/* ─── HERO ─────────────────────────────────────────────── */}
+        {/* Right Action Buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            onClick={() => navigate('/adminlogin')}
+          >
+            Admin Login
+          </Button>
+          <Button 
+            variant="primary" 
+            size="sm" 
+            onClick={() => navigate('/book-call')}
+          >
+            Use NativeBooking
+          </Button>
+        </div>
+      </header>
+
+      {/* ─── SECTION 1: HERO (EMERALD THEME) ─────────────────── */}
       <section
         style={{
           position: 'relative',
-          overflow: 'hidden',
+          padding: '100px 24px 80px',
+          textAlign: 'center',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          textAlign: 'center',
-          padding: '80px 24px 60px 24px',
-          animation: 'fadeInUp 0.7s ease both',
         }}
       >
-        {/* ── Ambient background: signal-flow diagram ── */}
-        <HeroFlowDiagram />
+        <div className="aave-hero-glow-emerald" />
 
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 16px',
-              borderRadius: '9999px',
-              border: `1px solid rgba(16,185,129,0.35)`,
-              background: 'rgba(16,185,129,0.08)',
-              fontSize: '12px',
-              fontWeight: 700,
-              color: t.accent,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              marginBottom: '24px',
-            }}
-          >
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: t.accent, display: 'inline-block' }} />
-            White-Label Reservation & Operations Engine
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '900px', margin: '0 auto' }}>
+          {/* Category Pill */}
+          <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>
+            <Badge 
+              variant="confirmed" 
+              icon={<img src="/logo-icon.jpg" width={16} height={16} style={{ borderRadius: '4px' }} />}
+              style={{ padding: '6px 16px', fontSize: '12px', fontWeight: 700 }}
+            >
+              NativeBooking App
+            </Badge>
           </div>
 
+          {/* Main Headline */}
           <h1
-            className="nb-hero-title"
+            className="aave-hero-title"
             style={{
-              fontSize: '52px',
+              fontSize: '60px',
               fontWeight: 800,
-              lineHeight: '1.15',
-              letterSpacing: '-0.025em',
+              lineHeight: '1.1',
+              letterSpacing: '-0.03em',
               color: '#ffffff',
-              maxWidth: '820px',
               marginBottom: '20px',
             }}
           >
-            Custom Reservation & Dispatch Systems{' '}
-            <span style={{ color: t.accent }}>Built for Your Workflow</span>
+            Reservations & Scheduling for{' '}
+            <span className="aave-text-gradient-emerald">Everyone</span>
           </h1>
 
+          {/* Description */}
           <p
             style={{
-              fontSize: '17px',
-              color: t.textSecondary,
-              maxWidth: '680px',
+              fontSize: '18px',
+              color: '#94a3b8',
+              maxWidth: '660px',
+              margin: '0 auto 36px',
               lineHeight: '1.6',
-              marginBottom: '36px',
             }}
           >
-            Tailored software for service businesses and contractor crews. Own your domain, your operational rules, and your client data — zero monthly per-booking commissions.
+            Put your money and time slots to work, every second of every day. Custom white-label booking infrastructure with 0% marketplace commission.
           </p>
 
-          <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button
-              onClick={() => navigate('/book-call')}
-              style={{
-                padding: '14px 32px',
-                fontSize: '15px',
-                fontWeight: 700,
-                borderRadius: '10px',
-                background: t.accent,
-                color: '#ffffff',
-                border: 'none',
-                cursor: 'pointer',
-                boxShadow: '0 4px 20px rgba(16,185,129,0.35)',
-                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+          {/* Action Buttons */}
+          <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', marginBottom: '60px', flexWrap: 'wrap' }}>
+            <Button variant="primary" size="lg" onClick={() => navigate('/book-call')}>
+              Book Demo Call ➔
+            </Button>
+            <Button 
+              variant="secondary" 
+              size="lg" 
+              onClick={() => {
+                const element = document.getElementById('workbench')
+                if (element) {
+                  element.scrollIntoView({ behavior: 'smooth' })
+                }
               }}
             >
-              Book 15-Min Blueprint Call ➔
-            </button>
-            <button
-              onClick={scrollToDemo}
-              style={{
-                padding: '14px 28px',
-                fontSize: '15px',
-                fontWeight: 600,
-                borderRadius: '10px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                color: '#ffffff',
-                border: `1px solid ${t.border}`,
-                cursor: 'pointer',
-                backdropFilter: 'blur(10px)',
-              }}
-            >
-              Explore Live Demos
-            </button>
+              Explore Client Booking
+            </Button>
+          </div>
+
+          {/* Dual-View Interactive Showcase */}
+          <div id="workbench" style={{ position: 'relative', zIndex: 2 }}>
+            <InteractiveShowcase />
           </div>
         </div>
       </section>
 
-      {/* ─── PIXEL FLOW SNAKE ────────────────────────────────────── */}
-      {/* Neon pixel snake bridging the hero to the demos section */}
-      <PixelFlowSnake />
+      {/* ─── SECTION 2: PRO (PURPLE THEME) ───────────────────── */}
+      <section
+        style={{
+          position: 'relative',
+          padding: '120px 24px 100px',
+          background: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.06) 0%, rgba(9, 10, 15, 1) 70%)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        }}
+      >
+        <div className="aave-hero-glow-purple" />
 
-      {/* ─── INTERACTIVE SHOWCASE SECTION ──────────────────────── */}
-      <section id="demos" style={{ padding: '0 24px 80px 24px' }}>
-        <InteractiveShowcase />
-      </section>
-
-      {/* ─── SAVINGS CALCULATOR SECTION ───────────────────────── */}
-      <section style={{ padding: '0 24px 80px 24px' }}>
-        <SavingsCalculator />
-      </section>
-
-      {/* ─── WHITE LABEL COMPARISON SECTION ───────────────────── */}
-      <section style={{ padding: '0 24px 80px 24px' }}>
-        <WhiteLabelComparison />
-      </section>
-
-      {/* ─── FEATURED PLATFORM DEMO VIDEO ──────────────────────── */}
-      <section style={{ padding: '0 24px 60px 24px', maxWidth: '960px', margin: '0 auto', width: '100%' }}>
-        <div
-          style={{
-            position: 'relative',
-            background: 'radial-gradient(circle at center, rgba(16, 185, 129, 0.12) 0%, rgba(9, 9, 11, 0.95) 100%), radial-gradient(rgba(16, 185, 129, 0.22) 1.5px, transparent 1.5px)',
-            backgroundSize: '100% 100%, 28px 28px',
-            border: '1px solid rgba(16, 185, 129, 0.4)',
-            borderRadius: '24px',
-            padding: '28px',
-            boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(16, 185, 129, 0.15)',
-            backdropFilter: 'blur(16px)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '20px' }}>🎬</span>
-              <div>
-                <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#ffffff', margin: 0 }}>
-                  Featured Platform Overview
-                </h3>
-                <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                  See how NativeBooking transforms inquiries into instant bookings (90-sec walkthrough)
-                </span>
-              </div>
+        <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+              <Badge variant="neutral" style={{ background: 'rgba(168, 85, 247, 0.15)', borderColor: 'rgba(168, 85, 247, 0.4)', color: '#c084fc', padding: '6px 16px' }}>
+                🛡️ NativeBooking Pro
+              </Badge>
             </div>
-            <span
+            <h2
               style={{
-                fontSize: '11px',
+                fontSize: '48px',
                 fontWeight: 800,
-                textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                padding: '4px 10px',
-                borderRadius: '8px',
-                background: 'rgba(16, 185, 129, 0.15)',
-                color: '#34d399',
-                border: '1px solid rgba(16, 185, 129, 0.3)',
+                color: '#ffffff',
+                letterSpacing: '-0.03em',
+                marginBottom: '16px',
               }}
             >
-              ⚡ Official Demo Video
-            </span>
+              The <span className="aave-text-gradient-purple">Full Power</span> of Automated Operations
+            </h2>
+            <p style={{ fontSize: '16px', color: '#94a3b8', maxWidth: '640px', margin: '0 auto', lineHeight: '1.6' }}>
+              Schedule, dispatch, collect deposits, and manage staff rosters. Built on NativeBooking core engine.
+            </p>
+
+            <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', marginTop: '32px' }}>
+              <Button variant="purple" size="lg" onClick={() => navigate('/adminlogin')}>
+                Open Control Board ➔
+              </Button>
+              <Button variant="secondary" size="lg" onClick={() => navigate('/book-call')}>
+                Talk to Sales
+              </Button>
+            </div>
+          </div>
+
+          {/* Market Cards Grid */}
+          <div style={{ marginBottom: '40px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px' }}>
+              <div>
+                <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#ffffff' }}>Markets for Every Strategy</h3>
+                <p style={{ fontSize: '14px', color: '#94a3b8', marginTop: '4px' }}>
+                  From conservative clinic intake to high-volume tattoo deposits, pick the operational market that fits your workflow.
+                </p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/book-call')}>
+                View Schemas ➔
+              </Button>
+            </div>
+
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                gap: '24px',
+              }}
+            >
+              {/* Market Card 1 */}
+              <div className="aave-market-card">
+                <div style={{ marginBottom: '20px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c084fc', display: 'block', marginBottom: '6px' }}>
+                    General Purpose Market
+                  </span>
+                  <h4 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+                    Creative Studios & Tattoo
+                  </h4>
+                  <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
+                    High-touch client queue management with Stripe 256-bit SSL deposits and consent forms.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <span className="aave-token-pill">💳 Stripe Deposits</span>
+                  <span className="aave-token-pill">🎨 Artist Split</span>
+                  <span className="aave-token-pill">📋 Consent Notes</span>
+                  <span className="aave-token-pill">+3 More</span>
+                </div>
+              </div>
+
+              {/* Market Card 2 */}
+              <div className="aave-market-card">
+                <div style={{ marginBottom: '20px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#34d399', display: 'block', marginBottom: '6px' }}>
+                    Collateral-Isolated Market
+                  </span>
+                  <h4 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+                    Clinics & Medical Roster
+                  </h4>
+                  <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
+                    Clean patient intake workflow, practitioner schedules, and zero-deposit appointment holds.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <span className="aave-token-pill">🩺 Doctor Roster</span>
+                  <span className="aave-token-pill">📝 Symptom Intake</span>
+                  <span className="aave-token-pill">🔒 Zero Deposit</span>
+                  <span className="aave-token-pill">+4 More</span>
+                </div>
+              </div>
+
+              {/* Market Card 3 */}
+              <div className="aave-market-card">
+                <div style={{ marginBottom: '20px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c084fc', display: 'block', marginBottom: '6px' }}>
+                    Dispatch-Isolated Market
+                  </span>
+                  <h4 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+                    Contractors & Trades
+                  </h4>
+                  <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
+                    Field crew dispatch boards, site address routing, and labor timing bookkeeping.
+                  </p>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <span className="aave-token-pill">🚛 Crew Dispatch</span>
+                  <span className="aave-token-pill">📍 Site Routing</span>
+                  <span className="aave-token-pill">⏱️ Labor Clock</span>
+                  <span className="aave-token-pill">+2 More</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SECTION 3: KIT & SAVINGS CALCULATOR (EMERALD THEME) ── */}
+      <section
+        style={{
+          position: 'relative',
+          padding: '100px 24px 120px',
+        }}
+      >
+        <div className="aave-hero-glow-emerald" />
+
+        <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
+              <Badge variant="confirmed" style={{ padding: '6px 16px' }}>
+                ⚡ NativeBooking Kit
+              </Badge>
+            </div>
+            <h2
+              style={{
+                fontSize: '48px',
+                fontWeight: 800,
+                color: '#ffffff',
+                letterSpacing: '-0.03em',
+                marginBottom: '16px',
+              }}
+            >
+              Build <span className="aave-text-gradient-emerald">with NativeBooking</span>
+            </h2>
+            <p style={{ fontSize: '16px', color: '#94a3b8', maxWidth: '640px', margin: '0 auto', lineHeight: '1.6' }}>
+              Launch booking and yield-like appointment systems with our integration stack.
+            </p>
+          </div>
+
+          {/* Calculator Component */}
+          <SavingsCalculator />
+
+          {/* White-Label Comparison */}
+          <div style={{ marginTop: '60px' }}>
+            <WhiteLabelComparison />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FOOTER ────────────────────────────────────────────── */}
+      <footer
+        style={{
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          background: '#06070a',
+          padding: '60px 36px 40px',
+        }}
+      >
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '40px',
+              marginBottom: '60px',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <img src="/logo-icon.jpg" width={32} height={32} style={{ borderRadius: '8px' }} />
+                <span style={{ fontSize: '16px', fontWeight: 800, color: '#ffffff' }}>NATIVEBOOKING</span>
+              </div>
+              <p style={{ fontSize: '13px', color: '#64748b', lineHeight: '1.6' }}>
+                White-label reservation, scheduling & field dispatch engine for modern service businesses.
+              </p>
+            </div>
+
+            <div>
+              <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px' }}>
+                Products
+              </h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#94a3b8' }}>
+                <li style={{ cursor: 'pointer' }} onClick={() => navigate('/book')}>Client Booking Portal</li>
+                <li style={{ cursor: 'pointer' }} onClick={() => navigate('/adminlogin')}>Admin Control Hub</li>
+                <li style={{ cursor: 'pointer' }} onClick={() => navigate('/book-call')}>Discovery Call Engine</li>
+              </ul>
+            </div>
+
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px' }}>
+                Resources
+              </div>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#94a3b8' }}>
+                <li style={{ cursor: 'pointer' }} onClick={() => navigate('/privacy')}>Privacy Policy</li>
+              </ul>
+            </div>
+
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '16px' }}>
+                Contact
+              </div>
+              <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.6' }}>
+                Email: <a href="mailto:info@nativebooking.co" style={{ color: '#10b981', textDecoration: 'none' }}>info@nativebooking.co</a>
+              </p>
+            </div>
           </div>
 
           <div
             style={{
-              position: 'relative',
-              paddingBottom: '56.25%',
-              height: 0,
-              overflow: 'hidden',
-              borderRadius: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              paddingTop: '24px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontSize: '12px',
+              color: '#64748b',
+              flexWrap: 'wrap',
+              gap: '12px',
             }}
           >
-            <iframe
-              src="https://www.youtube.com/embed/hT9lzAfrMuE?rel=0&modestbranding=1"
-              title="NativeBooking Official Platform Overview Demo"
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                border: 'none',
-              }}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
+            <div>© {new Date().getFullYear()} NativeBooking Inc. All rights reserved.</div>
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <span style={{ cursor: 'pointer' }} onClick={() => navigate('/privacy')}>Privacy Policy</span>
+            </div>
           </div>
         </div>
-      </section>
-
-      {/* ─── WHAT WE OFFER ────────────────────────────────────── */}
-      <section style={{ padding: '80px 24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-        <div style={{ textAlign: 'center', marginBottom: '52px' }}>
-          <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent, marginBottom: '12px' }}>
-            What We Build
-          </p>
-          <h2 className="nb-section-title" style={{ fontSize: '34px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
-            What's Inside
-          </h2>
-        </div>
-        <div
-          className="nb-feature-grid"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '20px',
-          }}
-        >
-          {features.map((f, i) => (
-            <div
-              key={i}
-              className="nb-card"
-              style={{
-                background: t.cardBg,
-                border: `1px solid ${t.border}`,
-                borderRadius: '16px',
-                padding: '28px 24px',
-                animation: `fadeInUp 0.6s ease ${i * 0.08}s both`,
-              }}
-            >
-              <div style={{ fontSize: '32px', marginBottom: '16px' }}>{f.icon}</div>
-              <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff', marginBottom: '10px' }}>{f.title}</h3>
-              <p style={{ fontSize: '13px', color: t.textSecondary, lineHeight: '1.6' }}>{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── TRUST STRIP ──────────────────────────────────────── */}
-      <section
-        style={{
-          background: t.strip,
-          borderTop: `1px solid ${t.border}`,
-          borderBottom: `1px solid ${t.border}`,
-          padding: '56px 24px',
-        }}
-      >
-        <div
-          style={{
-            maxWidth: '1000px',
-            margin: '0 auto',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '40px',
-            textAlign: 'center',
-          }}
-        >
-          {[
-            { icon: '📦', title: 'You Own the Code', desc: 'No monthly platform fee. No lock-in. The full source code is yours after delivery.' },
-            { icon: '🎨', title: 'Your Brand, Not Ours', desc: 'Your logo, your colors, your domain. Your clients will never know we built it.' },
-            { icon: '🛠️', title: 'We Stick Around', desc: 'Got a new feature idea? Found a bug? We stay in touch and keep things running.' },
-          ].map((item, i) => (
-            <div key={i}>
-              <div style={{ fontSize: '34px', marginBottom: '14px' }}>{item.icon}</div>
-              <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>{item.title}</h3>
-              <p style={{ fontSize: '13px', color: t.textSecondary, lineHeight: '1.6', maxWidth: '280px', margin: '0 auto' }}>{item.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── DEMO SANDBOXES ───────────────────────────────────── */}
-      <section
-        id="demos"
-        style={{
-          position: 'relative',
-          padding: '80px 24px',
-          overflow: 'hidden',
-          backgroundImage: 'radial-gradient(rgba(16,185,129,0.16) 1.8px, transparent 1.8px)',
-          backgroundSize: '36px 36px',
-        }}
-      >
-        <div style={{ maxWidth: '1200px', margin: '0 auto', width: '100%', position: 'relative', zIndex: 1 }}>
-        <div style={{ textAlign: 'center', marginBottom: '52px' }}>
-          <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent, marginBottom: '12px' }}>
-            Live Demos
-          </p>
-          <h2 className="nb-section-title" style={{ fontSize: '34px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
-            Explore Industry Sandboxes
-          </h2>
-          <p style={{ fontSize: '15px', color: t.textSecondary, marginTop: '12px', maxWidth: '560px', margin: '12px auto 0' }}>
-            Click into any live sandbox and test it yourself — book something, log in as admin, see how it all hangs together.
-          </p>
-        </div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '24px',
-          }}
-        >
-          {industries.map((ind, idx) => (
-            <div
-              key={idx}
-              className="nb-demo-card"
-              style={{
-                background: t.cardBg,
-                border: `1px solid ${t.border}`,
-                borderRadius: '16px',
-                padding: '32px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
-                animation: `fadeInUp 0.6s ease ${idx * 0.1}s both`,
-              }}
-            >
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
-                  <span style={{ fontSize: '42px', lineHeight: '1' }}>{ind.icon}</span>
-                  <span
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.05em',
-                      padding: '4px 10px',
-                      borderRadius: '20px',
-                      backgroundColor: ind.statusBg,
-                      color: ind.statusColor,
-                      border: `1px solid ${ind.statusColor}22`,
-                    }}
-                  >
-                    {ind.link && (
-                      <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: ind.statusColor, display: 'inline-block', boxShadow: `0 0 6px ${ind.statusColor}` }} />
-                    )}
-                    {ind.status}
-                  </span>
-                </div>
-                <span
-                  style={{
-                    fontSize: '11px',
-                    fontWeight: 600,
-                    textTransform: 'uppercase',
-                    color: t.accent,
-                    letterSpacing: '0.05em',
-                    display: 'block',
-                    marginBottom: '6px',
-                  }}
-                >
-                  {ind.badge}
-                </span>
-                <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '12px', color: '#ffffff' }}>{ind.title}</h3>
-                <p style={{ fontSize: '14px', lineHeight: '1.55', color: t.textSecondary, marginBottom: '28px' }}>{ind.description}</p>
-              </div>
-              {ind.link ? (
-                <a href={ind.link} style={{ textDecoration: 'none', width: '100%' }}>
-                  <button
-                    style={{
-                      width: '100%',
-                      padding: '12px',
-                      fontSize: '14px',
-                      borderRadius: '10px',
-                      background: ind.statusColor,
-                      color: '#ffffff',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontWeight: 700,
-                      boxShadow: `0 4px 16px ${ind.statusColor}30`,
-                      transition: 'opacity 0.2s ease',
-                    }}
-                  >
-                    Launch Live Sandbox ⚡
-                  </button>
-                </a>
-              ) : (
-                <button
-                  disabled
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    fontSize: '14px',
-                    borderRadius: '10px',
-                    background: 'rgba(255,255,255,0.03)',
-                    color: 'rgba(255,255,255,0.2)',
-                    border: `1px solid ${t.border}`,
-                    cursor: 'not-allowed',
-                    fontWeight: 600,
-                  }}
-                >
-                  Blueprint Locked 🔒
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-        </div>
-      </section>
-
-      {/* ─── CUSTOMIZATION PILLS ──────────────────────────────── */}
-      <section
-        style={{
-          background: t.strip,
-          borderTop: `1px solid ${t.border}`,
-          borderBottom: `1px solid ${t.border}`,
-          padding: '72px 24px',
-          textAlign: 'center',
-        }}
-      >
-        <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent, marginBottom: '12px' }}>
-          Your Call
-        </p>
-        <h2 className="nb-section-title" style={{ fontSize: '34px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em', marginBottom: '14px' }}>
-          You Decide What Goes In
-        </h2>
-        <p style={{ fontSize: '15px', color: t.textSecondary, maxWidth: '520px', margin: '0 auto 44px', lineHeight: '1.6' }}>
-          Not every business works the same way. Pick what you need, skip what you don't.
-        </p>
-        <div
-          style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '12px',
-            justifyContent: 'center',
-            maxWidth: '860px',
-            margin: '0 auto',
-          }}
-        >
-          {pills.map((pill, i) => (
-            <div
-              key={i}
-              className="nb-pill"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '10px 20px',
-                borderRadius: '9999px',
-                background: 'rgba(255,255,255,0.04)',
-                border: `1px solid ${t.border}`,
-                fontSize: '14px',
-                fontWeight: 600,
-                color: t.textPrimary,
-                cursor: 'default',
-                animation: `fadeInUp 0.5s ease ${i * 0.06}s both`,
-              }}
-            >
-              <span>{pill.icon}</span>
-              <span>{pill.label}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── HOW IT WORKS ─────────────────────────────────────── */}
-      <section
-        style={{
-          position: 'relative',
-          padding: '80px 24px',
-          overflow: 'hidden',
-          backgroundImage: 'radial-gradient(rgba(16,185,129,0.13) 1.5px, transparent 1.5px)',
-          backgroundSize: '38px 38px',
-        }}
-      >
-        <div style={{ maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
-        <div style={{ textAlign: 'center', marginBottom: '52px' }}>
-          <p style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: t.accent, marginBottom: '12px' }}>
-            Process
-          </p>
-          <h2 className="nb-section-title" style={{ fontSize: '34px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
-            How It Works
-          </h2>
-        </div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '24px',
-          }}
-        >
-          {steps.map((s, i) => (
-            <div
-              key={i}
-              className="nb-step"
-              style={{
-                background: t.cardBg,
-                border: `1px solid ${t.border}`,
-                borderRadius: '16px',
-                padding: '32px 28px',
-                animation: `fadeInUp 0.6s ease ${i * 0.1}s both`,
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '12px',
-                  fontWeight: 800,
-                  color: t.accent,
-                  letterSpacing: '0.08em',
-                  marginBottom: '16px',
-                }}
-              >
-                {s.num}
-              </div>
-              <div style={{ fontSize: '36px', marginBottom: '16px' }}>{s.icon}</div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', marginBottom: '10px' }}>{s.title}</h3>
-              <p style={{ fontSize: '14px', color: t.textSecondary, lineHeight: '1.6' }}>{s.desc}</p>
-            </div>
-          ))}
-        </div>
-        </div>
-      </section>
-
-      {/* ─── FOOTER ───────────────────────────────────────────── */}
-      <footer
-        style={{
-          borderTop: `1px solid ${t.border}`,
-          padding: '40px 32px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '16px',
-          textAlign: 'center',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <img
-            src="/logo-icon.jpg"
-            alt="NativeBooking"
-            style={{ height: '40px', width: '40px', borderRadius: '9px', display: 'block' }}
-          />
-          <span style={{ fontSize: '14px', fontWeight: 800, letterSpacing: '0.07em', color: '#ffffff' }}>NATIVEBOOKING</span>
-        </div>
-        <a
-          href="mailto:info@nativebooking.co"
-          style={{ fontSize: '14px', color: t.accent, textDecoration: 'none', fontWeight: 500 }}
-        >
-          info@nativebooking.co
-        </a>
-        <p style={{ fontSize: '12px', color: t.textMuted, margin: 0 }}>
-          © 2025 NativeBooking. All rights reserved.
-        </p>
-        <a
-          href="/privacy"
-          style={{ fontSize: '12px', color: t.textMuted, textDecoration: 'underline' }}
-        >
-          Privacy Policy
-        </a>
       </footer>
     </div>
   )
