@@ -22,45 +22,42 @@ export function Button({
     justifyContent: 'center',
     gap: '8px',
     fontFamily: 'inherit',
-    fontWeight: 700,
-    borderRadius: '9999px',
+    fontWeight: 600,
+    borderRadius: '10px',
     border: '1px solid transparent',
     cursor: disabled || isLoading ? 'not-allowed' : 'pointer',
     opacity: disabled || isLoading ? 0.6 : 1,
-    transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
     whiteSpace: 'nowrap',
     outline: 'none',
-    boxSizing: 'border-box',
-    letterSpacing: '-0.01em',
   }
 
   const sizeStyles: Record<string, React.CSSProperties> = {
-    sm: { padding: '8px 18px', fontSize: '13px' },
-    md: { padding: '12px 24px', fontSize: '14px' },
-    lg: { padding: '16px 32px', fontSize: '15px' },
+    sm: { padding: '6px 12px', fontSize: '12px' },
+    md: { padding: '10px 18px', fontSize: '14px' },
+    lg: { padding: '14px 24px', fontSize: '15px' },
   }
 
   const variantStyles: Record<string, React.CSSProperties> = {
     primary: {
       background: 'var(--accent-color)',
       color: '#000000',
-      boxShadow: '0 4px 20px rgba(16, 185, 129, 0.35)',
+      boxShadow: '0 2px 10px rgba(16, 185, 129, 0.25)',
     },
     purple: {
       background: '#a855f7',
       color: '#ffffff',
-      boxShadow: '0 4px 20px rgba(168, 85, 247, 0.35)',
+      boxShadow: '0 2px 10px rgba(168, 85, 247, 0.25)',
     },
     secondary: {
-      background: 'rgba(255, 255, 255, 0.06)',
+      background: 'rgba(255, 255, 255, 0.08)',
       color: '#ffffff',
-      border: '1px solid rgba(255, 255, 255, 0.12)',
-      backdropFilter: 'blur(12px)',
+      borderColor: 'var(--border-color)',
     },
     outline: {
       background: 'transparent',
       color: 'var(--accent-color)',
-      border: '1px solid rgba(16, 185, 129, 0.4)',
+      borderColor: 'rgba(16, 185, 129, 0.4)',
     },
     ghost: {
       background: 'transparent',
@@ -76,7 +73,7 @@ export function Button({
   }
 
   return (
-    <button className={className} style={combinedStyles} disabled={disabled || isLoading} {...props}>
+    <button style={combinedStyles} disabled={disabled || isLoading} {...props}>
       {isLoading ? (
         <span style={{ display: 'inline-block', animation: 'spin 1s linear infinite' }}>⏳</span>
       ) : null}
@@ -84,5 +81,3 @@ export function Button({
     </button>
   )
 }
-
-

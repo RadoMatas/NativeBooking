@@ -36,6 +36,7 @@ export default function WhiteLabelComparison() {
 
   return (
     <div
+      className="comparison-outer-card"
       style={{
         width: '100%',
         maxWidth: '1080px',
@@ -43,8 +44,9 @@ export default function WhiteLabelComparison() {
         background: 'rgba(22, 24, 29, 0.85)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
         borderRadius: '20px',
-        padding: '36px 28px',
+        padding: '36px 24px',
         boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
+        boxSizing: 'border-box',
       }}
     >
       <div style={{ textAlign: 'center', marginBottom: '32px' }}>
@@ -61,7 +63,7 @@ export default function WhiteLabelComparison() {
         >
           Why White-Label Custom Software?
         </span>
-        <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+        <h2 className="aave-section-title" style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
           Off-The-Shelf Widgets vs. NativeBooking White-Label System
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
@@ -69,7 +71,8 @@ export default function WhiteLabelComparison() {
         </p>
       </div>
 
-      <div style={{ overflowX: 'auto' }}>
+      {/* Desktop Table View */}
+      <div className="desktop-table-container" style={{ width: '100%', overflowX: 'hidden' }}>
         <table
           style={{
             width: '100%',
@@ -102,6 +105,36 @@ export default function WhiteLabelComparison() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card Stack View */}
+      <div className="mobile-cards-container" style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+        {comparisonRows.map((row, index) => (
+          <div
+            key={index}
+            style={{
+              background: 'rgba(12, 13, 16, 0.8)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '14px',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
+              width: '100%',
+              boxSizing: 'border-box',
+            }}
+          >
+            <div style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', paddingBottom: '6px' }}>
+              {row.feature}
+            </div>
+            <div style={{ fontSize: '13px', color: '#ef4444', background: 'rgba(239, 68, 68, 0.08)', padding: '8px 12px', borderRadius: '8px' }}>
+              <strong>Generic SaaS:</strong> {row.saas}
+            </div>
+            <div style={{ fontSize: '13px', color: '#34d399', background: 'rgba(16, 185, 129, 0.1)', padding: '8px 12px', borderRadius: '8px', fontWeight: 600 }}>
+              <strong>⚡ NativeBooking:</strong> {row.nativeBooking}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

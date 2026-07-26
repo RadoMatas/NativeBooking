@@ -12,6 +12,7 @@ export default function SavingsCalculator() {
 
   return (
     <div
+      className="calculator-outer-card"
       style={{
         width: '100%',
         maxWidth: '1080px',
@@ -37,7 +38,7 @@ export default function SavingsCalculator() {
         >
           Commission Savings Calculator
         </span>
-        <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+        <h2 className="aave-section-title" style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
           Stop Paying 18% Commissions on Your Own Clients
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
@@ -46,6 +47,7 @@ export default function SavingsCalculator() {
       </div>
 
       <div
+        className="calculator-grid"
         style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
@@ -175,5 +177,3 @@ export default function SavingsCalculator() {
     </div>
   )
 }
-
-

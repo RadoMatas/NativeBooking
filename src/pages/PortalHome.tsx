@@ -16,37 +16,14 @@ export default function PortalHome() {
         color: '#f8fafc',
         fontFamily: "'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif",
         overflowX: 'hidden',
+        width: '100%',
+        boxSizing: 'border-box',
       }}
     >
       <style>{`
         @keyframes pulseGlow {
           0%, 100% { opacity: 0.4; transform: scale(1); }
           50% { opacity: 0.7; transform: scale(1.05); }
-        }
-        .aave-hero-glow-emerald {
-          position: absolute;
-          width: 600px;
-          height: 600px;
-          top: -150px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.02) 60%, transparent 80%);
-          filter: blur(80px);
-          pointer-events: none;
-          z-index: 0;
-          animation: pulseGlow 8s ease-in-out infinite;
-        }
-        .aave-hero-glow-purple {
-          position: absolute;
-          width: 700px;
-          height: 700px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, rgba(168, 85, 247, 0.02) 60%, transparent 80%);
-          filter: blur(90px);
-          pointer-events: none;
-          z-index: 0;
-          animation: pulseGlow 10s ease-in-out infinite;
         }
         .aave-text-gradient-emerald {
           background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
@@ -62,9 +39,11 @@ export default function PortalHome() {
           background: rgba(20, 22, 28, 0.75);
           border: 1px solid rgba(255, 255, 255, 0.08);
           border-radius: 20px;
-          padding: 28px;
+          padding: clamp(16px, 4vw, 28px);
           transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
           backdrop-filter: blur(16px);
+          box-sizing: border-box;
+          width: 100%;
         }
         .aave-market-card:hover {
           border-color: rgba(255, 255, 255, 0.18);
@@ -83,13 +62,11 @@ export default function PortalHome() {
           font-weight: 600;
           color: #f8fafc;
         }
-        @media (max-width: 768px) {
-          .aave-hero-title { font-size: 38px !important; }
-        }
       `}</style>
 
-      {/* ─── AAVE STICKY HEADER NAV BAR ───────────────────────── */}
+      {/* ─── STICKY HEADER NAV BAR ───────────────────────── */}
       <header
+        className="aave-header"
         style={{
           position: 'sticky',
           top: 0,
@@ -97,29 +74,31 @@ export default function PortalHome() {
           background: 'rgba(9, 10, 15, 0.85)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          padding: '16px 36px',
+          padding: 'clamp(12px, 3vw, 16px) clamp(14px, 4vw, 36px)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          width: '100%',
+          boxSizing: 'border-box',
         }}
       >
         {/* Brand Logo */}
         <div 
           onClick={() => navigate('/')} 
-          style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
         >
           <img
             src="/logo-icon.jpg"
             alt="NativeBooking Logo"
-            style={{ width: '36px', height: '36px', borderRadius: '10px', display: 'block' }}
+            style={{ width: '32px', height: '32px', borderRadius: '8px', display: 'block' }}
           />
-          <span style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
+          <span className="aave-header-logo-text" style={{ fontSize: '16px', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
             NATIVEBOOKING
           </span>
         </div>
 
         {/* Right Action Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <Button 
             variant="secondary" 
             size="sm" 
@@ -139,20 +118,22 @@ export default function PortalHome() {
 
       {/* ─── SECTION 1: HERO (EMERALD THEME) ─────────────────── */}
       <section
+        className="aave-hero-section"
         style={{
           position: 'relative',
-          padding: '100px 24px 80px',
+          padding: 'clamp(40px, 8vw, 100px) clamp(14px, 4vw, 24px)',
           textAlign: 'center',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          width: '100%',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
         }}
       >
-        <div className="aave-hero-glow-emerald" />
-
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '900px', margin: '0 auto' }}>
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1080px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
           {/* Category Pill */}
-          <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
             <Badge 
               variant="confirmed" 
               icon={<img src="/logo-icon.jpg" width={16} height={16} style={{ borderRadius: '4px' }} />}
@@ -166,12 +147,13 @@ export default function PortalHome() {
           <h1
             className="aave-hero-title"
             style={{
-              fontSize: '60px',
+              fontSize: 'clamp(28px, 6vw, 60px)',
               fontWeight: 800,
-              lineHeight: '1.1',
+              lineHeight: '1.15',
               letterSpacing: '-0.03em',
               color: '#ffffff',
-              marginBottom: '20px',
+              marginBottom: '18px',
+              wordBreak: 'break-word',
             }}
           >
             Reservations & Scheduling for{' '}
@@ -180,11 +162,12 @@ export default function PortalHome() {
 
           {/* Description */}
           <p
+            className="aave-hero-desc"
             style={{
-              fontSize: '18px',
+              fontSize: 'clamp(14px, 2.5vw, 18px)',
               color: '#94a3b8',
               maxWidth: '660px',
-              margin: '0 auto 36px',
+              margin: '0 auto 32px',
               lineHeight: '1.6',
             }}
           >
@@ -192,7 +175,7 @@ export default function PortalHome() {
           </p>
 
           {/* Action Buttons */}
-          <div style={{ display: 'flex', gap: '14px', justifyContent: 'center', marginBottom: '60px', flexWrap: 'wrap' }}>
+          <div className="aave-hero-buttons" style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '48px', flexWrap: 'wrap', width: '100%' }}>
             <Button variant="primary" size="lg" onClick={() => navigate('/book-call')}>
               Book Demo Call ➔
             </Button>
@@ -211,7 +194,7 @@ export default function PortalHome() {
           </div>
 
           {/* Dual-View Interactive Showcase */}
-          <div id="workbench" style={{ position: 'relative', zIndex: 2 }}>
+          <div id="workbench" style={{ position: 'relative', zIndex: 2, width: '100%', boxSizing: 'border-box' }}>
             <InteractiveShowcase />
           </div>
         </div>
@@ -219,48 +202,59 @@ export default function PortalHome() {
 
       {/* ─── SECTION 2: PRO (PURPLE THEME) ───────────────────── */}
       <section
+        className="aave-section-padding"
         style={{
           position: 'relative',
-          padding: '120px 24px 100px',
+          padding: 'clamp(40px, 8vw, 120px) clamp(14px, 4vw, 24px)',
           background: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.06) 0%, rgba(9, 10, 15, 1) 70%)',
           borderTop: '1px solid rgba(255, 255, 255, 0.08)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          width: '100%',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
         }}
       >
-        <div className="aave-hero-glow-purple" />
-
-        <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <div style={{ maxWidth: '1080px', margin: '0 auto', position: 'relative', zIndex: 1, width: '100%', boxSizing: 'border-box' }}>
           {/* Header */}
-          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
             <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
               <Badge variant="neutral" style={{ background: 'rgba(168, 85, 247, 0.15)', borderColor: 'rgba(168, 85, 247, 0.4)', color: '#c084fc', padding: '6px 16px' }}>
                 🛡️ NativeBooking Pro
               </Badge>
             </div>
             <h2
+              className="aave-section-title"
               style={{
-                fontSize: '48px',
+                fontSize: 'clamp(24px, 5vw, 48px)',
                 fontWeight: 800,
                 color: '#ffffff',
                 letterSpacing: '-0.03em',
                 marginBottom: '16px',
+                wordBreak: 'break-word',
               }}
             >
               The <span className="aave-text-gradient-purple">Full Power</span> of Automated Operations
             </h2>
-            <p style={{ fontSize: '16px', color: '#94a3b8', maxWidth: '640px', margin: '0 auto', lineHeight: '1.6' }}>
+            <p style={{ fontSize: 'clamp(14px, 2.5vw, 16px)', color: '#94a3b8', maxWidth: '640px', margin: '0 auto', lineHeight: '1.6' }}>
               Schedule, dispatch, collect deposits, and manage staff rosters. Built on NativeBooking core engine.
             </p>
 
-        
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '28px', flexWrap: 'wrap', width: '100%' }}>
+              <Button variant="purple" size="lg" onClick={() => navigate('/adminlogin')}>
+                Open Control Board ➔
+              </Button>
+              <Button variant="secondary" size="lg" onClick={() => navigate('/book-call')}>
+                Talk to Sales
+              </Button>
+            </div>
           </div>
 
           {/* Market Cards Grid */}
-          <div style={{ marginBottom: '40px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px' }}>
+          <div style={{ marginBottom: '32px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
               <div>
-                <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#ffffff' }}>Markets for Every Strategy</h3>
-                <p style={{ fontSize: '14px', color: '#94a3b8', marginTop: '4px' }}>
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff' }}>Markets for Every Strategy</h3>
+                <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px' }}>
                   From conservative clinic intake to high-volume tattoo deposits, pick the operational market that fits your workflow.
                 </p>
               </div>
@@ -270,19 +264,22 @@ export default function PortalHome() {
             </div>
 
             <div
+              className="aave-markets-grid"
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                gap: '24px',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+                gap: '20px',
+                width: '100%',
+                boxSizing: 'border-box',
               }}
             >
               {/* Market Card 1 */}
               <div className="aave-market-card">
-                <div style={{ marginBottom: '20px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#54bffd', display: 'block', marginBottom: '6px' }}>
+                <div style={{ marginBottom: '16px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c084fc', display: 'block', marginBottom: '6px' }}>
                     General Purpose Market
                   </span>
-                  <h4 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
                     Creative Studios & Tattoo
                   </h4>
                   <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
@@ -299,11 +296,11 @@ export default function PortalHome() {
 
               {/* Market Card 2 */}
               <div className="aave-market-card">
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{ marginBottom: '16px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#34d399', display: 'block', marginBottom: '6px' }}>
                     Collateral-Isolated Market
                   </span>
-                  <h4 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
                     Clinics & Medical Roster
                   </h4>
                   <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
@@ -320,11 +317,11 @@ export default function PortalHome() {
 
               {/* Market Card 3 */}
               <div className="aave-market-card">
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{ marginBottom: '16px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c084fc', display: 'block', marginBottom: '6px' }}>
                     Dispatch-Isolated Market
                   </span>
-                  <h4 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
+                  <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
                     Contractors & Trades
                   </h4>
                   <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
@@ -345,32 +342,36 @@ export default function PortalHome() {
 
       {/* ─── SECTION 3: KIT & SAVINGS CALCULATOR (EMERALD THEME) ── */}
       <section
+        className="aave-section-padding"
         style={{
           position: 'relative',
-          padding: '100px 24px 120px',
+          padding: 'clamp(40px, 8vw, 100px) clamp(14px, 4vw, 24px)',
+          width: '100%',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
         }}
       >
-        <div className="aave-hero-glow-emerald" />
-
-        <div style={{ maxWidth: '1100px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+        <div style={{ maxWidth: '1080px', margin: '0 auto', position: 'relative', zIndex: 1, width: '100%', boxSizing: 'border-box' }}>
+          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
             <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
               <Badge variant="confirmed" style={{ padding: '6px 16px' }}>
                 ⚡ NativeBooking Kit
               </Badge>
             </div>
             <h2
+              className="aave-section-title"
               style={{
-                fontSize: '48px',
+                fontSize: 'clamp(24px, 5vw, 48px)',
                 fontWeight: 800,
                 color: '#ffffff',
                 letterSpacing: '-0.03em',
                 marginBottom: '16px',
+                wordBreak: 'break-word',
               }}
             >
               Build <span className="aave-text-gradient-emerald">with NativeBooking</span>
             </h2>
-            <p style={{ fontSize: '16px', color: '#94a3b8', maxWidth: '640px', margin: '0 auto', lineHeight: '1.6' }}>
+            <p style={{ fontSize: 'clamp(14px, 2.5vw, 16px)', color: '#94a3b8', maxWidth: '640px', margin: '0 auto', lineHeight: '1.6' }}>
               Launch booking and yield-like appointment systems with our integration stack.
             </p>
           </div>
@@ -379,7 +380,7 @@ export default function PortalHome() {
           <SavingsCalculator />
 
           {/* White-Label Comparison */}
-          <div style={{ marginTop: '60px' }}>
+          <div style={{ marginTop: '48px', width: '100%' }}>
             <WhiteLabelComparison />
           </div>
         </div>
@@ -387,19 +388,22 @@ export default function PortalHome() {
 
       {/* ─── FOOTER ────────────────────────────────────────────── */}
       <footer
+        className="aave-footer"
         style={{
           borderTop: '1px solid rgba(255, 255, 255, 0.08)',
           background: '#06070a',
-          padding: '60px 36px 40px',
+          padding: 'clamp(40px, 6vw, 60px) clamp(14px, 4vw, 36px) 30px',
+          width: '100%',
+          boxSizing: 'border-box',
         }}
       >
-        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '1080px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-              gap: '40px',
-              marginBottom: '60px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 180px), 1fr))',
+              gap: '32px',
+              marginBottom: '48px',
             }}
           >
             <div>
@@ -445,7 +449,7 @@ export default function PortalHome() {
           <div
             style={{
               borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-              paddingTop: '24px',
+              paddingTop: '20px',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
