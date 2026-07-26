@@ -288,7 +288,7 @@ export default function AdminDB() {
                           🆕 NEW LESSON REQUEST
                         </span>
                       )}
-                      <strong style={{ color: '#f8fafc', fontSize: '15px' }}>{req.service}</strong>
+                      <strong style={{ color: '#773601', fontSize: '15px' }}>{req.service}</strong>
                       <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                         — {req.customerName || 'Student'} ({req.customerEmail})
                       </span>
