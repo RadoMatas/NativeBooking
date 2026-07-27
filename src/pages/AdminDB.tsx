@@ -266,8 +266,8 @@ export default function AdminDB() {
                 <div
                   key={req.id}
                   style={{
-                    background: 'rgba(15, 23, 42, 0.6)',
-                    border: '1px solid rgba(2, 132, 199, 0.3)',
+                    background: 'rgb(122, 219, 243)',
+                    border: '1px solid rgba(197, 19, 19, 0.3)',
                     borderRadius: '14px',
                     padding: '16px 20px',
                     display: 'flex',
