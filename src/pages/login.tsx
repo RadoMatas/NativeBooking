@@ -106,52 +106,6 @@ export default function Login() {
           onValueChange={(val) => setIsSignUpMode(val === 'signup')}
           style={{ width: '100%', maxWidth: '420px', margin: '0 auto', display: 'flex', flexDirection: 'column' }}
         >
-          <Tabs.List style={{ 
-            display: 'flex', 
-            background: 'rgba(255,255,255,0.05)', 
-            borderRadius: '12px', 
-            padding: '4px',
-            marginBottom: '24px',
-            position: 'relative'
-          }}>
-            {['signin', 'signup'].map((tabValue) => {
-              const isActive = (tabValue === 'signup') === isSignUpMode;
-              return (
-                <Tabs.Tab 
-                  key={tabValue}
-                  value={tabValue} 
-                  style={{
-                    flex: 1,
-                    padding: '10px',
-                    background: 'transparent',
-                    border: 'none',
-                    color: isActive ? '#fff' : 'rgba(255,255,255,0.5)',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    position: 'relative',
-                    zIndex: 1,
-                    transition: 'color 0.2s ease'
-                  }}
-                >
-                  {tabValue === 'signin' ? 'Sign In' : 'Sign Up'}
-                  
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeTab"
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        background: 'var(--accent-color)',
-                        borderRadius: '8px',
-                        zIndex: -1
-                      }}
-                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-                  )}
-                </Tabs.Tab>
-              )
-            })}
-          </Tabs.List>
 
           <Tabs.Panel value={isSignUpMode ? 'signup' : 'signin'}>
             <form
@@ -205,7 +159,7 @@ export default function Login() {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <button
+              <AnimatedButton
                 type="button"
                 onClick={() => handleDemoLogin('customer')}
                 disabled={isLoggingIn}
@@ -216,21 +170,22 @@ export default function Login() {
                   gap: '6px',
                   padding: '14px 12px',
                   borderRadius: '12px',
-                  background: 'rgba(16, 185, 129, 0.08)',
-                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  background: 'var(--accent-color)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
                   color: '#ffffff',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                 }}
               >
-                <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', display: 'flex' }}>
+                <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.2)', color: '#ffffff', display: 'flex' }}>
                   <UsersIcon size={18} />
                 </div>
                 <div style={{ fontSize: '13px', fontWeight: 700 }}>Client Test-Drive</div>
-                <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Customer Reservation View</div>
-              </button>
+                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>Customer Reservation View</div>
+              </AnimatedButton>
 
-              <button
+              <AnimatedButton
                 type="button"
                 onClick={() => handleDemoLogin('admin')}
                 disabled={isLoggingIn}
@@ -241,19 +196,20 @@ export default function Login() {
                   gap: '6px',
                   padding: '14px 12px',
                   borderRadius: '12px',
-                  background: 'rgba(255, 255, 255, 0.03)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: '#6366f1',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
                   color: '#ffffff',
                   cursor: 'pointer',
                   transition: 'all 0.2s ease',
                 }}
               >
-                <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.08)', color: '#ffffff', display: 'flex' }}>
+                <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.2)', color: '#ffffff', display: 'flex' }}>
                   <SettingsIcon size={18} />
                 </div>
                 <div style={{ fontSize: '13px', fontWeight: 700 }}>Manager Board</div>
-                <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Admin Control Panel</div>
-              </button>
+                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>Admin Control Panel</div>
+              </AnimatedButton>
             </div>
           </div>
         )}
