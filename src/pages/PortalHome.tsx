@@ -99,13 +99,7 @@ export default function PortalHome() {
 
         {/* Right Action Buttons */}
         <div className="aave-header-buttons" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-          <Button 
-            variant="secondary" 
-            size="sm" 
-            onClick={() => navigate('/adminlogin')}
-          >
-            Admin Login
-          </Button>
+          {/* Removed public Admin Login link */}
           <Button 
             variant="primary" 
             size="sm" 
@@ -240,8 +234,8 @@ export default function PortalHome() {
             </p>
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '28px', flexWrap: 'wrap', width: '100%' }}>
-              <Button variant="purple" size="lg" onClick={() => navigate('/adminlogin')}>
-                Open Control Board ➔
+              <Button variant="purple" size="lg" onClick={() => navigate('/book-call')}>
+                Request Pro Demo ➔
               </Button>
               <Button variant="secondary" size="lg" onClick={() => navigate('/book-call')}>
                 Talk to Sales
@@ -422,7 +416,6 @@ export default function PortalHome() {
               </h4>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#94a3b8' }}>
                 <li style={{ cursor: 'pointer' }} onClick={() => navigate('/book')}>Client Booking Portal</li>
-                <li style={{ cursor: 'pointer' }} onClick={() => navigate('/adminlogin')}>Admin Control Hub</li>
                 <li style={{ cursor: 'pointer' }} onClick={() => navigate('/book-call')}>Discovery Call Engine</li>
               </ul>
             </div>

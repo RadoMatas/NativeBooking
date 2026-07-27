@@ -4,6 +4,10 @@ import { login, register, currentUserRole } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import { UsersIcon, SettingsIcon } from '../components/ui/Icons'
+import { Tabs } from '@base-ui/react/tabs'
+import { motion } from 'motion/react'
+import { useNotification } from '../components/ui/NotificationStack'
+import { AnimatedButton } from '../components/ui/AnimatedButton'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -11,12 +15,11 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [isSignUpMode, setIsSignUpMode] = useState(false)
   const [isLoggingIn, setIsLoggingIn] = useState(false)
-  const [errorMsg, setErrorMsg] = useState('')
+  const { notify } = useNotification()
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoggingIn(true)
-    setErrorMsg('')
 
     let ok = false
     if (isSignUpMode) {
@@ -27,10 +30,11 @@ export default function Login() {
     setIsLoggingIn(false)
 
     if (!ok) {
-      setErrorMsg(
+      notify(
         isSignUpMode
           ? 'Registration failed (password must be at least 6 characters, or email is already registered).'
-          : 'Invalid email or password.'
+          : 'Invalid email or password.',
+        'error'
       )
       return
     }
@@ -44,14 +48,13 @@ export default function Login() {
 
   const handleDemoLogin = async (role: 'customer' | 'admin') => {
     setIsLoggingIn(true)
-    setErrorMsg('')
     const demoEmail    = role === 'admin' ? 'admin@test.com'    : 'customer@test.com'
     const demoPassword = role === 'admin' ? 'admin123'          : 'cust123'
     const ok = await login(demoEmail, demoPassword)
     setIsLoggingIn(false)
 
     if (!ok) {
-      setErrorMsg('Demo login failed — please try again.')
+      notify('Demo login failed — please try again.', 'error')
       return
     }
 
@@ -98,45 +101,81 @@ export default function Login() {
         <span>Live product demo — all data is simulated for demonstration purposes only.</span>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="premium-card"
-        style={{
-          width: '100%',
-          maxWidth: '420px',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-            <Logo size="large" />
-          </div>
-          <h1 style={{ fontSize: '32px', marginBottom: '6px' }}>
-            {isSignUpMode ? 'Create Account' : BUSINESS_CONFIG.name}
-          </h1>
-          <p style={{ fontSize: '15px' }}>
-            {isSignUpMode ? 'Join us and start booking your sessions.' : BUSINESS_CONFIG.tagline}
-          </p>
-        </div>
+        <Tabs.Root 
+          defaultValue="signin" 
+          onValueChange={(val) => setIsSignUpMode(val === 'signup')}
+          style={{ width: '100%', maxWidth: '420px', margin: '0 auto', display: 'flex', flexDirection: 'column' }}
+        >
+          <Tabs.List style={{ 
+            display: 'flex', 
+            background: 'rgba(255,255,255,0.05)', 
+            borderRadius: '12px', 
+            padding: '4px',
+            marginBottom: '24px',
+            position: 'relative'
+          }}>
+            {['signin', 'signup'].map((tabValue) => {
+              const isActive = (tabValue === 'signup') === isSignUpMode;
+              return (
+                <Tabs.Tab 
+                  key={tabValue}
+                  value={tabValue} 
+                  style={{
+                    flex: 1,
+                    padding: '10px',
+                    background: 'transparent',
+                    border: 'none',
+                    color: isActive ? '#fff' : 'rgba(255,255,255,0.5)',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    position: 'relative',
+                    zIndex: 1,
+                    transition: 'color 0.2s ease'
+                  }}
+                >
+                  {tabValue === 'signin' ? 'Sign In' : 'Sign Up'}
+                  
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeTab"
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background: 'var(--accent-color)',
+                        borderRadius: '8px',
+                        zIndex: -1
+                      }}
+                      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </Tabs.Tab>
+              )
+            })}
+          </Tabs.List>
 
-        {errorMsg && (
-          <div
-            style={{
-              padding: '12px 14px',
-              borderRadius: '10px',
-              background: 'rgba(239, 68, 68, 0.12)',
-              border: '1px solid rgba(239, 68, 68, 0.3)',
-              color: '#f87171',
-              fontSize: '13px',
-              fontWeight: 600,
-              textAlign: 'center',
-              marginBottom: '20px',
-            }}
-          >
-            {errorMsg}
-          </div>
-        )}
+          <Tabs.Panel value={isSignUpMode ? 'signup' : 'signin'}>
+            <form
+              onSubmit={handleSubmit}
+              className="premium-card"
+              style={{
+                width: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+                  <Logo size="large" />
+                </div>
+                <h1 style={{ fontSize: '32px', marginBottom: '6px' }}>
+                  {isSignUpMode ? 'Create Account' : BUSINESS_CONFIG.name}
+                </h1>
+                <p style={{ fontSize: '15px' }}>
+                  {isSignUpMode ? 'Join us and start booking your sessions.' : BUSINESS_CONFIG.tagline}
+                </p>
+              </div>
+
+
 
         {/* Quick Demo Persona Access */}
         {!isSignUpMode && (
@@ -264,7 +303,7 @@ export default function Login() {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={isLoggingIn}>
+        <AnimatedButton type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={isLoggingIn}>
           {isLoggingIn
             ? isSignUpMode
               ? 'Creating Account...'
@@ -272,20 +311,20 @@ export default function Login() {
             : isSignUpMode
             ? 'Create Account'
             : 'Sign In'}
-        </button>
+        </AnimatedButton>
 
         {/* Back to Portal */}
         <a
           href="https://nativebooking.co"
           style={{ textDecoration: 'none', width: '100%', display: 'block', marginTop: '12px' }}
         >
-          <button
+          <AnimatedButton
             type="button"
             className="btn btn-secondary"
             style={{ width: '100%', gap: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}
           >
             ← Back to Industry Portal
-          </button>
+          </AnimatedButton>
         </a>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
@@ -322,15 +361,17 @@ export default function Login() {
         >
           Powered by NativeBooking Software ⚡
         </div>
-        <div style={{ textAlign: 'center', marginTop: '10px' }}>
-          <a
-            href="/privacy"
-            style={{ fontSize: '11px', color: 'var(--text-secondary)', textDecoration: 'underline', opacity: 0.7 }}
-          >
-            Privacy Policy
-          </a>
-        </div>
-      </form>
+              <div style={{ textAlign: 'center', marginTop: '10px' }}>
+                <a
+                  href="/privacy"
+                  style={{ fontSize: '11px', color: 'var(--text-secondary)', textDecoration: 'underline', opacity: 0.7 }}
+                >
+                  Privacy Policy
+                </a>
+              </div>
+            </form>
+          </Tabs.Panel>
+        </Tabs.Root>
     </div>
   )
 }
