@@ -10,106 +10,119 @@ import {
 import type { User as FirebaseUser } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 
+// ─── DEV-only flag: mock credentials are ONLY available in dev builds ───
+const IS_DEV = import.meta.env.DEV
+
+// Role and email are derived from auth state, not from sessionStorage alone.
+// sessionStorage is used only for UI persistence across page reloads within
+// the same browser tab — it is NOT a security boundary.
 export let currentUserRole: 'admin' | 'customer' | null =
   (sessionStorage.getItem('currentUserRole') as 'admin' | 'customer' | null) || null
 
 export let currentUserEmail: string | null =
   sessionStorage.getItem('currentUserEmail') || null
 
-// Local mock login logic (runs if Firebase is disabled)
 
-
-// Unified export functions
+// ─── LOGIN ──────────────────────────────────────────────────────────────
 export async function login(email: string, password: string): Promise<boolean> {
-  // Mock login when Firebase is disabled
-  if (!isFirebaseEnabled) {
+  // Mock login — only available in DEV builds (stripped from production by Vite)
+  if (!isFirebaseEnabled && IS_DEV) {
     // Check mock user store first
-    const mockUsers = JSON.parse(localStorage.getItem('mockUsers') || '[]') as Array<{email:string,password:string,role:'admin'|'customer'}>;
-    const user = mockUsers.find(u => u.email === email && u.password === password);
+    const mockUsers = JSON.parse(localStorage.getItem('mockUsers') || '[]') as Array<{email:string,password:string,role:'admin'|'customer'}>
+    const user = mockUsers.find(u => u.email === email && u.password === password)
     if (user) {
-      currentUserRole = user.role;
-      currentUserEmail = email;
-      sessionStorage.setItem('currentUserRole', user.role);
-      sessionStorage.setItem('currentUserEmail', email);
-      return true;
+      currentUserRole = user.role
+      currentUserEmail = email
+      sessionStorage.setItem('currentUserRole', user.role)
+      sessionStorage.setItem('currentUserEmail', email)
+      return true
     }
-    // Admin credentials (strictly admin@nativebooking.co)
-    const isAdminEmail = email === 'admin@nativebooking.co' 
-    const isAdminPass  = password === 'NativeBooking2026!Admin' 
-
-    if (isAdminEmail && isAdminPass) {
-      currentUserRole = 'admin';
-      currentUserEmail = email;
-      sessionStorage.setItem('currentUserRole', 'admin');
-      sessionStorage.setItem('currentUserEmail', email);
-      return true;
+    // DEV-only demo credentials
+    if (email === 'admin@test.com' && password === 'admin123') {
+      currentUserRole = 'admin'
+      currentUserEmail = email
+      sessionStorage.setItem('currentUserRole', 'admin')
+      sessionStorage.setItem('currentUserEmail', email)
+      return true
     }
     if (email === 'customer@test.com' && password === 'cust123') {
-      currentUserRole = 'customer';
-      currentUserEmail = email;
-      sessionStorage.setItem('currentUserRole', 'customer');
-      sessionStorage.setItem('currentUserEmail', email);
-      return true;
+      currentUserRole = 'customer'
+      currentUserEmail = email
+      sessionStorage.setItem('currentUserRole', 'customer')
+      sessionStorage.setItem('currentUserEmail', email)
+      return true
     }
-    // If no match, fail
-    return false;
+    return false
   }
 
-  // Real Firebase login flow
+  // Firebase is disabled in production without config — block login
+  if (!isFirebaseEnabled) {
+    console.error('Firebase is not configured. Login unavailable.')
+    return false
+  }
+
+  // Real Firebase login — NO auto-account-creation on failure
   try {
-    let cred;
-    try {
-      cred = await signInWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-      // Auto-create account in Firebase Auth if not created yet
-      cred = await createUserWithEmailAndPassword(auth, email, password);
-    }
-    await syncUserProfile(cred.user);
-    return true;
+    const cred = await signInWithEmailAndPassword(auth, email, password)
+    await syncUserProfile(cred.user)
+    return true
   } catch (error) {
-    console.error('Firebase Email sign-in failed:', error);
-    return false;
+    console.error('Firebase Email sign-in failed:', error)
+    return false
   }
 }
 
+
+// ─── REGISTER ───────────────────────────────────────────────────────────
 export async function register(email: string, password: string): Promise<boolean> {
-  // Mock registration when Firebase is disabled
-  if (!isFirebaseEnabled) {
-    const mockUsers = JSON.parse(localStorage.getItem('mockUsers') || '[]') as Array<{email:string,password:string,role:'admin'|'customer'}>;
-    // Prevent duplicate email
+  // Mock registration — only in DEV
+  if (!isFirebaseEnabled && IS_DEV) {
+    const mockUsers = JSON.parse(localStorage.getItem('mockUsers') || '[]') as Array<{email:string,password:string,role:'admin'|'customer'}>
     if (mockUsers.some(u => u.email === email)) {
-      console.warn('Mock registration failed: email already exists');
-      return false;
+      console.warn('Mock registration failed: email already exists')
+      return false
     }
-    const newUser = { email, password, role: 'customer' as const };
-    mockUsers.push(newUser);
-    localStorage.setItem('mockUsers', JSON.stringify(mockUsers));
-    currentUserRole = 'customer';
-    currentUserEmail = email;
-    sessionStorage.setItem('currentUserRole', 'customer');
-    sessionStorage.setItem('currentUserEmail', email);
-    return true;
+    const newUser = { email, password, role: 'customer' as const }
+    mockUsers.push(newUser)
+    localStorage.setItem('mockUsers', JSON.stringify(mockUsers))
+    currentUserRole = 'customer'
+    currentUserEmail = email
+    sessionStorage.setItem('currentUserRole', 'customer')
+    sessionStorage.setItem('currentUserEmail', email)
+    return true
+  }
+
+  if (!isFirebaseEnabled) {
+    console.error('Firebase is not configured. Registration unavailable.')
+    return false
   }
 
   // Real Firebase registration flow
   try {
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    await syncUserProfile(cred.user);
-    return true;
+    const cred = await createUserWithEmailAndPassword(auth, email, password)
+    await syncUserProfile(cred.user)
+    return true
   } catch (error) {
-    console.error('Firebase registration failed:', error);
-    return false;
+    console.error('Firebase registration failed:', error)
+    return false
   }
 }
 
+
+// ─── GOOGLE SIGN-IN ─────────────────────────────────────────────────────
 export async function loginWithGoogle(): Promise<boolean> {
-  if (!isFirebaseEnabled) {
-    // Local fallback mock Google Sign-in
+  if (!isFirebaseEnabled && IS_DEV) {
+    // DEV-only mock Google Sign-in
     currentUserRole = 'customer'
     currentUserEmail = 'google-customer@test.com'
     sessionStorage.setItem('currentUserRole', 'customer')
     sessionStorage.setItem('currentUserEmail', 'google-customer@test.com')
     return true
+  }
+
+  if (!isFirebaseEnabled) {
+    console.error('Firebase is not configured. Google sign-in unavailable.')
+    return false
   }
 
   try {
@@ -119,9 +132,7 @@ export async function loginWithGoogle(): Promise<boolean> {
   } catch (error) {
     console.warn('Google signInWithPopup failed, attempting redirect:', error)
     try {
-      // Attempt redirect flow as a fallback (especially on mobile)
       await signInWithRedirect(auth, googleProvider)
-      // The redirect will bring the user back to the app; onAuthStateChanged will handle sync
       return true
     } catch (redirError) {
       console.error('Firebase Google sign-in failed:', redirError)
@@ -131,8 +142,7 @@ export async function loginWithGoogle(): Promise<boolean> {
 }
 
 
-
-
+// ─── LOGOUT ─────────────────────────────────────────────────────────────
 export async function logout() {
   if (isFirebaseEnabled && auth) {
     try {
@@ -148,21 +158,24 @@ export async function logout() {
   sessionStorage.removeItem('currentUserEmail')
 }
 
-// Helper to provision user document in Firestore and sync session role
+
+// ─── SYNC USER PROFILE ─────────────────────────────────────────────────
+// Provisions a user document in Firestore and syncs session role
 async function syncUserProfile(user: FirebaseUser) {
   currentUserEmail = user.email
   sessionStorage.setItem('currentUserEmail', user.email || '')
 
+  // Default role: customer. Admin is determined from Firestore user doc,
+  // NOT from a client-side email comparison (except as initial seed).
   let role: 'admin' | 'customer' = 'customer'
-  if (user.email === 'admin@nativebooking.co' ) {
-    role = 'admin'
-  }
 
   try {
     const userDocRef = doc(db, 'users', user.uid)
     const userDoc = await getDoc(userDocRef)
 
     if (!userDoc.exists()) {
+      // First-time user — seed a profile. Admin role must be set manually
+      // in Firestore or via Custom Claims, not auto-assigned by email.
       await setDoc(userDocRef, {
         email: user.email,
         displayName: user.displayName || '',
@@ -183,7 +196,8 @@ async function syncUserProfile(user: FirebaseUser) {
   sessionStorage.setItem('currentUserRole', role)
 }
 
-// Observe Firebase state changes and sync role
+
+// ─── AUTH STATE OBSERVER ────────────────────────────────────────────────
 if (isFirebaseEnabled && auth) {
   try {
     onAuthStateChanged(auth, async (user) => {

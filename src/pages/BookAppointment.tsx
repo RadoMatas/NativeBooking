@@ -200,6 +200,30 @@ export default function BookAppointment() {
       return
     }
 
+    // ─── Input Validation ──────────────────────────────────
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (customerEmail && !emailRegex.test(customerEmail)) {
+      setFormErrorMsg('Please enter a valid email address.')
+      return
+    }
+
+    const phoneRegex = /^[+\d\s\-().]{6,20}$/
+    if (customerPhone && !phoneRegex.test(customerPhone)) {
+      setFormErrorMsg('Please enter a valid phone number (digits, spaces, +, -, parentheses only).')
+      return
+    }
+
+    if (customerName && customerName.length > 100) {
+      setFormErrorMsg('Name must be under 100 characters.')
+      return
+    }
+
+    if (notes && notes.length > 1000) {
+      setFormErrorMsg('Notes must be under 1000 characters.')
+      return
+    }
+    // ─── End Input Validation ──────────────────────────────
+
     // Bypass payment modal if rescheduling OR if deposit is 0%
     if (isReschedule || BUSINESS_CONFIG.depositPercentage === 0) {
       processBooking()

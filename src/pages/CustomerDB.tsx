@@ -11,8 +11,7 @@ import { Badge } from '../components/ui/Badge'
 export default function CustomerDB() {
   const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
 
-  console.log('currentUserEmail:', currentUserEmail)
-  console.log('all bookings:', bookings)
+  // Debug logging removed for security — use DevTools breakpoints in development
 
   const getBookingDateTime = (booking: any) => {
     return new Date(`${booking.date}T${booking.time}`)
