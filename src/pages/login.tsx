@@ -5,7 +5,6 @@ import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import { UsersIcon, SettingsIcon } from '../components/ui/Icons'
 import { Tabs } from '@base-ui/react/tabs'
-import { motion } from 'motion/react'
 import { useNotification } from '../components/ui/NotificationStack'
 import { AnimatedButton } from '../components/ui/AnimatedButton'
 
