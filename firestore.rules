@@ -15,7 +15,7 @@ service cloud.firestore {
     // Helper: Check if the logged-in user is an Admin
     function isAdmin() {
       return isSignedIn() && 
-        (request.auth.token.email == 'admin@test.com' || getUserData().role == 'admin');
+        (request.auth.token.email == 'admin@nativebooking.co' || getUserData().role == 'admin');
     }
 
     // Helper: Check if the logged-in user owns the document/data
@@ -32,12 +32,33 @@ service cloud.firestore {
 
     // --- BOOKINGS COLLECTION RULES ---
     match /bookings/{bookingId} {
-      allow read, write: if true;
+      // Any authenticated user can read bookings (filtered client-side by email)
+      allow read: if isSignedIn();
+      // Any authenticated user can create a booking
+      allow create: if isSignedIn();
+      // Only the booking owner or an admin can update/delete
+      allow update, delete: if isSignedIn() && 
+        (isAdmin() || isOwner(resource.data.ownerEmail));
     }
 
     // --- NOTIFICATIONS COLLECTION RULES ---
     match /notifications/{notificationId} {
-      allow read, write: if true;
+      // Only admins can read notifications
+      allow read: if isSignedIn() && isAdmin();
+      // Any authenticated user can create notifications (e.g. booking triggers)
+      allow create: if isSignedIn();
+      // Only admins can update/delete notifications
+      allow update, delete: if isSignedIn() && isAdmin();
+    }
+
+    // --- INTRO CALL BOOKINGS COLLECTION RULES ---
+    match /intro_call_bookings/{callId} {
+      // Admins can read all intro call bookings
+      allow read: if isSignedIn() && isAdmin();
+      // Anyone can create an intro call request (public form)
+      allow create: if true;
+      // Only admins can update/delete
+      allow update, delete: if isSignedIn() && isAdmin();
     }
   }
 }
