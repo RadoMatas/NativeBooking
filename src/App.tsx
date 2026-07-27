@@ -1,15 +1,13 @@
 import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
-import PortalHome from './pages/PortalHome'
 import CustomerDB from './pages/CustomerDB'
 import AdminDB from './pages/AdminDB'
 import BookAppointment from './pages/BookAppointment'
 import PrivacyPolicy from './pages/PrivacyPolicy'
-import BookIntroCall from './pages/BookIntroCall'
-import AdminLogin from './pages/AdminLogin'
 import Login from './pages/login'
 import { BookingProvider } from './BookingContext'
 import { BUSINESS_CONFIG } from './businessConfig'
+import { NotificationProvider } from './components/ui/NotificationStack'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -34,19 +32,19 @@ function App() {
 
   return (
     <BookingProvider>
-      <BrowserRouter>
-        <ScrollToTop />
-        <Routes>
-          <Route path="/" element={<PortalHome />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/adminlogin" element={<AdminLogin />} />
-          <Route path="/dashboard" element={<CustomerDB />} />
-          <Route path="/admin" element={<AdminDB />} />
-          <Route path="/book" element={<BookAppointment />} />
-          <Route path="/book-call" element={<BookIntroCall />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-        </Routes>
-      </BrowserRouter>
+      <NotificationProvider>
+        <BrowserRouter>
+          <ScrollToTop />
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<CustomerDB />} />
+            <Route path="/admin" element={<AdminDB />} />
+            <Route path="/book" element={<BookAppointment />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+          </Routes>
+        </BrowserRouter>
+      </NotificationProvider>
     </BookingProvider>
   )
 }
