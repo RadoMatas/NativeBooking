@@ -8,6 +8,7 @@ import { Tabs } from '@base-ui/react/tabs'
 import { motion } from 'motion/react'
 import { useNotification } from '../components/ui/NotificationStack'
 import { AnimatedButton } from '../components/ui/AnimatedButton'
+import { PageWrapper } from '../components/ui/PageWrapper'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -66,6 +67,7 @@ export default function Login() {
   }
 
   return (
+    <PageWrapper>
     <div
       style={{
         minHeight: '100vh',
@@ -328,22 +330,22 @@ export default function Login() {
         </a>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-          <button
-            type="button"
-            onClick={() => setIsSignUpMode(!isSignUpMode)}
-            className="btn-link"
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--accent-color)',
-              cursor: 'pointer',
-              fontSize: '14px',
-              textDecoration: 'underline',
-              fontFamily: 'inherit',
-            }}
-          >
-            {isSignUpMode ? 'Already have an account? Sign In' : "Don't have an account? Create one"}
-          </button>
+       <AnimatedButton
+  type="button"
+  onClick={() => setIsSignUpMode(!isSignUpMode)}
+  className="btn-link"
+  style={{
+    background: 'none',
+    border: 'none',
+    color: 'var(--accent-color)',
+    cursor: 'pointer',
+    fontSize: '14px',
+    textDecoration: 'underline',
+    fontFamily: 'inherit',
+  }}
+>
+  {isSignUpMode ? 'Already have an account? Sign In' : "Don't have an account? Create one"}
+</AnimatedButton>
         </div>
 
         {/* Watermark */}
@@ -373,5 +375,6 @@ export default function Login() {
           </Tabs.Panel>
         </Tabs.Root>
     </div>
-  )
+ </PageWrapper>     
+)
 }

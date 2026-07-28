@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
+import { PageWrapper } from '../components/ui/PageWrapper'
 
 export default function BookIntroCall() {
   const navigate = useNavigate()
@@ -20,6 +21,7 @@ export default function BookIntroCall() {
   }
 
   return (
+    <PageWrapper>
     <div
       style={{
         minHeight: '100vh',
@@ -182,5 +184,6 @@ export default function BookIntroCall() {
         </div>
       </div>
     </div>
+    </PageWrapper>
   )
 }

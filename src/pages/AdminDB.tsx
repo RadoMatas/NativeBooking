@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { currentUserRole, logout } from '../auth'
 import { fetchIntroCalls, updateIntroCallStatus, type IntroCallBooking } from '../introCallHelpers'
 import { Badge } from '../components/ui/Badge'
-
+import { PageWrapper } from '../components/ui/PageWrapper'
 
 export default function AdminDB() {
   const navigate = useNavigate()
@@ -86,6 +86,7 @@ export default function AdminDB() {
   }
 
   return (
+    <PageWrapper>
     <div
       style={{
         minHeight: '100vh',
@@ -502,5 +503,6 @@ export default function AdminDB() {
         </div>
       </div>
     </div>
+    </PageWrapper>
   )
 }

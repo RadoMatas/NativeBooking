@@ -6,7 +6,7 @@ import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
 import { Badge } from '../components/ui/Badge'
-
+import { PageWrapper } from '../components/ui/PageWrapper'
 
 export default function CustomerDB() {
   const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
@@ -168,6 +168,7 @@ export default function CustomerDB() {
   }
 
   return (
+     <PageWrapper>
     <div
       style={{
         minHeight: '100vh',
@@ -855,5 +856,6 @@ export default function CustomerDB() {
         Powered by NativeBooking Software ⚡
       </div>
     </div>
+    </PageWrapper>
   )
 }

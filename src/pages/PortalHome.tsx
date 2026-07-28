@@ -4,27 +4,36 @@ import SavingsCalculator from '../components/SavingsCalculator'
 import WhiteLabelComparison from '../components/WhiteLabelComparison'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
+import { PageWrapper } from '../components/ui/PageWrapper'
 
 export default function PortalHome() {
   const navigate = useNavigate()
-
+  
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        backgroundColor: '#090a0f',
-        color: '#f8fafc',
-        fontFamily: "'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif",
-        overflowX: 'hidden',
-        width: '100%',
-        boxSizing: 'border-box',
-      }}
-    >
-      <style>{`
-        @keyframes pulseGlow {
-          0%, 100% { opacity: 0.4; transform: scale(1); }
-          50% { opacity: 0.7; transform: scale(1.05); }
-        }
+    <PageWrapper>
+      <div
+        style={{
+          minHeight: '100vh',
+          background: 'radial-gradient(rgba(255, 255, 255, 0.18) 1.5px, transparent 1.5px) #090a0f',
+          backgroundSize: '30px 30px',
+          color: '#f8fafc',
+          fontFamily: "'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif",
+          overflowX: 'hidden',
+          width: '100%',
+          boxSizing: 'border-box',
+          position: 'relative',
+        }}
+      >
+        <style>{`
+          @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, -50px) scale(1.15); }
+            100% { transform: translate(-30px, 30px) scale(0.9); }
+          }
+          @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+          }
         .aave-text-gradient-emerald {
           background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
           -webkit-background-clip: text;
@@ -110,6 +119,7 @@ export default function PortalHome() {
         </div>
       </header>
 
+
       {/* ─── SECTION 1: HERO (EMERALD THEME) ─────────────────── */}
       <section
         className="aave-hero-section"
@@ -126,17 +136,6 @@ export default function PortalHome() {
         }}
       >
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '1080px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
-          {/* Category Pill */}
-          <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'center' }}>
-            <Badge 
-              variant="confirmed" 
-              icon={<img src="/logo-icon.jpg" width={16} height={16} style={{ borderRadius: '4px' }} />}
-              style={{ padding: '6px 16px', fontSize: '12px', fontWeight: 700 }}
-            >
-              NativeBooking App
-            </Badge>
-          </div>
-
           {/* Main Headline */}
           <h1
             className="aave-hero-title"
@@ -237,9 +236,6 @@ export default function PortalHome() {
               <Button variant="purple" size="lg" onClick={() => navigate('/book-call')}>
                 Request Pro Demo ➔
               </Button>
-              <Button variant="secondary" size="lg" onClick={() => navigate('/book-call')}>
-                Talk to Sales
-              </Button>
             </div>
           </div>
 
@@ -270,7 +266,7 @@ export default function PortalHome() {
               {/* Market Card 1 */}
               <div className="aave-market-card">
                 <div style={{ marginBottom: '16px' }}>
-                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c084fc', display: 'block', marginBottom: '6px' }}>
+                  <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#4fc9fa', display: 'block', marginBottom: '6px' }}>
                     General Purpose Market
                   </span>
                   <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
@@ -460,5 +456,6 @@ export default function PortalHome() {
         </div>
       </footer>
     </div>
+  </PageWrapper>
   )
 }

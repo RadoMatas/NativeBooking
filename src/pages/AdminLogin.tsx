@@ -6,6 +6,8 @@ import { BUSINESS_CONFIG } from '../businessConfig'
 import { useNotification } from '../components/ui/NotificationStack'
 import { AnimatedButton } from '../components/ui/AnimatedButton'
 
+import { PageWrapper } from '../components/ui/PageWrapper'
+
 export default function AdminLogin() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -34,6 +36,7 @@ export default function AdminLogin() {
   }
 
   return (
+    <PageWrapper>
     <div
       style={{
         minHeight: '100vh',
@@ -124,5 +127,6 @@ export default function AdminLogin() {
         </div>
       </form>
     </div>
+    </PageWrapper>
   )
 }
