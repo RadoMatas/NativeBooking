@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login, currentUserRole } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
-import Logo from '../components/Logo'
+
 import { useNotification } from '../components/ui/NotificationStack'
 import { AnimatedButton } from '../components/ui/AnimatedButton'
 
@@ -55,10 +55,14 @@ export default function AdminLogin() {
       >
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-            <Logo size="large" />
+            <img
+              src="/logo-icon.jpg"
+              alt="NativeBooking logo"
+              style={{ width: '96px', height: '96px', borderRadius: '16px', objectFit: 'cover' }}
+            />
           </div>
           <h1 style={{ fontSize: '32px', marginBottom: '6px' }}>{BUSINESS_CONFIG.name}</h1>
-          <p style={{ fontSize: '15px' }}>Admin access only</p>
+          <p style={{ fontSize: '15px', color: '#10b981', fontWeight: 600 }}>Admin access only</p>
         </div>
 
         <div className="form-group">
