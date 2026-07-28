@@ -3,10 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { login, register, currentUserRole } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
-import { UsersIcon, SettingsIcon } from '../components/ui/Icons'
-import { Tabs } from '@base-ui/react/tabs'
-import { useNotification } from '../components/ui/NotificationStack'
-import { AnimatedButton } from '../components/ui/AnimatedButton'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -14,11 +10,12 @@ export default function Login() {
   const [password, setPassword] = useState('')
   const [isSignUpMode, setIsSignUpMode] = useState(false)
   const [isLoggingIn, setIsLoggingIn] = useState(false)
-  const { notify } = useNotification()
+  const [errorMsg, setErrorMsg] = useState('')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoggingIn(true)
+    setErrorMsg('')
 
     let ok = false
     if (isSignUpMode) {
@@ -29,11 +26,10 @@ export default function Login() {
     setIsLoggingIn(false)
 
     if (!ok) {
-      notify(
+      setErrorMsg(
         isSignUpMode
           ? 'Registration failed (password must be at least 6 characters, or email is already registered).'
-          : 'Invalid email or password.',
-        'error'
+          : 'Invalid email or password.'
       )
       return
     }
@@ -47,13 +43,14 @@ export default function Login() {
 
   const handleDemoLogin = async (role: 'customer' | 'admin') => {
     setIsLoggingIn(true)
+    setErrorMsg('')
     const demoEmail    = role === 'admin' ? 'admin@test.com'    : 'customer@test.com'
     const demoPassword = role === 'admin' ? 'admin123'          : 'cust123'
     const ok = await login(demoEmail, demoPassword)
     setIsLoggingIn(false)
 
     if (!ok) {
-      notify('Demo login failed — please try again.', 'error')
+      setErrorMsg('Demo login failed — please try again.')
       return
     }
 
@@ -100,115 +97,81 @@ export default function Login() {
         <span>Live product demo — all data is simulated for demonstration purposes only.</span>
       </div>
 
-        <Tabs.Root 
-          defaultValue="signin" 
-          onValueChange={(val) => setIsSignUpMode(val === 'signup')}
-          style={{ width: '100%', maxWidth: '420px', margin: '0 auto', display: 'flex', flexDirection: 'column' }}
-        >
+      <form
+        onSubmit={handleSubmit}
+        className="premium-card"
+        style={{
+          width: '100%',
+          maxWidth: '420px',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+            <Logo size="large" />
+          </div>
+          <h1 style={{ fontSize: '32px', marginBottom: '6px' }}>
+            {isSignUpMode ? 'Create Account' : BUSINESS_CONFIG.name}
+          </h1>
+          <p style={{ fontSize: '15px' }}>
+            {isSignUpMode ? 'Join us and start booking your sessions.' : BUSINESS_CONFIG.tagline}
+          </p>
+        </div>
 
-          <Tabs.Panel value={isSignUpMode ? 'signup' : 'signin'}>
-            <form
-              onSubmit={handleSubmit}
-              className="premium-card"
-              style={{
-                width: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-              }}
-            >
-              <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
-                  <Logo size="large" />
-                </div>
-                <h1 style={{ fontSize: '32px', marginBottom: '6px' }}>
-                  {isSignUpMode ? 'Create Account' : BUSINESS_CONFIG.name}
-                </h1>
-                <p style={{ fontSize: '15px' }}>
-                  {isSignUpMode ? 'Join us and start booking your sessions.' : BUSINESS_CONFIG.tagline}
-                </p>
-              </div>
+        {errorMsg && (
+          <div
+            style={{
+              padding: '12px 14px',
+              borderRadius: '10px',
+              background: 'rgba(239, 68, 68, 0.12)',
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              color: '#f87171',
+              fontSize: '13px',
+              fontWeight: 600,
+              textAlign: 'center',
+              marginBottom: '20px',
+            }}
+          >
+            {errorMsg}
+          </div>
+        )}
 
-
-
-        {/* Quick Demo Persona Access */}
+        {/* Quick Demo Access */}
         {!isSignUpMode && (
           <div style={{ marginBottom: '24px' }}>
-            <div
+            <p
               style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '12px',
+                fontSize: '11px',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.08em',
+                color: 'var(--text-secondary)',
+                textAlign: 'center',
+                marginBottom: '10px',
               }}
             >
-              <span
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.08em',
-                  color: 'var(--accent-color)',
-                }}
-              >
-                ⚡ Instant Test-Drive
-              </span>
-              <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                No password required
-              </span>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <AnimatedButton
+              Jump straight in
+            </p>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
                 type="button"
                 onClick={() => handleDemoLogin('customer')}
                 disabled={isLoggingIn}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '14px 12px',
-                  borderRadius: '12px',
-                  background: 'var(--accent-color)',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
-                  color: '#ffffff',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
+                className="btn btn-primary"
+                style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
               >
-                <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.2)', color: '#ffffff', display: 'flex' }}>
-                  <UsersIcon size={18} />
-                </div>
-                <div style={{ fontSize: '13px', fontWeight: 700 }}>Client Test-Drive</div>
-                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>Customer Reservation View</div>
-              </AnimatedButton>
-
-              <AnimatedButton
+                👤 Try as Customer
+              </button>
+              <button
                 type="button"
                 onClick={() => handleDemoLogin('admin')}
                 disabled={isLoggingIn}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '6px',
-                  padding: '14px 12px',
-                  borderRadius: '12px',
-                  background: '#6366f1',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
-                  color: '#ffffff',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                }}
+                className="btn btn-secondary"
+                style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
               >
-                <div style={{ padding: '8px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.2)', color: '#ffffff', display: 'flex' }}>
-                  <SettingsIcon size={18} />
-                </div>
-                <div style={{ fontSize: '13px', fontWeight: 700 }}>Manager Board</div>
-                <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>Admin Control Panel</div>
-              </AnimatedButton>
+                ⚙️ Try as Admin
+              </button>
             </div>
           </div>
         )}
@@ -258,7 +221,7 @@ export default function Login() {
           />
         </div>
 
-        <AnimatedButton type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={isLoggingIn}>
+        <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={isLoggingIn}>
           {isLoggingIn
             ? isSignUpMode
               ? 'Creating Account...'
@@ -266,20 +229,20 @@ export default function Login() {
             : isSignUpMode
             ? 'Create Account'
             : 'Sign In'}
-        </AnimatedButton>
+        </button>
 
         {/* Back to Portal */}
         <a
           href="https://nativebooking.co"
           style={{ textDecoration: 'none', width: '100%', display: 'block', marginTop: '12px' }}
         >
-          <AnimatedButton
+          <button
             type="button"
             className="btn btn-secondary"
             style={{ width: '100%', gap: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent' }}
           >
             ← Back to Industry Portal
-          </AnimatedButton>
+          </button>
         </a>
 
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
@@ -316,17 +279,15 @@ export default function Login() {
         >
           Powered by NativeBooking Software ⚡
         </div>
-              <div style={{ textAlign: 'center', marginTop: '10px' }}>
-                <a
-                  href="/privacy"
-                  style={{ fontSize: '11px', color: 'var(--text-secondary)', textDecoration: 'underline', opacity: 0.7 }}
-                >
-                  Privacy Policy
-                </a>
-              </div>
-            </form>
-          </Tabs.Panel>
-        </Tabs.Root>
+        <div style={{ textAlign: 'center', marginTop: '10px' }}>
+          <a
+            href="/privacy"
+            style={{ fontSize: '11px', color: 'var(--text-secondary)', textDecoration: 'underline', opacity: 0.7 }}
+          >
+            Privacy Policy
+          </a>
+        </div>
+      </form>
     </div>
   )
 }
