@@ -61,7 +61,7 @@ export default function AdminLogin() {
               style={{ width: '96px', height: '96px', borderRadius: '16px', objectFit: 'cover' }}
             />
           </div>
-          <h1 style={{ fontSize: '32px', marginBottom: '6px' }}>{BUSINESS_CONFIG.name}</h1>
+          <h1 style={{ fontSize: '32px', marginBottom: '6px', color: '#10b981' }}>{BUSINESS_CONFIG.name}</h1>
           <p style={{ fontSize: '15px', color: '#10b981', fontWeight: 600 }}>Admin access only</p>
         </div>
 
