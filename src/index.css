@@ -1,31 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 :root {
-  /* Default Branding Colors - will be overridden dynamically by App.tsx */
-  --primary-color: #0c0d10;
-  --card-bg: rgba(22, 24, 29, 0.85);
-  --accent-color: #10b981;
-  --accent-hover: #34d399;
-  --border-radius: 12px;
+  /* Contractor Industrial Amber Theme */
+  --primary-color: #090a0d;
+  --card-bg: rgba(23, 24, 30, 0.92);
+  --card-bg-elevated: rgba(31, 33, 42, 0.95);
+  --accent-color: #f59e0b;
+  --accent-hover: #fbbf24;
+  --border-radius: 14px;
   --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
 
-  /* Standard Colors */
+  /* High Contrast Text & Industrial Amber Border Colors */
   --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-inverse: #0c0d10;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(255, 255, 255, 0.16);
+  --text-secondary: #a1a1aa;
+  --text-inverse: #090a0d;
+  --border-color: rgba(245, 158, 11, 0.16);
+  --border-hover: rgba(245, 158, 11, 0.4);
 
   /* Status Colors */
-  --status-pending-bg: rgba(234, 179, 8, 0.12);
-  --status-pending-text: #facc15;
-  --status-confirmed-bg: rgba(16, 185, 129, 0.12);
+  --status-pending-bg: rgba(245, 158, 11, 0.18);
+  --status-pending-text: #fde047;
+  --status-confirmed-bg: rgba(16, 185, 129, 0.18);
   --status-confirmed-text: #34d399;
-  --status-completed-bg: rgba(59, 130, 246, 0.12);
+  --status-completed-bg: rgba(59, 130, 246, 0.18);
   --status-completed-text: #60a5fa;
-  --status-cancelled-bg: rgba(239, 68, 68, 0.12);
-  --status-cancelled-text: #f87171;
+  --status-cancelled-bg: rgba(239, 68, 68, 0.18);
+  --status-cancelled-text: #fca5a5;
 
   background-color: var(--primary-color);
   color: var(--text-primary);
@@ -309,10 +310,10 @@ button:active, .btn:active {
   background: rgba(255, 255, 255, 0.25);
 }
 
-/* Dashboard Split Layout responsive classes */
+/* Dashboard Split Layout & Grid Systems */
 .booking-split-container {
   border-left: 1px solid var(--border-color);
-  padding-left: 24px;
+  padding-left: 28px;
 }
 
 @media (max-width: 768px) {
@@ -321,20 +322,54 @@ button:active, .btn:active {
     padding-left: 0 !important;
     border-top: 1px solid var(--border-color);
     padding-top: 24px;
-    margin-top: 12px;
+    margin-top: 16px;
   }
 }
 
-/* Admin Dashboard responsive grid */
+/* Admin Dashboard de-clunked grid layout */
 .admin-dashboard-grid {
   display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 24px;
+  grid-template-columns: 7fr 5fr;
+  gap: 28px;
   align-items: start;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 1024px) {
   .admin-dashboard-grid {
     grid-template-columns: 1fr !important;
+    gap: 20px;
   }
 }
+
+/* Customer Dashboard de-clunked grid layout */
+.customer-dashboard-grid {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .customer-dashboard-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+  }
+}
+
+/* Micro-interactions & industrial amber shadow outlines */
+.dashboard-card-interactive {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px) saturate(120%);
+  -webkit-backdrop-filter: blur(16px) saturate(120%);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.dashboard-card-interactive:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 158, 11, 0.4);
+  box-shadow: 0 12px 32px -8px rgba(245, 158, 11, 0.15);
+}
+
