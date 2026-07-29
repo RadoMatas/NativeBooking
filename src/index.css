@@ -1,31 +1,32 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 
 :root {
-  /* Academic Sandbox Warm Organic Cream + Emerald Green + Leather Brown Theme */
-  --primary-color: #fdfbf7;
-  --card-bg: rgba(255, 255, 255, 0.92);
-  --accent-color: #059669;
-  --accent-hover: #047857;
+  /* NativeBooking Base Obsidian + Emerald Theme */
+  --primary-color: #08080a;
+  --card-bg: rgba(23, 24, 30, 0.92);
+  --card-bg-elevated: rgba(31, 33, 42, 0.95);
+  --accent-color: #10b981;
+  --accent-hover: #34d399;
   --border-radius: 14px;
   --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   --font-heading: 'Outfit', 'Plus Jakarta Sans', sans-serif;
 
-  /* Standard Light Text & Leather Brown Border Colors */
-  --text-primary: #1c1917;
-  --text-secondary: #57534e;
-  --text-inverse: #ffffff;
-  --border-color: rgba(120, 53, 15, 0.18);
-  --border-hover: rgba(5, 150, 105, 0.35);
+  /* Standard Light Text & High Contrast Border Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #a1a1aa;
+  --text-inverse: #08080a;
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-hover: rgba(16, 185, 129, 0.4);
 
-  /* Academic Status Colors */
-  --status-pending-bg: rgba(180, 83, 9, 0.1);
-  --status-pending-text: #b45309;
-  --status-confirmed-bg: rgba(5, 150, 105, 0.12);
-  --status-confirmed-text: #059669;
-  --status-completed-bg: rgba(30, 58, 138, 0.12);
-  --status-completed-text: #1e3a8a;
-  --status-cancelled-bg: rgba(185, 28, 28, 0.12);
-  --status-cancelled-text: #b91c1c;
+  /* Status Colors */
+  --status-pending-bg: rgba(234, 179, 8, 0.18);
+  --status-pending-text: #fde047;
+  --status-confirmed-bg: rgba(16, 185, 129, 0.18);
+  --status-confirmed-text: #34d399;
+  --status-completed-bg: rgba(59, 130, 246, 0.18);
+  --status-completed-text: #60a5fa;
+  --status-cancelled-bg: rgba(239, 68, 68, 0.18);
+  --status-cancelled-text: #fca5a5;
 
   background-color: var(--primary-color);
   color: var(--text-primary);
