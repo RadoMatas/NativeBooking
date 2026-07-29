@@ -1,32 +1,69 @@
-# React + TypeScript + Vite
+# Reservation Blueprint
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A reservation and appointment scheduling web application built with React, TypeScript, Vite, and Firebase, featuring Android mobile support via Capacitor.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Customer Booking Flow**: Select services, date, time slots, and confirm appointments.
+- **Customer Dashboard**: View personal booking history and manage account details.
+- **Admin Dashboard**: Manage appointments, service catalog, time availability, and user roles.
+- **Authentication**: Firebase Auth supporting email/password and role-based access control.
+- **Mobile Ready**: Capacitor integration for Android build and deployment.
 
-## React Compiler
+## Project Structure
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+src/
+├── components/          # Reusable UI components
+├── pages/
+│   ├── BookAppointment.tsx  # Customer booking flow
+│   ├── CustomerDB.tsx       # Customer dashboard & history
+│   ├── AdminDB.tsx          # Admin management dashboard
+│   └── login.tsx            # Auth page
+├── BookingContext.tsx   # Global booking state & business logic
+├── auth.ts              # Authentication helpers
+├── businessConfig.ts    # Service definitions & default settings
+├── firebase.ts          # Firebase SDK initialization
+└── firestoreHelpers.ts  # Database CRUD utilities
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Tech Stack
+
+- **Frontend**: React 19, TypeScript, Vite, React Router v7
+- **Backend & Database**: Firebase Auth, Firestore
+- **Mobile**: Capacitor 8 (Android)
+- **Linting**: Oxlint
+
+## Local Setup & Development
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Configure environment variables in `.env`:
+   ```env
+   VITE_FIREBASE_API_KEY=your_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_domain
+   VITE_FIREBASE_PROJECT_ID=your_project_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Build for production:
+   ```bash
+   npm run build
+   ```
+
+## Mobile (Android) Build
+
+```bash
+npx cap sync android
+npx cap open android
+```
