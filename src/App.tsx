@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import PortalHome from './pages/PortalHome'
 import CustomerDB from './pages/CustomerDB'
 import AdminDB from './pages/AdminDB'
@@ -7,7 +7,7 @@ import BookAppointment from './pages/BookAppointment'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import BookIntroCall from './pages/BookIntroCall'
 import AdminLogin from './pages/AdminLogin'
-import Login from './pages/login'
+// login.tsx file remains intact for sandbox branches (tattoo, dental, academic)
 import { BookingProvider } from './BookingContext'
 import { BUSINESS_CONFIG } from './businessConfig'
 import { NotificationProvider } from './components/ui/NotificationStack'
@@ -40,7 +40,7 @@ function App() {
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<PortalHome />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/login" element={<Navigate to="/" replace />} />
             <Route path="/adminlogin" element={<AdminLogin />} />
             <Route path="/dashboard" element={<CustomerDB />} />
             <Route path="/admin" element={<AdminDB />} />
