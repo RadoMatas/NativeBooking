@@ -1084,7 +1084,12 @@ export default function AdminDB() {
                     className="form-select"
                     style={{ padding: '8px', borderColor: dispatchConflict ? '#f87171' : undefined }}
                   >
-                    {['08:00', '09:00', '10:00', '11:00', '13:00', '14:00', '16:00'].map((t) => {
+                    {[
+                      { time: '08:00', label: '🌅 Morning (08:00 - 11:00 AM)' },
+                      { time: '11:00', label: '☀️ Midday (11:00 - 02:00 PM)' },
+                      { time: '14:00', label: '🌇 Afternoon (02:00 - 05:00 PM)' },
+                      { time: '16:00', label: '🌙 Late Dispatch (04:00 - 07:00 PM)' },
+                    ].map((windowObj) => {
                       const isOccupied = bookings.some(
                         (b) =>
                           b.id !== reassignJobId &&
@@ -1092,11 +1097,11 @@ export default function AdminDB() {
                           b.adminStatus !== 'Declined by Tech' &&
                           b.artistId === assignedTechId &&
                           b.date === jobDate &&
-                          b.time === t
+                          b.time === windowObj.time
                       )
                       return (
-                        <option key={t} value={t} disabled={isOccupied}>
-                          {t} {isOccupied ? '(⚠️ Booked)' : ''}
+                        <option key={windowObj.time} value={windowObj.time} disabled={isOccupied}>
+                          {windowObj.label} {isOccupied ? '(⚠️ Crew Dispatched)' : ''}
                         </option>
                       )
                     })}
