@@ -215,32 +215,41 @@ export default function InteractiveShowcase() {
                 gap: '12px',
                 padding: '14px 18px',
                 borderRadius: '16px',
-                background: isActive ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-                border: `1px solid ${isActive ? tab.accent : 'rgba(255, 255, 255, 0.06)'}`,
+                background: isActive 
+                  ? `linear-gradient(135deg, ${tab.accent}25 0%, rgba(20, 22, 28, 0.95) 100%)` 
+                  : `${tab.accent}08`,
+                border: `1.5px solid ${isActive ? tab.accent : `${tab.accent}30`}`,
                 color: isActive ? '#ffffff' : 'var(--text-secondary)',
                 cursor: 'pointer',
                 textAlign: 'left',
                 transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-                boxShadow: isActive ? `0 4px 20px ${tab.accent}20` : 'none',
+                boxShadow: isActive ? `0 8px 24px ${tab.accent}35` : `0 2px 10px rgba(0,0,0,0.2)`,
+                transform: isActive ? 'translateY(-2px)' : 'none',
               }}
             >
               <div
                 style={{
-                  padding: '8px',
-                  borderRadius: '10px',
-                  background: isActive ? `${tab.accent}22` : 'rgba(255, 255, 255, 0.04)',
-                  color: isActive ? tab.accent : 'var(--text-secondary)',
+                  padding: '9px',
+                  borderRadius: '12px',
+                  background: isActive ? tab.accent : `${tab.accent}20`,
+                  color: isActive ? '#090a0f' : tab.accent,
                   display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  boxShadow: isActive ? `0 0 12px ${tab.accent}80` : 'none',
+                  transition: 'all 0.25s ease',
                 }}
               >
                 {tab.icon}
               </div>
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 700, color: isActive ? '#ffffff' : 'var(--text-primary)', wordBreak: 'break-word' }}>
-                  {tab.label}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 800, color: isActive ? '#ffffff' : tab.accent, wordBreak: 'break-word' }}>
+                    {tab.label}
+                  </span>
                 </div>
-                <div className="showcase-tab-subtitle-desktop" style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{tab.subtitle}</div>
-                <div className="showcase-tab-subtitle-mobile" style={{ fontSize: '11px', color: isActive ? 'rgba(255, 255, 255, 0.85)' : 'rgba(255, 255, 255, 0.45)', fontWeight: 500 }}>{tab.shortSubtitle}</div>
+                <div className="showcase-tab-subtitle-desktop" style={{ fontSize: '11px', color: isActive ? '#cbd5e1' : '#94a3b8' }}>{tab.subtitle}</div>
+                <div className="showcase-tab-subtitle-mobile" style={{ fontSize: '11px', color: isActive ? '#cbd5e1' : '#94a3b8', fontWeight: 500 }}>{tab.shortSubtitle}</div>
               </div>
             </button>
           )
