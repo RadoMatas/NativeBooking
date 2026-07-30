@@ -52,6 +52,9 @@ export default function BookIntroCall() {
               from_name: formData.name,
               from_email: formData.email,
               phone: formData.phone || 'N/A',
+              industry: formData.businessType,
+              requested_date: formData.date,
+              requested_time: formData.time,
               service: `[Discovery Call] ${formData.businessType}`,
               date: formData.date,
               time: formData.time,
@@ -244,9 +247,25 @@ export default function BookIntroCall() {
                         outline: 'none',
                       }}
                     >
-                      {['10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'].map((t) => (
-                        <option key={t} value={t}>{t} CET</option>
-                      ))}
+                      {[
+                        { time: '10:00', label: '10:00 AM CET' },
+                        { time: '12:00', label: '12:00 PM CET' },
+                        { time: '14:00', label: '02:00 PM CET' },
+                        { time: '16:00', label: '04:00 PM CET' },
+                        { time: '18:00', label: '06:00 PM CET' },
+                      ].map((slot) => {
+                        const todayStr = new Date().toISOString().split('T')[0]
+                        const isToday = formData.date === todayStr
+                        const nowHour = new Date().getHours()
+                        const slotHour = parseInt(slot.time.split(':')[0], 10)
+                        const isPast = isToday && slotHour <= nowHour
+
+                        return (
+                          <option key={slot.time} value={slot.time} disabled={isPast}>
+                            {slot.label} {isPast ? '(⚠️ Past Slot)' : ''}
+                          </option>
+                        )
+                      })}
                     </select>
                   </div>
                 </div>
