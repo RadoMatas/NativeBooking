@@ -28,6 +28,19 @@ function App() {
     root.style.setProperty('--accent-hover', BUSINESS_CONFIG.theme.accentHover)
     root.style.setProperty('--border-radius', BUSINESS_CONFIG.theme.borderRadius)
     root.style.setProperty('--font-family', BUSINESS_CONFIG.theme.fontFamily)
+
+    // Update mobile status bar & overscroll tint dynamically to match branch theme
+    const metaTheme = document.getElementById('meta-theme-color')
+    if (metaTheme) {
+      metaTheme.setAttribute('content', BUSINESS_CONFIG.theme.primaryColor || '#fdfbf7')
+    }
+
+    // Inject theme-matched ambient radial background for academic cream theme
+    document.body.style.background = `
+      radial-gradient(circle at top right, rgba(5, 150, 105, 0.08), transparent 45%),
+      radial-gradient(circle at bottom left, rgba(120, 53, 15, 0.06), transparent 50%),
+      ${BUSINESS_CONFIG.theme.primaryColor}
+    `
   }, [])
 
   return (
