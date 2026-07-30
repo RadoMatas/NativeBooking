@@ -243,7 +243,7 @@ export default function BookAppointment() {
         minHeight: '100vh',
         padding: '24px 16px',
         display: 'flex',
-        justifyContent: 'center',
+        flexDirection: 'column',
         alignItems: 'center',
       }}
     >
@@ -305,7 +305,7 @@ export default function BookAppointment() {
               <div style={{ height: '1px', background: 'var(--border-color)', margin: '10px 0' }} />
               <p style={{ display: 'flex', justifyContent: 'space-between', margin: '4px 0', fontSize: '16px', color: 'var(--accent-color)' }}>
                 <span style={{ fontWeight: 700 }}>Deposit to Pay:</span>
-                <span style={{ fontWeight: 700 }}>£{depositAmount.toFixed(2)}</span>
+                <span style={{ fontWeight: 700 }}>${depositAmount.toFixed(2)}</span>
               </p>
             </div>
 
@@ -373,6 +373,57 @@ export default function BookAppointment() {
         </div>
       )}
 
+      {/* ─── OAZA-INSPIRED TOP TRUST BAR & DISCLAIMER ─── */}
+      <div style={{ width: '100%', maxWidth: '640px', marginBottom: '16px' }}>
+        {/* Social Proof Last Booking Bar */}
+        <div
+          style={{
+            background: 'rgba(2, 132, 199, 0.08)',
+            border: '1px solid rgba(2, 132, 199, 0.25)',
+            borderRadius: '12px',
+            padding: '10px 16px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            fontSize: '13px',
+            color: '#0369a1',
+            fontWeight: 600,
+            marginBottom: '12px',
+          }}
+        >
+          <span>📅 <strong>Last online booking:</strong> Today at 14:45</span>
+          <span style={{ fontSize: '11px', background: '#0284c7', color: 'white', padding: '3px 8px', borderRadius: '9999px', fontWeight: 700 }}>
+            🔒 256-bit SSL
+          </span>
+        </div>
+
+        {/* Scope / Terms Medical Disclaimer Box */}
+        <div
+          style={{
+            background: '#fff',
+            border: '1px solid #e2e8f0',
+            borderLeft: '4px solid #0284c7',
+            borderRadius: '12px',
+            padding: '16px',
+            fontSize: '13px',
+            lineHeight: '1.5',
+            color: '#334155',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+          }}
+        >
+          <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '6px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span>🩺 Important Patient Intake Notice</span>
+          </div>
+          <p style={{ margin: '0 0 8px 0' }}>
+            Please review our intake terms before booking. For urgent acute pain or emergency trauma, do not wait for online slots.
+          </p>
+          <div style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid #f1f5f9' }}>
+            <span style={{ fontWeight: 700, color: '#dc2626' }}>Need Emergency Care?</span> Call our triage desk directly at{' '}
+            <strong style={{ color: '#0f172a' }}>+1 (800) 555-APEX</strong> for same-day walk-in authorization.
+          </div>
+        </div>
+      </div>
+
       <div
         className="premium-card"
         style={{
@@ -389,7 +440,7 @@ export default function BookAppointment() {
         <p style={{ marginBottom: '28px', textAlign: 'center' }}>
           {isReschedule
             ? 'Update your appointment details and submit your new preferred slot.'
-            : 'Choose your service, date, time, and add notes if needed.'}
+            : 'Choose your service, doctor, date, and time.'}
         </p>
 
         {/* Booking Stepper Indicator */}
@@ -408,10 +459,10 @@ export default function BookAppointment() {
             fontWeight: 600,
           }}
         >
-          <span style={{ color: 'var(--accent-color)' }}>① Client & Service</span>
+          <span style={{ color: 'var(--accent-color)' }}>① Patient Info</span>
           <span style={{ color: 'var(--text-secondary)' }}>➔</span>
           <span style={{ color: artistId && date && time ? 'var(--accent-color)' : 'var(--text-secondary)' }}>
-            ② Slot & {BUSINESS_CONFIG.staffLabel}
+            ② Select Doctor & Slot
           </span>
           <span style={{ color: 'var(--text-secondary)' }}>➔</span>
           <span style={{ color: 'var(--text-secondary)' }}>③ Confirm</span>
