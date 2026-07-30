@@ -1,5 +1,5 @@
 import { safeCollection, safeDoc, safeSetDoc } from './firestoreHelpers'
-import { getDocs, query, orderBy } from 'firebase/firestore'
+import { getDocs, query, orderBy, onSnapshot } from 'firebase/firestore'
 import { db } from './firebase'
 
 export interface IntroCallBooking {
@@ -31,6 +31,54 @@ export const saveIntroCallsLocal = (calls: IntroCallBooking[]) => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(calls))
   } catch (err) {
     console.error('Failed to save intro calls to localStorage', err)
+  }
+}
+
+export const subscribeToIntroCalls = (
+  callback: (calls: IntroCallBooking[]) => void
+): (() => void) => {
+  const localCalls = getIntroCallsLocal()
+  callback(localCalls)
+
+  if (!db) {
+    const interval = setInterval(() => {
+      callback(getIntroCallsLocal())
+    }, 3000)
+    return () => clearInterval(interval)
+  }
+
+  try {
+    const colRef = safeCollection('intro_call_bookings')
+    const q = query(colRef, orderBy('createdAt', 'desc'))
+    const unsubscribe = onSnapshot(
+      q,
+      (snap) => {
+        const remoteCalls: IntroCallBooking[] = []
+        snap.forEach((docSnap) => {
+          remoteCalls.push(docSnap.data() as IntroCallBooking)
+        })
+
+        const local = getIntroCallsLocal()
+        const mergedMap = new Map<string, IntroCallBooking>()
+        local.forEach((c) => mergedMap.set(c.id, c))
+        remoteCalls.forEach((c) => mergedMap.set(c.id, c))
+        const merged = Array.from(mergedMap.values()).sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+        saveIntroCallsLocal(merged)
+        callback(merged)
+      },
+      (err) => {
+        console.warn('Firestore onSnapshot failed, using fallback interval', err)
+      }
+    )
+    return unsubscribe
+  } catch (err) {
+    console.warn('Failed to subscribe to intro calls', err)
+    const interval = setInterval(() => {
+      callback(getIntroCallsLocal())
+    }, 3000)
+    return () => clearInterval(interval)
   }
 }
 
