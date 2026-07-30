@@ -583,47 +583,136 @@ export default function BookAppointment() {
             </div>
           </div>
 
+          {/* Dispatch Site Banner */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '16px',
+              background: 'rgba(245, 158, 11, 0.08)',
+              border: '1px solid rgba(245, 158, 11, 0.25)',
+              borderRadius: '12px',
+              padding: '12px 16px',
+              marginBottom: '20px',
+              fontSize: '13px',
+              color: '#fbbf24',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontWeight: 600,
             }}
           >
-            <div className="form-group">
-              <label className="form-label">Preferred Date</label>
-              <input
-                type="date"
-                min={today}
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="form-input"
-                style={{ borderColor: dateError ? '#f87171' : 'var(--border-color)' }}
-                required
-              />
-              {dateError && (
-                <p style={{ color: '#f87171', fontSize: '12px', marginTop: '6px', margin: '4px 0 0 0' }}>
-                  ⚠ {dateError}
-                </p>
+            <span>🚛 <strong>Field Crew Routing:</strong> Select job site arrival window</span>
+            <span style={{ fontSize: '11px', background: '#f59e0b', color: '#000', padding: '3px 8px', borderRadius: '9999px', fontWeight: 800 }}>
+              GPS Dispatched
+            </span>
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '20px' }}>
+            <label className="form-label">Preferred Service Date</label>
+            <input
+              type="date"
+              min={today}
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="form-input"
+              style={{ borderColor: dateError ? '#f87171' : 'var(--border-color)' }}
+              required
+            />
+            {dateError && (
+              <p style={{ color: '#f87171', fontSize: '12px', marginTop: '6px', margin: '4px 0 0 0' }}>
+                ⚠ {dateError}
+              </p>
+            )}
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <label className="form-label" style={{ margin: 0 }}>
+                Select Dispatch Arrival Window {!date && '(Select a date first)'}
+              </label>
+              {date && !dateError && (
+                <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 600 }}>
+                  ⚡ Field Crews Active Today
+                </span>
               )}
             </div>
-            <div className="form-group">
-              <label className="form-label">Available Time Slots</label>
-              <select
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="form-select"
-                disabled={!date || !!dateError}
-                required
+
+            {!date || dateError ? (
+              <div
+                style={{
+                  padding: '20px',
+                  borderRadius: '14px',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px dashed var(--border-color)',
+                  textAlign: 'center',
+                  color: 'var(--text-secondary)',
+                  fontSize: '13px',
+                }}
               >
-                <option value="">Select a time</option>
-                {availableTimeSlots.map((slot) => (
-                  <option key={slot} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-              </select>
-            </div>
+                Please pick a valid preferred date above to inspect crew dispatch windows.
+              </div>
+            ) : (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+                  gap: '12px',
+                  marginTop: '8px',
+                }}
+              >
+                {[
+                  { time: '08:00', label: '🌅 Morning Arrival Window', range: '08:00 AM - 11:00 AM' },
+                  { time: '11:00', label: '☀️ Midday Arrival Window', range: '11:00 AM - 02:00 PM' },
+                  { time: '14:00', label: '🌇 Afternoon Arrival Window', range: '02:00 PM - 05:00 PM' },
+                  { time: '16:00', label: '🌙 Late Dispatch Window', range: '04:00 PM - 07:00 PM' },
+                ].map((windowObj) => {
+                  const isAvailable = availableTimeSlots.includes(windowObj.time)
+                  const isSelected = time === windowObj.time
+
+                  return (
+                    <button
+                      key={windowObj.time}
+                      type="button"
+                      disabled={!isAvailable}
+                      onClick={() => setTime(windowObj.time)}
+                      style={{
+                        padding: '14px 16px',
+                        borderRadius: '14px',
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        textAlign: 'left',
+                        cursor: isAvailable ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.25s ease',
+                        border: isSelected
+                          ? '2px solid #f59e0b'
+                          : isAvailable
+                          ? '1px solid rgba(245, 158, 11, 0.35)'
+                          : '1px solid rgba(255, 255, 255, 0.06)',
+                        background: isSelected
+                          ? 'rgba(245, 158, 11, 0.2)'
+                          : isAvailable
+                          ? 'rgba(245, 158, 11, 0.05)'
+                          : 'rgba(255, 255, 255, 0.02)',
+                        color: isSelected
+                          ? '#ffffff'
+                          : isAvailable
+                          ? '#fbbf24'
+                          : 'rgba(255, 255, 255, 0.3)',
+                        opacity: isAvailable ? 1 : 0.45,
+                      }}
+                    >
+                      <div style={{ fontSize: '13px', fontWeight: 800, color: isSelected ? '#ffffff' : isAvailable ? '#fbbf24' : '#64748b' }}>
+                        {windowObj.label}
+                      </div>
+                      <div style={{ fontSize: '12px', color: isSelected ? '#fef08a' : 'var(--text-secondary)', marginTop: '4px' }}>
+                        ⏱️ Estimated Arrival: {windowObj.range}
+                      </div>
+                      <div style={{ fontSize: '11px', marginTop: '6px', fontWeight: 700, color: isSelected ? '#f59e0b' : isAvailable ? '#34d399' : '#f87171' }}>
+                        {isSelected ? '✓ Selected Window' : isAvailable ? '🟢 Crew Available' : '🔴 Crew Fully Booked'}
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
           {/* Deposit Pricing Display Card */}
