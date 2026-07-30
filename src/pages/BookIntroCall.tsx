@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import emailjs from '@emailjs/browser'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { PageWrapper } from '../components/ui/PageWrapper'
@@ -40,28 +41,24 @@ export default function BookIntroCall() {
       const userId = import.meta.env.VITE_EMAILJS_USER_ID
 
       if (serviceId && templateId && userId) {
-        fetch('https://api.emailjs.com/api/v1.0/email/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            service_id: serviceId,
-            template_id: templateId,
-            user_id: userId,
-            template_params: {
-              to_email: 'info@nativebooking.co',
-              from_name: formData.name,
-              from_email: formData.email,
-              phone: formData.phone || 'N/A',
-              industry: formData.businessType,
-              requested_date: formData.date,
-              requested_time: formData.time,
-              service: `[Discovery Call] ${formData.businessType}`,
-              date: formData.date,
-              time: formData.time,
-              notes: formData.notes || 'No notes provided',
-            },
-          }),
-        }).catch((err) => console.warn('EmailJS alert send failed:', err))
+        await emailjs.send(
+          serviceId,
+          templateId,
+          {
+            to_email: 'info@nativebooking.co',
+            from_name: formData.name,
+            from_email: formData.email,
+            phone: formData.phone || 'N/A',
+            industry: formData.businessType,
+            requested_date: formData.date,
+            requested_time: formData.time,
+            service: `[Discovery Call] ${formData.businessType}`,
+            date: formData.date,
+            time: formData.time,
+            notes: formData.notes || 'No notes provided',
+          },
+          userId
+        )
       }
     } catch (err) {
       console.error('Failed to submit intro call request:', err)

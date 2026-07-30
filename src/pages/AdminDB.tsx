@@ -68,7 +68,7 @@ export default function AdminDB() {
     const gcalDateStr = `${cleanDateStr}T${pad(startHour)}0000Z`
     const gcalEndDateStr = `${cleanDateStr}T${pad(endHour)}0000Z`
 
-    const gcalUrl = `https://calendar.google.com/calendar/u/info@nativebooking.co/r/eventedit?text=${encodeURIComponent(
+    const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
       `NativeBooking Discovery Call — ${call.name}`
     )}&details=${encodeURIComponent(
       `Discovery call with ${call.name}\nIndustry: ${call.industry}\nPhone/WhatsApp: ${call.phone}\nNotes: ${call.notes || 'None'}`
