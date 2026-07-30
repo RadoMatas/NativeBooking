@@ -1,7 +1,7 @@
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { currentUserRole, logout } from '../auth'
-import { fetchIntroCalls, updateIntroCallStatus, type IntroCallBooking } from '../introCallHelpers'
+import { fetchIntroCalls, updateIntroCallStatus, subscribeToIntroCalls, type IntroCallBooking } from '../introCallHelpers'
 import { Badge } from '../components/ui/Badge'
 import { PageWrapper } from '../components/ui/PageWrapper'
 
@@ -11,15 +11,13 @@ export default function AdminDB() {
   const [loading, setLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'confirmed' | 'declined'>('all')
 
-  const loadCalls = async () => {
-    setLoading(true)
-    const calls = await fetchIntroCalls()
-    setIntroCalls(calls)
-    setLoading(false)
-  }
-
   useEffect(() => {
-    loadCalls()
+    setLoading(true)
+    const unsubscribe = subscribeToIntroCalls((calls) => {
+      setIntroCalls(calls)
+      setLoading(false)
+    })
+    return () => unsubscribe()
   }, [])
 
   const handleLogout = () => {
@@ -70,27 +68,24 @@ export default function AdminDB() {
     const gcalDateStr = `${cleanDateStr}T${pad(startHour)}0000Z`
     const gcalEndDateStr = `${cleanDateStr}T${pad(endHour)}0000Z`
 
-    const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+    const gcalUrl = `https://calendar.google.com/calendar/u/info@nativebooking.co/r/eventedit?text=${encodeURIComponent(
       `NativeBooking Discovery Call — ${call.name}`
     )}&details=${encodeURIComponent(
       `Discovery call with ${call.name}\nIndustry: ${call.industry}\nPhone/WhatsApp: ${call.phone}\nNotes: ${call.notes || 'None'}`
-    )}&dates=${gcalDateStr}/${gcalEndDateStr}&add=${encodeURIComponent(call.email)}`
+    )}&dates=${gcalDateStr}/${gcalEndDateStr}&add=${encodeURIComponent(call.email)}&authuser=info@nativebooking.co`
 
     window.open(gcalUrl, '_blank')
-
-    await loadCalls()
   }
 
   const handleDeclineCall = async (call: IntroCallBooking) => {
     await updateIntroCallStatus(call.id, 'declined')
 
-    const mailtoSubject = encodeURIComponent(`Update on your NativeBooking Discovery Call Request`)
-    const mailtoBody = encodeURIComponent(
+    const mailSubject = encodeURIComponent(`Update on your NativeBooking Discovery Call Request`)
+    const mailBody = encodeURIComponent(
       `Hi ${call.name},\n\nThank you for requesting a discovery call with NativeBooking for ${call.date} at ${call.timeSlot} CET.\n\n[Please enter your decline / reschedule reason here]\n\nBest regards,\nNativeBooking Team`
     )
-    window.open(`mailto:${call.email}?subject=${mailtoSubject}&body=${mailtoBody}`, '_blank')
-
-    await loadCalls()
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(call.email)}&su=${mailSubject}&body=${mailBody}&authuser=info@nativebooking.co`
+    window.open(gmailUrl, '_blank')
   }
 
   const filteredCalls = introCalls.filter((c) => {

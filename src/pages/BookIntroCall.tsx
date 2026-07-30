@@ -253,19 +253,20 @@ export default function BookIntroCall() {
                         { time: '14:00', label: '02:00 PM CET' },
                         { time: '16:00', label: '04:00 PM CET' },
                         { time: '18:00', label: '06:00 PM CET' },
-                      ].map((slot) => {
-                        const todayStr = new Date().toISOString().split('T')[0]
-                        const isToday = formData.date === todayStr
-                        const nowHour = new Date().getHours()
-                        const slotHour = parseInt(slot.time.split(':')[0], 10)
-                        const isPast = isToday && slotHour <= nowHour
-
-                        return (
-                          <option key={slot.time} value={slot.time} disabled={isPast}>
-                            {slot.label} {isPast ? '(⚠️ Past Slot)' : ''}
+                      ]
+                        .filter((slot) => {
+                          const todayStr = new Date().toISOString().split('T')[0]
+                          const isToday = formData.date === todayStr
+                          if (!isToday) return true
+                          const nowHour = new Date().getHours()
+                          const slotHour = parseInt(slot.time.split(':')[0], 10)
+                          return slotHour > nowHour
+                        })
+                        .map((slot) => (
+                          <option key={slot.time} value={slot.time}>
+                            {slot.label}
                           </option>
-                        )
-                      })}
+                        ))}
                     </select>
                   </div>
                 </div>
