@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { PageWrapper } from '../components/ui/PageWrapper'
+import { useBooking, type Booking } from '../BookingContext'
 
 export default function BookIntroCall() {
   const navigate = useNavigate()
+  const { addBooking, addNotification } = useBooking()
   const [submitted, setSubmitted] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
@@ -17,6 +19,23 @@ export default function BookIntroCall() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    const discoveryBooking: Booking = {
+      id: `intro-${crypto.randomUUID()}`,
+      ownerEmail: formData.email,
+      customerName: formData.name,
+      customerEmail: formData.email,
+      customerPhone: formData.phone || 'N/A',
+      service: `[Discovery Call] ${formData.businessType}`,
+      date: new Date().toISOString().split('T')[0],
+      time: '12:00',
+      status: 'Pending',
+      adminStatus: 'Pending',
+      notes: formData.notes || 'Discovery Call Request from Portal',
+    }
+
+    addBooking(discoveryBooking)
+    addNotification(`🚀 New Discovery Call requested by ${formData.name} (${formData.email})`)
     setSubmitted(true)
   }
 
