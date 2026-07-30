@@ -1,16 +1,30 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- 1. Google Consent Mode v2 Default Setup -->
+    <!-- 1. Google Consent Mode v2 Default Setup (CookieYes GCM Compliant) -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      
       gtag('consent', 'default', {
         'analytics_storage': 'denied',
         'ad_storage': 'denied',
         'ad_user_data': 'denied',
         'ad_personalization': 'denied',
+        'security_storage': 'granted',
         'wait_for_update': 500
+      });
+
+      gtag('consent', 'default', {
+        'analytics_storage': 'denied',
+        'ad_storage': 'denied',
+        'ad_user_data': 'denied',
+        'ad_personalization': 'denied',
+        'region': ['EEA', 'GB', 'CH', 'US']
+      });
+
+      window.dataLayer.push({
+        'event': 'default_consent'
       });
     </script>
     <!-- 2. CookieYes Banner -->
