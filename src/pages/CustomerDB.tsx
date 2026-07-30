@@ -642,7 +642,7 @@ export default function CustomerDB() {
             </p>
           </div>
 
-          {/* Interactive Google Maps Embed Widget */}
+          {/* Interactive Map Embed Widget */}
           <div
             style={{
               width: '100%',
@@ -660,9 +660,7 @@ export default function CustomerDB() {
               height="100%"
               style={{ border: 0 }}
               loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://maps.google.com/maps?q=${encodeURIComponent(BUSINESS_CONFIG.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(BUSINESS_CONFIG.address)}&t=&z=14&ie=UTF8&iwloc=B&output=embed`}
             />
           </div>
 
