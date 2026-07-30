@@ -45,10 +45,23 @@ export default function AdminDB() {
     acceptReschedule,
     resetBookings,
     updateSessionDetails,
+    addBooking,
+    addNotification,
+    blockSlot,
   } = useBooking()
+
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
+  const [techFilter, setTechFilter] = useState('All')
   const [showAllBookings, setShowAllBookings] = useState(false)
   const detailsRef = useRef<HTMLDivElement | null>(null)
+
+  // Block Slot Modal State
+  const [showBlockModal, setShowBlockModal] = useState(false)
+  const [blockStaffId, setBlockStaffId] = useState(BUSINESS_CONFIG.artists[0].id)
+  const [blockDate, setBlockDate] = useState(() => new Date().toISOString().split('T')[0])
+  const [blockTime, setBlockTime] = useState('12:00')
+  const [blockReason, setBlockReason] = useState('Lunch Break / Out of Office')
+
   const [statusFilter, setStatusFilter] = useState('All')
   const [artistFilter, setArtistFilter] = useState('All')
 
@@ -215,6 +228,13 @@ export default function AdminDB() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <PulseTypewriterHeader text="Admin Control Hub" />
           <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={() => setShowBlockModal(true)}
+              className="btn btn-secondary"
+              style={{ padding: '7px 12px', fontSize: '12px', border: '1px solid #0284c7', color: '#38bdf8' }}
+            >
+              🚫 Block Time Slot
+            </button>
             <button onClick={resetBookings} className="btn btn-danger" style={{ padding: '7px 12px', fontSize: '12px' }}>
               Reset Data
             </button>
@@ -948,6 +968,133 @@ export default function AdminDB() {
                 Confirm Cancellation
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── BLOCK TIME SLOT MODAL ──────────────────────────────── */}
+      {showBlockModal && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(9, 10, 15, 0.85)',
+            backdropFilter: 'blur(10px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '20px',
+          }}
+        >
+          <div
+            className="premium-card"
+            style={{
+              width: '100%',
+              maxWidth: '460px',
+              border: '1px solid #0284c7',
+              borderRadius: '20px',
+              padding: '28px',
+              boxShadow: '0 20px 50px rgba(2, 132, 199, 0.2)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#38bdf8', margin: 0 }}>
+                🚫 Block Doctor / Staff Time Slot
+              </h3>
+              <button
+                onClick={() => setShowBlockModal(false)}
+                style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: '20px', cursor: 'pointer' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                blockSlot(blockStaffId, blockDate, blockTime, blockReason)
+                setShowBlockModal(false)
+              }}
+              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+            >
+              <div>
+                <label className="form-label">Select {BUSINESS_CONFIG.staffLabel}</label>
+                <select
+                  value={blockStaffId}
+                  onChange={(e) => setBlockStaffId(e.target.value)}
+                  className="form-select"
+                >
+                  {BUSINESS_CONFIG.artists.map((staff) => (
+                    <option key={staff.id} value={staff.id}>
+                      {staff.avatarEmoji || '👤'} {staff.name} ({staff.specialty})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label className="form-label">Date to Block</label>
+                  <input
+                    type="date"
+                    min={new Date().toISOString().split('T')[0]}
+                    value={blockDate}
+                    onChange={(e) => setBlockDate(e.target.value)}
+                    className="form-input"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="form-label">Time Slot</label>
+                  <select
+                    value={blockTime}
+                    onChange={(e) => setBlockTime(e.target.value)}
+                    className="form-select"
+                  >
+                    {['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'].map((t) => (
+                      <option key={t} value={t}>{t}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="form-label">Block Reason / Label</label>
+                <select
+                  value={blockReason}
+                  onChange={(e) => setBlockReason(e.target.value)}
+                  className="form-select"
+                  style={{ marginBottom: '8px' }}
+                >
+                  <option value="Lunch Break / Out of Office">Lunch Break / Out of Office</option>
+                  <option value="Personal / Vacation">Personal / Vacation</option>
+                  <option value="Clinic Equipment Maintenance">Clinic Equipment Maintenance</option>
+                  <option value="Staff Meeting">Staff Training / Meeting</option>
+                </select>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowBlockModal(false)}
+                  className="btn btn-secondary"
+                  style={{ flex: 1 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ flex: 1, background: '#0284c7', borderColor: '#0284c7', color: '#fff', fontWeight: 800 }}
+                >
+                  Block Slot 🚫
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
