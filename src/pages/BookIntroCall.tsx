@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { PageWrapper } from '../components/ui/PageWrapper'
-import { useBooking, type Booking } from '../BookingContext'
+import { submitIntroCallRequest } from '../introCallHelpers'
 
 export default function BookIntroCall() {
   const navigate = useNavigate()
-  const { addBooking, addNotification } = useBooking()
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,26 +19,53 @@ export default function BookIntroCall() {
     notes: '',
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
 
-    const discoveryBooking: Booking = {
-      id: `intro-${crypto.randomUUID()}`,
-      ownerEmail: formData.email,
-      customerName: formData.name,
-      customerEmail: formData.email,
-      customerPhone: formData.phone || 'N/A',
-      service: `[Discovery Call] ${formData.businessType}`,
-      date: formData.date,
-      time: formData.time,
-      status: 'Pending',
-      adminStatus: 'Pending',
-      notes: formData.notes || 'Discovery Call Request from Portal',
+    try {
+      await submitIntroCallRequest({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || 'N/A',
+        industry: formData.businessType,
+        date: formData.date,
+        timeSlot: formData.time,
+        notes: formData.notes,
+      })
+
+      // Send EmailJS alert to admin if configured
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+      const userId = import.meta.env.VITE_EMAILJS_USER_ID
+
+      if (serviceId && templateId && userId) {
+        fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            service_id: serviceId,
+            template_id: templateId,
+            user_id: userId,
+            template_params: {
+              to_email: 'info@nativebooking.co',
+              from_name: formData.name,
+              from_email: formData.email,
+              phone: formData.phone || 'N/A',
+              service: `[Discovery Call] ${formData.businessType}`,
+              date: formData.date,
+              time: formData.time,
+              notes: formData.notes || 'No notes provided',
+            },
+          }),
+        }).catch((err) => console.warn('EmailJS alert send failed:', err))
+      }
+    } catch (err) {
+      console.error('Failed to submit intro call request:', err)
+    } finally {
+      setIsSubmitting(false)
+      setSubmitted(true)
     }
-
-    addBooking(discoveryBooking)
-    addNotification(`🚀 New Discovery Call requested by ${formData.name} for ${formData.date} at ${formData.time}`)
-    setSubmitted(true)
   }
 
   return (

@@ -35,6 +35,32 @@ export default function AdminDB() {
   const handleAcceptCall = async (call: IntroCallBooking) => {
     await updateIntroCallStatus(call.id, 'confirmed')
 
+    // Send automated EmailJS confirmation to client
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+    const userId = import.meta.env.VITE_EMAILJS_USER_ID
+
+    if (serviceId && templateId && userId) {
+      fetch('https://api.emailjs.com/api/v1.0/email/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_id: serviceId,
+          template_id: templateId,
+          user_id: userId,
+          template_params: {
+            to_email: call.email,
+            customer_name: call.name,
+            service: `NativeBooking Discovery Call (${call.industry})`,
+            date: call.date,
+            time: call.timeSlot,
+            status: 'Confirmed',
+            notes: call.notes || 'Your discovery call is confirmed!',
+          },
+        }),
+      }).catch((err) => console.warn('EmailJS confirmation send failed:', err))
+    }
+
     const [startHourStr] = call.timeSlot.split(':')
     const startHour = parseInt(startHourStr, 10) || 9
     const endHour = startHour + 1
