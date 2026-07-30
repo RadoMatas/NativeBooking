@@ -1048,65 +1048,73 @@ export default function AdminDB() {
               />
             </div>
 
+            <div>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
+                Assign {BUSINESS_CONFIG.staffLabel} *
+              </label>
+              <select
+                value={assignedTechId}
+                onChange={(e) => setAssignedTechId(e.target.value)}
+                className="form-select"
+                style={{ width: '100%', padding: '10px 14px' }}
+              >
+                {BUSINESS_CONFIG.artists.map((tech) => (
+                  <option key={tech.id} value={tech.id}>
+                    {tech.avatarEmoji} {tech.name} — {tech.specialty}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
-                  Assign Technician *
+                  Service Date *
                 </label>
-                <select
-                  value={assignedTechId}
-                  onChange={(e) => setAssignedTechId(e.target.value)}
-                  className="form-select"
-                >
-                  {BUSINESS_CONFIG.artists.map((tech) => (
-                    <option key={tech.id} value={tech.id}>
-                      {tech.avatarEmoji} {tech.name}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  type="date"
+                  min={new Date().toISOString().split('T')[0]}
+                  value={jobDate}
+                  onChange={(e) => setJobDate(e.target.value)}
+                  className="form-input"
+                  style={{ width: '100%', padding: '10px 12px', colorScheme: 'dark' }}
+                  required
+                />
               </div>
+
               <div>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)' }}>
-                  Scheduled Date & Time
+                  Dispatch Arrival Window *
                 </label>
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  <input
-                    type="date"
-                    min={new Date().toISOString().split('T')[0]}
-                    value={jobDate}
-                    onChange={(e) => setJobDate(e.target.value)}
-                    className="form-input"
-                    style={{ padding: '8px' }}
-                  />
-                  <select
-                    value={jobTime}
-                    onChange={(e) => setJobTime(e.target.value)}
-                    className="form-select"
-                    style={{ padding: '8px', borderColor: dispatchConflict ? '#f87171' : undefined }}
-                  >
-                    {[
-                      { time: '08:00', label: '🌅 Morning (08:00 - 11:00 AM)' },
-                      { time: '11:00', label: '☀️ Midday (11:00 - 02:00 PM)' },
-                      { time: '14:00', label: '🌇 Afternoon (02:00 - 05:00 PM)' },
-                      { time: '16:00', label: '🌙 Late Dispatch (04:00 - 07:00 PM)' },
-                    ].map((windowObj) => {
-                      const isOccupied = bookings.some(
-                        (b) =>
-                          b.id !== reassignJobId &&
-                          b.status !== 'Cancelled' &&
-                          b.adminStatus !== 'Declined by Tech' &&
-                          b.artistId === assignedTechId &&
-                          b.date === jobDate &&
-                          b.time === windowObj.time
-                      )
-                      return (
-                        <option key={windowObj.time} value={windowObj.time} disabled={isOccupied}>
-                          {windowObj.label} {isOccupied ? '(⚠️ Crew Dispatched)' : ''}
-                        </option>
-                      )
-                    })}
-                  </select>
-                </div>
+                <select
+                  value={jobTime}
+                  onChange={(e) => setJobTime(e.target.value)}
+                  className="form-select"
+                  style={{ width: '100%', padding: '10px 12px', borderColor: dispatchConflict ? '#f87171' : undefined }}
+                  required
+                >
+                  {[
+                    { time: '08:00', label: '🌅 Morning (08:00 - 11:00 AM)' },
+                    { time: '11:00', label: '☀️ Midday (11:00 - 02:00 PM)' },
+                    { time: '14:00', label: '🌇 Afternoon (02:00 - 05:00 PM)' },
+                    { time: '16:00', label: '🌙 Late Dispatch (04:00 - 07:00 PM)' },
+                  ].map((windowObj) => {
+                    const isOccupied = bookings.some(
+                      (b) =>
+                        b.id !== reassignJobId &&
+                        b.status !== 'Cancelled' &&
+                        b.adminStatus !== 'Declined by Tech' &&
+                        b.artistId === assignedTechId &&
+                        b.date === jobDate &&
+                        b.time === windowObj.time
+                    )
+                    return (
+                      <option key={windowObj.time} value={windowObj.time} disabled={isOccupied}>
+                        {windowObj.label} {isOccupied ? '(⚠️ Crew Dispatched)' : ''}
+                      </option>
+                    )
+                  })}
+                </select>
               </div>
             </div>
 
