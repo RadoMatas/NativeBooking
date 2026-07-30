@@ -45,13 +45,10 @@ export default function AdminDB() {
     acceptReschedule,
     resetBookings,
     updateSessionDetails,
-    addBooking,
-    addNotification,
     blockSlot,
   } = useBooking()
 
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)
-  const [techFilter, setTechFilter] = useState('All')
   const [showAllBookings, setShowAllBookings] = useState(false)
   const detailsRef = useRef<HTMLDivElement | null>(null)
 

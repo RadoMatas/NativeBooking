@@ -26,6 +26,19 @@ function App() {
     root.style.setProperty('--accent-hover', BUSINESS_CONFIG.theme.accentHover)
     root.style.setProperty('--border-radius', BUSINESS_CONFIG.theme.borderRadius)
     root.style.setProperty('--font-family', BUSINESS_CONFIG.theme.fontFamily)
+
+    // Update mobile status bar & overscroll tint dynamically to match branch theme
+    const metaTheme = document.getElementById('meta-theme-color')
+    if (metaTheme) {
+      metaTheme.setAttribute('content', BUSINESS_CONFIG.theme.primaryColor || '#08080a')
+    }
+
+    // Inject theme-matched ambient radial background
+    document.body.style.background = `
+      radial-gradient(circle at top right, ${BUSINESS_CONFIG.theme.accentColor}18, transparent 45%),
+      radial-gradient(circle at bottom left, ${BUSINESS_CONFIG.theme.accentColor}10, transparent 50%),
+      ${BUSINESS_CONFIG.theme.primaryColor}
+    `
   }, [])
 
   return (
