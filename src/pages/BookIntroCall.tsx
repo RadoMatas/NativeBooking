@@ -41,7 +41,13 @@ export default function BookIntroCall() {
       const userId = import.meta.env.VITE_EMAILJS_USER_ID
 
       if (serviceId && templateId && userId) {
-        await emailjs.send(
+        console.log('Dispatching EmailJS with params:', {
+          serviceId,
+          templateId,
+          userId,
+          to_email: 'info@nativebooking.co',
+        })
+        const res = await emailjs.send(
           serviceId,
           templateId,
           {
@@ -59,9 +65,12 @@ export default function BookIntroCall() {
           },
           userId
         )
+        console.log('EmailJS response success:', res)
+      } else {
+        console.warn('Missing EmailJS environment variables!', { serviceId, templateId, userId })
       }
     } catch (err) {
-      console.error('Failed to submit intro call request:', err)
+      console.error('Failed to submit intro call request or send email:', err)
     } finally {
       setIsSubmitting(false)
       setSubmitted(true)
