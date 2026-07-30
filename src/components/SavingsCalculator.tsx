@@ -36,13 +36,13 @@ export default function SavingsCalculator() {
             marginBottom: '8px',
           }}
         >
-          Commission Savings Calculator
+          Ownership vs Subscription Calculator
         </span>
         <h2 className="aave-section-title" style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
-          Stop Paying 18% Commissions on Your Own Clients
+          Pay Once. Own Your System. Stop Paying Monthly Rent.
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
-          Third-party booking platforms take a cut of every booking. NativeBooking gives you custom software with 0% per-booking commission fees.
+          If you pay a one-off build fee, you save more than with any monthly subscription service. The software is fully yours forever with 0% ongoing commission fees.
         </p>
       </div>
 

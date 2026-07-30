@@ -164,7 +164,7 @@ export default function PortalHome() {
               lineHeight: '1.6',
             }}
           >
-            Put your money and time slots to work, every second of every day. Custom white-label booking infrastructure with 0% marketplace commission.
+            Custom booking software built for your business. Pay once, save thousands compared to monthly subscription services, and keep 100% of your revenue.
           </p>
 
           {/* Action Buttons */}
@@ -186,9 +186,9 @@ export default function PortalHome() {
             </Button>
           </div>
 
-          {/* Dual-View Interactive Showcase */}
-          <div id="workbench" style={{ position: 'relative', zIndex: 2, width: '100%', boxSizing: 'border-box' }}>
-            <InteractiveShowcase />
+          {/* Savings Calculator Block (High Priority under Hero) */}
+          <div id="calculator" style={{ position: 'relative', zIndex: 2, width: '100%', boxSizing: 'border-box' }}>
+            <SavingsCalculator />
           </div>
         </div>
       </section>
@@ -330,7 +330,7 @@ export default function PortalHome() {
         </div>
       </section>
 
-      {/* ─── SECTION 3: KIT & SAVINGS CALCULATOR (EMERALD THEME) ── */}
+      {/* ─── SECTION 3: INTERACTIVE SHOWCASE (EMERALD THEME) ── */}
       <section
         className="aave-section-padding"
         style={{
@@ -345,7 +345,7 @@ export default function PortalHome() {
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
             <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
               <Badge variant="confirmed" style={{ padding: '6px 16px' }}>
-                ⚡ NativeBooking Kit
+                ⚡ Interactive Workbench
               </Badge>
             </div>
             <h2
@@ -359,15 +359,17 @@ export default function PortalHome() {
                 wordBreak: 'break-word',
               }}
             >
-              Build <span className="aave-text-gradient-emerald">with NativeBooking</span>
+              Test <span className="aave-text-gradient-emerald">Live Booking Engine</span>
             </h2>
             <p style={{ fontSize: 'clamp(14px, 2.5vw, 16px)', color: '#94a3b8', maxWidth: '640px', margin: '0 auto', lineHeight: '1.6' }}>
-              Launch booking and yield-like appointment systems with our integration stack.
+              Experience the dual-view workflow for clients and business admins.
             </p>
           </div>
 
-          {/* Calculator Component */}
-          <SavingsCalculator />
+          {/* Showcase Component */}
+          <div id="workbench" style={{ position: 'relative', zIndex: 2, width: '100%', boxSizing: 'border-box' }}>
+            <InteractiveShowcase />
+          </div>
 
           {/* White-Label Comparison */}
           <div style={{ marginTop: '48px', width: '100%' }}>
