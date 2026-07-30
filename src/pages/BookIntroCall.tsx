@@ -216,9 +216,6 @@ export default function BookIntroCall() {
           ) : (
             <>
               <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                <Badge variant="info" style={{ padding: '6px 14px', marginBottom: '12px' }}>
-                  ⚡ NativeBooking Architecture Call
-                </Badge>
                 <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
                   Schedule a White-Label Demo
                 </h1>
@@ -386,7 +383,7 @@ export default function BookIntroCall() {
 
                 {availableSlots.length === 0 && (
                   <div style={{ fontSize: '12px', color: '#facc15', background: 'rgba(234, 179, 8, 0.1)', padding: '10px 14px', borderRadius: '8px', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
-                    💡 All slots for today ({todayStr}) have passed or are booked. Please select tomorrow or a future date on the date picker.
+                    All slots for today ({todayStr}) have passed or are booked. Please select tomorrow or a future date on the date picker.
                   </div>
                 )}
 
@@ -411,12 +408,12 @@ export default function BookIntroCall() {
                     }}
                   />
                   <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '6px', lineHeight: '1.4' }}>
-                    💡 <em>Having trouble finding a suitable time due to timezone differences? Feel free to pick any available slot above and state your ideal time or timezone in the notes — we will gladly accommodate you!</em>
+                    <em>Having trouble finding a suitable time due to timezone differences? Feel free to pick any available slot above and state your ideal time or timezone in the notes — we will gladly accommodate you.</em>
                   </p>
                 </div>
 
                 <Button variant="primary" size="lg" type="submit" disabled={isSubmitting} style={{ marginTop: '8px' }}>
-                  {isSubmitting ? 'Submitting Request... ⏳' : 'Request Discovery Call ➔'}
+                  {isSubmitting ? 'Submitting Request...' : 'Request Discovery Call ➔'}
                 </Button>
               </form>
             </>
