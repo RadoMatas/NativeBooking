@@ -36,6 +36,8 @@ export type Booking = {
   artistName?: string | null
   depositAmount?: number | null
   depositPaid?: boolean | null
+  isBlocked?: boolean | null
+  blockReason?: string | null
 }
 
 type AdminNotification = {
@@ -61,6 +63,7 @@ type BookingContextType = {
     id: string,
     details: { priceCharged: number; adminNotesForCustomer: string; internalAdminNotes: string }
   ) => void
+  blockSlot: (artistId: string, date: string, time: string, reason: string) => void
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined)
@@ -566,6 +569,29 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const blockSlot = async (artistId: string, date: string, time: string, reason: string) => {
+    const matchedArtist = BUSINESS_CONFIG.artists.find((a) => a.id === artistId)
+    const blockBooking: Booking = {
+      id: `block-${crypto.randomUUID()}`,
+      ownerEmail: 'admin@system.com',
+      customerName: `Blocked: ${reason}`,
+      customerEmail: 'admin@system.com',
+      customerPhone: 'N/A',
+      service: `[Blocked Slot: ${reason}]`,
+      artistId,
+      artistName: matchedArtist ? matchedArtist.name : 'Staff',
+      date,
+      time,
+      status: 'Blocked',
+      adminStatus: 'Blocked',
+      isBlocked: true,
+      blockReason: reason,
+    }
+
+    addBooking(blockBooking)
+    addNotification(`Blocked slot for ${matchedArtist ? matchedArtist.name : 'Staff'} on ${date} at ${time} (${reason})`)
+  }
+
   return (
     <BookingContext.Provider
       value={{
@@ -583,6 +609,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
         resetBookings,
         clearCustomerNotification,
         updateSessionDetails,
+        blockSlot,
       }}
     >
       {children}
