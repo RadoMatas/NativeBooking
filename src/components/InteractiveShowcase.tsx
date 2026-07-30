@@ -4,7 +4,9 @@ import {
   ClinicIcon,
   AcademicIcon,
   ContractorIcon,
-  CheckIcon
+  CheckIcon,
+  SettingsIcon,
+  UsersIcon
 } from './ui/Icons'
 
 type TabKey = 'studio' | 'clinic' | 'academic' | 'contractor'
@@ -278,9 +280,12 @@ export default function InteractiveShowcase() {
             background: viewMode === 'admin' ? `${currentTab.accent}22` : 'rgba(255,255,255,0.02)',
             color: viewMode === 'admin' ? '#ffffff' : 'var(--text-secondary)',
             transition: 'all 0.2s ease',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
           }}
         >
-          🖥️ Admin Control Board
+          <SettingsIcon size={15} /> Admin Control Board
         </button>
         <button
           onClick={() => setViewMode('customer')}
@@ -294,9 +299,12 @@ export default function InteractiveShowcase() {
             background: viewMode === 'customer' ? `${currentTab.accent}22` : 'rgba(255,255,255,0.02)',
             color: viewMode === 'customer' ? '#ffffff' : 'var(--text-secondary)',
             transition: 'all 0.2s ease',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
           }}
         >
-          📱 Customer Booking View
+          <UsersIcon size={15} /> Customer Booking View
         </button>
       </div>
 

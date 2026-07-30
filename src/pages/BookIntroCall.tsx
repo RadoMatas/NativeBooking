@@ -1,24 +1,113 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import emailjs from '@emailjs/browser'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { PageWrapper } from '../components/ui/PageWrapper'
-import { submitIntroCallRequest } from '../introCallHelpers'
+import { submitIntroCallRequest, subscribeToIntroCalls, type IntroCallBooking } from '../introCallHelpers'
+
+// Helper to get local date string YYYY-MM-DD in user's timezone (e.g. Krakow / Europe/Warsaw)
+const getLocalTodayStr = () => {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+const TIMEZONE_OPTIONS = [
+  { zone: 'Europe/Warsaw', label: 'Europe/Warsaw (CEST / UTC+2)' },
+  { zone: 'America/New_York', label: 'America/New_York (EDT / UTC-4)' },
+  { zone: 'America/Chicago', label: 'America/Chicago (CDT / UTC-5)' },
+  { zone: 'America/Los_Angeles', label: 'America/Los_Angeles (PDT / UTC-7)' },
+  { zone: 'Europe/London', label: 'Europe/London (BST / UTC+1)' },
+  { zone: 'Asia/Tokyo', label: 'Asia/Tokyo (JST / UTC+9)' },
+  { zone: 'Australia/Sydney', label: 'Australia/Sydney (AEST / UTC+10)' },
+]
 
 export default function BookIntroCall() {
   const navigate = useNavigate()
   const [submitted, setSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [existingBookings, setExistingBookings] = useState<IntroCallBooking[]>([])
+
+  const todayStr = getLocalTodayStr()
+  const detectedZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Warsaw'
+  const [selectedTimezone, setSelectedTimezone] = useState(detectedZone)
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     businessType: 'Tattoo & Creative Studio',
-    date: new Date().toISOString().split('T')[0],
+    date: todayStr,
     time: '14:00',
     notes: '',
   })
+
+  // Subscribe to real-time booked intro calls so booked slots become unavailable instantly
+  useEffect(() => {
+    const unsub = subscribeToIntroCalls((calls) => {
+      setExistingBookings(calls)
+    })
+    return () => unsub()
+  }, [])
+
+  // Format slot label in both Selected Timezone & Host CEST (14:00 CEST)
+  const formatSlotLabel = (cestTime: string) => {
+    const [hStr] = cestTime.split(':')
+    const baseDate = new Date(`${formData.date}T${hStr}:00:00+02:00`)
+
+    try {
+      const userLocalTimeStr = baseDate.toLocaleTimeString('en-US', {
+        timeZone: selectedTimezone,
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      })
+
+      const shortZoneName = selectedTimezone.split('/')[1]?.replace('_', ' ') || selectedTimezone
+
+      if (selectedTimezone === 'Europe/Warsaw' || selectedTimezone.includes('CEST')) {
+        return `${cestTime} CEST (${userLocalTimeStr})`
+      }
+
+      return `${userLocalTimeStr} (${shortZoneName}) · ${cestTime} CEST Host`
+    } catch {
+      return `${cestTime} CEST`
+    }
+  }
+
+  // All standard daily slots
+  const ALL_SLOTS = [
+    { time: '10:00', rawHour: 10 },
+    { time: '12:00', rawHour: 12 },
+    { time: '14:00', rawHour: 14 },
+    { time: '16:00', rawHour: 16 },
+    { time: '18:00', rawHour: 18 },
+  ]
+
+  // Filter out past hours for today & already-booked slots for selected date
+  const availableSlots = ALL_SLOTS.filter((slot) => {
+    const isToday = formData.date === todayStr
+    if (isToday) {
+      const nowHour = new Date().getHours()
+      if (slot.rawHour <= nowHour) return false
+    }
+
+    // Check if slot is already booked for this date
+    const isAlreadyBooked = existingBookings.some(
+      (b) => b.date === formData.date && b.timeSlot === slot.time && b.status !== 'declined'
+    )
+    return !isAlreadyBooked
+  })
+
+  // Ensure default selected time is always a valid available slot
+  useEffect(() => {
+    if (availableSlots.length > 0 && !availableSlots.some((s) => s.time === formData.time)) {
+      setFormData((prev) => ({ ...prev, time: availableSlots[0].time }))
+    }
+  }, [formData.date, existingBookings])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -210,6 +299,33 @@ export default function BookIntroCall() {
                   </select>
                 </div>
 
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>
+                    Your Timezone *
+                  </label>
+                  <select
+                    value={selectedTimezone}
+                    onChange={(e) => setSelectedTimezone(e.target.value)}
+                    style={{
+                      width: '100%',
+                      background: '#12141a',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '12px 16px',
+                      color: '#34d399',
+                      fontWeight: 600,
+                      fontSize: '14px',
+                      outline: 'none',
+                    }}
+                  >
+                    {TIMEZONE_OPTIONS.map((opt) => (
+                      <option key={opt.zone} value={opt.zone}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>
@@ -218,7 +334,7 @@ export default function BookIntroCall() {
                     <input
                       type="date"
                       required
-                      min={new Date().toISOString().split('T')[0]}
+                      min={todayStr}
                       value={formData.date}
                       onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                       style={{
@@ -237,11 +353,12 @@ export default function BookIntroCall() {
 
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>
-                      Call Time Slot (CET) *
+                      Available Time Slot *
                     </label>
                     <select
                       value={formData.time}
                       onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                      disabled={availableSlots.length === 0}
                       style={{
                         width: '100%',
                         background: '#12141a',
@@ -249,33 +366,29 @@ export default function BookIntroCall() {
                         borderRadius: '12px',
                         padding: '12px 16px',
                         color: '#ffffff',
-                        fontSize: '14px',
+                        fontSize: '13px',
                         outline: 'none',
+                        opacity: availableSlots.length === 0 ? 0.5 : 1,
                       }}
                     >
-                      {[
-                        { time: '10:00', label: '10:00 AM CET' },
-                        { time: '12:00', label: '12:00 PM CET' },
-                        { time: '14:00', label: '02:00 PM CET' },
-                        { time: '16:00', label: '04:00 PM CET' },
-                        { time: '18:00', label: '06:00 PM CET' },
-                      ]
-                        .filter((slot) => {
-                          const todayStr = new Date().toISOString().split('T')[0]
-                          const isToday = formData.date === todayStr
-                          if (!isToday) return true
-                          const nowHour = new Date().getHours()
-                          const slotHour = parseInt(slot.time.split(':')[0], 10)
-                          return slotHour > nowHour
-                        })
-                        .map((slot) => (
+                      {availableSlots.length === 0 ? (
+                        <option value="">No slots available today</option>
+                      ) : (
+                        availableSlots.map((slot) => (
                           <option key={slot.time} value={slot.time}>
-                            {slot.label}
+                            {formatSlotLabel(slot.time)}
                           </option>
-                        ))}
+                        ))
+                      )}
                     </select>
                   </div>
                 </div>
+
+                {availableSlots.length === 0 && (
+                  <div style={{ fontSize: '12px', color: '#facc15', background: 'rgba(234, 179, 8, 0.1)', padding: '10px 14px', borderRadius: '8px', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+                    💡 All slots for today ({todayStr}) have passed or are booked. Please select tomorrow or a future date on the date picker.
+                  </div>
+                )}
 
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>

@@ -5,6 +5,13 @@ import WhiteLabelComparison from '../components/WhiteLabelComparison'
 import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { PageWrapper } from '../components/ui/PageWrapper'
+import {
+  CreditCardIcon,
+  UsersIcon,
+  CalendarIcon,
+  CheckIcon,
+  ArrowRightIcon
+} from '../components/ui/Icons'
 
 export default function PortalHome() {
   const navigate = useNavigate()
@@ -108,13 +115,12 @@ export default function PortalHome() {
 
         {/* Right Action Buttons */}
         <div className="aave-header-buttons" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-          {/* Removed public Admin Login link */}
           <Button 
             variant="primary" 
             size="sm" 
             onClick={() => navigate('/book-call')}
           >
-            Use NativeBooking
+            Get in Touch
           </Button>
         </div>
       </header>
@@ -170,7 +176,7 @@ export default function PortalHome() {
           {/* Action Buttons */}
           <div className="aave-hero-buttons" style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '48px', flexWrap: 'wrap', width: '100%' }}>
             <Button variant="primary" size="lg" onClick={() => navigate('/book-call')}>
-              Book Demo Call ➔
+              Schedule Intro Meeting ➔
             </Button>
             <Button 
               variant="secondary" 
@@ -210,11 +216,6 @@ export default function PortalHome() {
         <div style={{ maxWidth: '1080px', margin: '0 auto', position: 'relative', zIndex: 1, width: '100%', boxSizing: 'border-box' }}>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
-              <Badge variant="neutral" style={{ background: 'rgba(168, 85, 247, 0.15)', borderColor: 'rgba(168, 85, 247, 0.4)', color: '#c084fc', padding: '6px 16px' }}>
-                🛡️ NativeBooking Pro
-              </Badge>
-            </div>
             <h2
               className="aave-section-title"
               style={{
@@ -234,7 +235,7 @@ export default function PortalHome() {
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '28px', flexWrap: 'wrap', width: '100%' }}>
               <Button variant="purple" size="lg" onClick={() => navigate('/book-call')}>
-                Request Pro Demo ➔
+                Book Strategy Session ➔
               </Button>
             </div>
           </div>
@@ -248,7 +249,16 @@ export default function PortalHome() {
                   From conservative clinic intake to high-volume tattoo deposits, pick the operational market that fits your workflow.
                 </p>
               </div>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/book-call')}>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => {
+                  const element = document.getElementById('workbench')
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' })
+                  }
+                }}
+              >
                 View Schemas ➔
               </Button>
             </div>
@@ -267,20 +277,28 @@ export default function PortalHome() {
               <div className="aave-market-card">
                 <div style={{ marginBottom: '16px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#4fc9fa', display: 'block', marginBottom: '6px' }}>
-                    General Purpose Market
+                    General Purpose Architecture
                   </span>
                   <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
                     Creative Studios & Tattoo
                   </h4>
                   <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
-                    High-touch client queue management with Stripe 256-bit SSL deposits and consent forms.
+                    Client queue management with direct Stripe deposits and custom consent notes.
                   </p>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  <span className="aave-token-pill">💳 Stripe Deposits</span>
-                  <span className="aave-token-pill">🎨 Artist Split</span>
-                  <span className="aave-token-pill">📋 Consent Notes</span>
-                  <span className="aave-token-pill">+3 More</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#cbd5e1' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CreditCardIcon size={15} style={{ color: '#10b981' }} />
+                    <span>Direct Stripe Deposit Holds</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <UsersIcon size={15} style={{ color: '#10b981' }} />
+                    <span>Artist Split Schedule Board</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CheckIcon size={15} style={{ color: '#10b981' }} />
+                    <span>Custom Consent Agreements</span>
+                  </div>
                 </div>
               </div>
 
@@ -288,20 +306,28 @@ export default function PortalHome() {
               <div className="aave-market-card">
                 <div style={{ marginBottom: '16px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#34d399', display: 'block', marginBottom: '6px' }}>
-                    Collateral-Isolated Market
+                    Clinical Intake Engine
                   </span>
                   <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
                     Clinics & Medical Roster
                   </h4>
                   <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
-                    Clean patient intake workflow, practitioner schedules, and zero-deposit appointment holds.
+                    Clean patient intake workflow, practitioner schedules, and flexible appointment holds.
                   </p>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  <span className="aave-token-pill">🩺 Doctor Roster</span>
-                  <span className="aave-token-pill">📝 Symptom Intake</span>
-                  <span className="aave-token-pill">🔒 Zero Deposit</span>
-                  <span className="aave-token-pill">+4 More</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#cbd5e1' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <UsersIcon size={15} style={{ color: '#38bdf8' }} />
+                    <span>Practitioner Roster System</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CheckIcon size={15} style={{ color: '#38bdf8' }} />
+                    <span>Symptom Intake Questionnaire</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CalendarIcon size={15} style={{ color: '#38bdf8' }} />
+                    <span>Zero Deposit Reservation Holds</span>
+                  </div>
                 </div>
               </div>
 
@@ -309,20 +335,28 @@ export default function PortalHome() {
               <div className="aave-market-card">
                 <div style={{ marginBottom: '16px' }}>
                   <span style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#c084fc', display: 'block', marginBottom: '6px' }}>
-                    Dispatch-Isolated Market
+                    Dispatch Roster Engine
                   </span>
                   <h4 style={{ fontSize: '18px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
                     Contractors & Trades
                   </h4>
                   <p style={{ fontSize: '13px', color: '#94a3b8', lineHeight: '1.5' }}>
-                    Field crew dispatch boards, site address routing, and labor timing bookkeeping.
+                    Field crew dispatch boards, site address routing, and labor timing tracking.
                   </p>
                 </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                  <span className="aave-token-pill">🚛 Crew Dispatch</span>
-                  <span className="aave-token-pill">📍 Site Routing</span>
-                  <span className="aave-token-pill">⏱️ Labor Clock</span>
-                  <span className="aave-token-pill">+2 More</span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#cbd5e1' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <UsersIcon size={15} style={{ color: '#c084fc' }} />
+                    <span>Field Crew Dispatch Cards</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CalendarIcon size={15} style={{ color: '#c084fc' }} />
+                    <span>3-Hour Arrival Windows</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <CheckIcon size={15} style={{ color: '#c084fc' }} />
+                    <span>Site Routing & Address Tracking</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -343,11 +377,6 @@ export default function PortalHome() {
       >
         <div style={{ maxWidth: '1080px', margin: '0 auto', position: 'relative', zIndex: 1, width: '100%', boxSizing: 'border-box' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}>
-              <Badge variant="confirmed" style={{ padding: '6px 16px' }}>
-                ⚡ Interactive Workbench
-              </Badge>
-            </div>
             <h2
               className="aave-section-title"
               style={{
@@ -390,6 +419,18 @@ export default function PortalHome() {
         }}
       >
         <div style={{ maxWidth: '1080px', margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
+          
+          {/* Pre-Footer Meeting CTA Callout Box */}
+          <div style={{ background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '16px', padding: '32px', textAlign: 'left', marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+            <div>
+              <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff', margin: '0 0 6px 0' }}>Ready to discuss your custom build?</h3>
+              <p style={{ fontSize: '14px', color: '#94a3b8', margin: 0 }}>Schedule a 1-on-1 session to walk through your business rules, staff rosters, and Stripe setup.</p>
+            </div>
+            <Button variant="primary" size="lg" onClick={() => navigate('/book-call')}>
+              Schedule Intro Meeting ➔
+            </Button>
+          </div>
+
           <div
             style={{
               display: 'grid',

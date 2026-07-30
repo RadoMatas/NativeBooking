@@ -86,7 +86,7 @@ export default function WhiteLabelComparison() {
               <th style={{ padding: '16px', color: 'var(--text-secondary)', fontWeight: 600 }}>Capability</th>
               <th style={{ padding: '16px', color: 'rgba(239, 68, 68, 0.85)', fontWeight: 700 }}>Generic SaaS Platforms</th>
               <th style={{ padding: '16px', color: 'var(--accent-color)', fontWeight: 800, background: 'rgba(16, 185, 129, 0.06)', borderRadius: '8px 8px 0 0' }}>
-                ⚡ NativeBooking White-Label
+                NativeBooking White-Label
               </th>
             </tr>
           </thead>
@@ -131,7 +131,7 @@ export default function WhiteLabelComparison() {
               <strong>Generic SaaS:</strong> {row.saas}
             </div>
             <div style={{ fontSize: '13px', color: '#34d399', background: 'rgba(16, 185, 129, 0.1)', padding: '8px 12px', borderRadius: '8px', fontWeight: 600 }}>
-              <strong>⚡ NativeBooking:</strong> {row.nativeBooking}
+              <strong>NativeBooking:</strong> {row.nativeBooking}
             </div>
           </div>
         ))}
