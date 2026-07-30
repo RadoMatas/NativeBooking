@@ -45,8 +45,6 @@ export default function AdminDB() {
     acceptReschedule,
     resetBookings,
     updateSessionDetails,
-    addBooking,
-    addNotification,
     blockSlot,
   } = useBooking()
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null)

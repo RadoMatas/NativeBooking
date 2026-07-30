@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { safeCollection, safeDoc, safeSetDoc } from './firestoreHelpers'
 import { db, isFirebaseEnabled } from './firebase'
+import { BUSINESS_CONFIG, type Artist } from './businessConfig'
 import {
   collection,
   onSnapshot,
@@ -566,7 +567,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   }
 
   const blockSlot = async (artistId: string, date: string, time: string, reason: string) => {
-    const matchedArtist = BUSINESS_CONFIG.artists.find((a) => a.id === artistId)
+    const matchedArtist = BUSINESS_CONFIG.artists.find((a: Artist) => a.id === artistId)
     const blockBooking: Booking = {
       id: `block-${crypto.randomUUID()}`,
       ownerEmail: 'admin@system.com',
