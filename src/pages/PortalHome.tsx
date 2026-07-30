@@ -2,15 +2,13 @@ import { useNavigate } from 'react-router-dom'
 import InteractiveShowcase from '../components/InteractiveShowcase'
 import SavingsCalculator from '../components/SavingsCalculator'
 import WhiteLabelComparison from '../components/WhiteLabelComparison'
-import { Badge } from '../components/ui/Badge'
 import { Button } from '../components/ui/Button'
 import { PageWrapper } from '../components/ui/PageWrapper'
 import {
   CreditCardIcon,
   UsersIcon,
   CalendarIcon,
-  CheckIcon,
-  ArrowRightIcon
+  CheckIcon
 } from '../components/ui/Icons'
 
 export default function PortalHome() {
