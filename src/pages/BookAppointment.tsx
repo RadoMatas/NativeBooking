@@ -687,9 +687,11 @@ export default function BookAppointment() {
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))',
-                  gap: '10px',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(clamp(72px, 22vw, 95px), 1fr))',
+                  gap: '8px',
                   marginTop: '8px',
+                  width: '100%',
+                  boxSizing: 'border-box',
                 }}
               >
                 {generateTimeSlots().map((slot) => {
@@ -703,7 +705,8 @@ export default function BookAppointment() {
                       disabled={!isAvailable}
                       onClick={() => setTime(slot)}
                       style={{
-                        padding: '10px 8px',
+                        minHeight: '48px',
+                        padding: '8px 4px',
                         borderRadius: '12px',
                         fontSize: '13px',
                         fontWeight: 700,
@@ -727,6 +730,11 @@ export default function BookAppointment() {
                           : 'rgba(255, 255, 255, 0.25)',
                         opacity: isAvailable ? 1 : 0.45,
                         textDecoration: isAvailable ? 'none' : 'line-through',
+                        WebkitTapHighlightColor: 'transparent',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
                       }}
                     >
                       <div>{slot}</div>
