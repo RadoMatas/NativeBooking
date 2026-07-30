@@ -396,7 +396,7 @@ export default function BookIntroCall() {
                   </label>
                   <textarea
                     rows={3}
-                    placeholder="Tell us about your team size, custom rules, or integration goals..."
+                    placeholder="Tell us about your team size, custom rules, preferred call times, or integration goals..."
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     style={{
@@ -410,6 +410,9 @@ export default function BookIntroCall() {
                       outline: 'none',
                     }}
                   />
+                  <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '6px', lineHeight: '1.4' }}>
+                    💡 <em>Having trouble finding a suitable time due to timezone differences? Feel free to pick any available slot above and state your ideal time or timezone in the notes — we will gladly accommodate you!</em>
+                  </p>
                 </div>
 
                 <Button variant="primary" size="lg" type="submit" disabled={isSubmitting} style={{ marginTop: '8px' }}>
