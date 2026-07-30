@@ -637,47 +637,114 @@ export default function BookAppointment() {
             </div>
           </div>
 
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '16px',
-            }}
-          >
-            <div className="form-group">
-              <label className="form-label">Preferred Date</label>
-              <input
-                type="date"
-                min={today}
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="form-input"
-                style={{ borderColor: dateError ? '#f87171' : 'var(--border-color)' }}
-                required
-              />
-              {dateError && (
-                <p style={{ color: '#f87171', fontSize: '12px', marginTop: '6px', margin: '4px 0 0 0' }}>
-                  ⚠ {dateError}
-                </p>
+          <div className="form-group" style={{ marginBottom: '20px' }}>
+            <label className="form-label">Preferred Date</label>
+            <input
+              type="date"
+              min={today}
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="form-input"
+              style={{ borderColor: dateError ? '#f87171' : 'var(--border-color)' }}
+              required
+            />
+            {dateError && (
+              <p style={{ color: '#f87171', fontSize: '12px', marginTop: '6px', margin: '4px 0 0 0' }}>
+                ⚠ {dateError}
+              </p>
+            )}
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+              <label className="form-label" style={{ margin: 0 }}>
+                Select Time Slot {!date && '(Select a date first)'}
+              </label>
+              {date && !dateError && (
+                <span style={{ fontSize: '12px', color: '#0284c7', fontWeight: 600 }}>
+                  🟢 {availableTimeSlots.length} Available Slots Today
+                </span>
               )}
             </div>
-            <div className="form-group">
-              <label className="form-label">Available Time Slots</label>
-              <select
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
-                className="form-select"
-                disabled={!date || !!dateError}
-                required
+
+            {!date || dateError ? (
+              <div
+                style={{
+                  padding: '20px',
+                  borderRadius: '14px',
+                  background: 'rgba(255, 255, 255, 0.02)',
+                  border: '1px dashed var(--border-color)',
+                  textAlign: 'center',
+                  color: 'var(--text-secondary)',
+                  fontSize: '13px',
+                }}
               >
-                <option value="">Select a time</option>
-                {availableTimeSlots.map((slot) => (
-                  <option key={slot} value={slot}>
-                    {slot}
-                  </option>
-                ))}
-              </select>
-            </div>
+                Please pick a valid preferred date above to inspect doctor availability grid.
+              </div>
+            ) : generateTimeSlots().length === 0 ? (
+              <div style={{ color: '#f87171', fontSize: '13px' }}>No hours configured for this day.</div>
+            ) : (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(90px, 1fr))',
+                  gap: '10px',
+                  marginTop: '8px',
+                }}
+              >
+                {generateTimeSlots().map((slot) => {
+                  const isAvailable = availableTimeSlots.includes(slot)
+                  const isSelected = time === slot
+
+                  return (
+                    <button
+                      key={slot}
+                      type="button"
+                      disabled={!isAvailable}
+                      onClick={() => setTime(slot)}
+                      style={{
+                        padding: '10px 8px',
+                        borderRadius: '12px',
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        textAlign: 'center',
+                        cursor: isAvailable ? 'pointer' : 'not-allowed',
+                        transition: 'all 0.2s ease',
+                        border: isSelected
+                          ? '2px solid #0284c7'
+                          : isAvailable
+                          ? '1px solid rgba(2, 132, 199, 0.3)'
+                          : '1px solid rgba(255, 255, 255, 0.06)',
+                        background: isSelected
+                          ? '#0284c7'
+                          : isAvailable
+                          ? 'rgba(2, 132, 199, 0.08)'
+                          : 'rgba(255, 255, 255, 0.02)',
+                        color: isSelected
+                          ? '#ffffff'
+                          : isAvailable
+                          ? '#0284c7'
+                          : 'rgba(255, 255, 255, 0.25)',
+                        opacity: isAvailable ? 1 : 0.45,
+                        textDecoration: isAvailable ? 'none' : 'line-through',
+                      }}
+                    >
+                      <div>{slot}</div>
+                      <div
+                        style={{
+                          fontSize: '10px',
+                          fontWeight: 600,
+                          marginTop: '2px',
+                          textTransform: 'uppercase',
+                        }}
+                      >
+                        {isSelected ? '✓ Selected' : isAvailable ? 'Available' : 'Booked'}
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+            )}
           </div>
 
           {/* Deposit Pricing Display Card */}
