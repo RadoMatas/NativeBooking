@@ -273,8 +273,8 @@ export default function BookIntroCall() {
                   />
                 </div>
 
-                <Button variant="primary" size="lg" type="submit" style={{ marginTop: '8px' }}>
-                  Request Discovery Call ➔
+                <Button variant="primary" size="lg" type="submit" disabled={isSubmitting} style={{ marginTop: '8px' }}>
+                  {isSubmitting ? 'Submitting Request... ⏳' : 'Request Discovery Call ➔'}
                 </Button>
               </form>
             </>
