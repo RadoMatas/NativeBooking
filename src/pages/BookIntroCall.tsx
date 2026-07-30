@@ -14,6 +14,8 @@ export default function BookIntroCall() {
     email: '',
     phone: '',
     businessType: 'Tattoo & Creative Studio',
+    date: new Date().toISOString().split('T')[0],
+    time: '14:00',
     notes: '',
   })
 
@@ -27,15 +29,15 @@ export default function BookIntroCall() {
       customerEmail: formData.email,
       customerPhone: formData.phone || 'N/A',
       service: `[Discovery Call] ${formData.businessType}`,
-      date: new Date().toISOString().split('T')[0],
-      time: '12:00',
+      date: formData.date,
+      time: formData.time,
       status: 'Pending',
       adminStatus: 'Pending',
       notes: formData.notes || 'Discovery Call Request from Portal',
     }
 
     addBooking(discoveryBooking)
-    addNotification(`🚀 New Discovery Call requested by ${formData.name} (${formData.email})`)
+    addNotification(`🚀 New Discovery Call requested by ${formData.name} for ${formData.date} at ${formData.time}`)
     setSubmitted(true)
   }
 
@@ -170,6 +172,56 @@ export default function BookIntroCall() {
                     <option value="Education & Academy">Education & Academy</option>
                     <option value="Contractor & Crew Dispatch">Contractor & Crew Dispatch</option>
                   </select>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>
+                      Preferred Call Date *
+                    </label>
+                    <input
+                      type="date"
+                      required
+                      min={new Date().toISOString().split('T')[0]}
+                      value={formData.date}
+                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                      style={{
+                        width: '100%',
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '12px 16px',
+                        color: '#ffffff',
+                        fontSize: '14px',
+                        outline: 'none',
+                        colorScheme: 'dark',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>
+                      Call Time Slot (CET) *
+                    </label>
+                    <select
+                      value={formData.time}
+                      onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                      style={{
+                        width: '100%',
+                        background: '#12141a',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: '12px',
+                        padding: '12px 16px',
+                        color: '#ffffff',
+                        fontSize: '14px',
+                        outline: 'none',
+                      }}
+                    >
+                      {['10:00', '11:00', '13:00', '14:00', '15:00', '16:00', '17:00'].map((t) => (
+                        <option key={t} value={t}>{t} CET</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div>
