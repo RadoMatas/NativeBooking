@@ -1,11 +1,10 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Google Consent Mode Default Setup -->
+    <!-- 1. Google Consent Mode v2 Default Setup -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
-      
       gtag('consent', 'default', {
         'analytics_storage': 'denied',
         'ad_storage': 'denied',
@@ -14,15 +13,35 @@
         'wait_for_update': 500
       });
     </script>
-    <!-- Start cookieyes banner -->
+    <!-- 2. CookieYes Banner -->
     <script id="cookieyes" type="text/javascript" src="https://cdn-cookieyes.com/client_data/4272b14a381053fe64124b0d775e2564/script.js"></script>
-    <!-- End cookieyes banner -->
+    <!-- 3. Google Tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E93FQMFSXJ"></script>
+    <script>
+      gtag('js', new Date());
+      gtag('config', 'G-E93FQMFSXJ');
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="/logo-icon.jpg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Apex Dental & Chiropractic Sandbox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>NativeBooking | Build & Scale Your Custom Reservation System</title>
+    <meta name="description" content="Turn client inquiries into instant bookings. NativeBooking provides custom white-label reservation, dispatch, and client management systems tailored to your industry." />
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#0ea5e9" />
+    <meta id="meta-theme-color" name="theme-color" content="#08080a" />
+    
+    <!-- Open Graph / Facebook / Instagram Meta Tags -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nativebooking.co" />
+    <meta property="og:title" content="NativeBooking | Build & Scale Your Custom Reservation System" />
+    <meta property="og:description" content="Turn client inquiries into instant bookings. NativeBooking provides custom white-label reservation, dispatch, and client management systems tailored to your industry." />
+    <meta property="og:image" content="https://nativebooking.co/logo-icon.jpg" />
+
+    <!-- Twitter Preview Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://nativebooking.co" />
+    <meta name="twitter:title" content="NativeBooking | Build & Scale Your Custom Reservation System" />
+    <meta name="twitter:description" content="Turn client inquiries into instant bookings. NativeBooking provides custom white-label reservation, dispatch, and client management systems tailored to your industry." />
+    <meta name="twitter:image" content="https://nativebooking.co/logo-icon.jpg" />
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,17 +49,8 @@
     <!-- iOS & Android meta tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="apple-touch-icon" href="/lognew.png">
+    <link rel="apple-touch-icon" href="/logo-icon.jpg">
     <meta name="mobile-web-app-capable" content="yes">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-E93FQMFSXJ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-E93FQMFSXJ');
-    </script>
   </head>
   <body>
     <div id="root"></div>
