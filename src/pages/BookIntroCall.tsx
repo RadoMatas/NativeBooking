@@ -36,9 +36,9 @@ export default function BookIntroCall() {
       })
 
       // Send EmailJS alert to admin if configured
-      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID
-      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
-      const userId = import.meta.env.VITE_EMAILJS_USER_ID
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_jfrd3cr'
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_4e7ipi1'
+      const userId = import.meta.env.VITE_EMAILJS_USER_ID || 'SWLupKhyJ1aMBxMI-'
 
       if (serviceId && templateId && userId) {
         console.log('Dispatching EmailJS with params:', {
