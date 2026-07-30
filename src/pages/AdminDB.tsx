@@ -1,7 +1,7 @@
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { currentUserRole, logout } from '../auth'
-import { fetchIntroCalls, updateIntroCallStatus, subscribeToIntroCalls, type IntroCallBooking } from '../introCallHelpers'
+import { updateIntroCallStatus, subscribeToIntroCalls, type IntroCallBooking } from '../introCallHelpers'
 import { Badge } from '../components/ui/Badge'
 import { PageWrapper } from '../components/ui/PageWrapper'
 
