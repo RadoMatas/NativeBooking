@@ -4,7 +4,7 @@ import { currentUserRole, currentUserEmail, logout } from '../auth'
 import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
-import InkTypewriterHeader from '../components/InkTypewriterHeader'
+import PulseTypewriterHeader from '../components/InkTypewriterHeader'
 
 export default function CustomerDB() {
   const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
@@ -191,19 +191,19 @@ export default function CustomerDB() {
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '16px',
-            background: 'rgba(253, 251, 247, 0.98)',
-            border: '1px solid rgba(120, 53, 15, 0.3)',
+            background: 'rgba(255, 255, 255, 0.96)',
+            border: '1px solid rgba(14, 165, 233, 0.35)',
             borderRadius: '16px',
-            boxShadow: '0 12px 36px rgba(120, 53, 15, 0.12)',
+            boxShadow: '0 12px 36px rgba(14, 165, 233, 0.2)',
             borderLeft: `5px solid ${
               toastVariant === 'success'
-                ? '#059669'
+                ? '#0284c7'
                 : toastVariant === 'error'
-                ? '#dc2626'
-                : '#78350f'
+                ? '#ef4444'
+                : '#f59e0b'
             }`,
             padding: '16px 20px',
-            color: '#1c1917',
+            color: '#0f172a',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
@@ -212,7 +212,7 @@ export default function CustomerDB() {
                 width: '34px',
                 height: '34px',
                 borderRadius: '50%',
-                background: 'rgba(5, 150, 105, 0.15)',
+                background: 'rgba(14, 165, 233, 0.12)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -220,10 +220,10 @@ export default function CustomerDB() {
                 fontWeight: 700,
                 color:
                   toastVariant === 'success'
-                    ? '#059669'
+                    ? '#0284c7'
                     : toastVariant === 'error'
-                    ? '#dc2626'
-                    : '#78350f',
+                    ? '#ef4444'
+                    : '#d97706',
               }}
             >
               {toastVariant === 'success' ? '✓' : toastVariant === 'error' ? '✕' : 'ℹ'}
@@ -236,17 +236,17 @@ export default function CustomerDB() {
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  color: '#78350f',
+                  color: '#0284c7',
                 }}
               >
-                Academic Lesson Alert
+                Appointment Status Alert
               </p>
               <p
                 style={{
                   margin: '2px 0 0 0',
                   fontSize: '14px',
                   fontWeight: 600,
-                  color: '#1c1917',
+                  color: '#0f172a',
                 }}
               >
                 {toastMessage}
@@ -295,7 +295,7 @@ export default function CustomerDB() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <InkTypewriterHeader text="Manage Your Lessons" />
+          <PulseTypewriterHeader text="Manage Your Booking" />
           <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '7px 12px', fontSize: '12px' }}>
             Logout
           </button>
@@ -329,7 +329,7 @@ export default function CustomerDB() {
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '15px', color: 'var(--text-primary)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '12px', border: '1px solid var(--accent-color)', color: 'var(--accent-color)', padding: '3px 10px', borderRadius: '9999px', fontWeight: 600 }}>
+                  <span style={{ fontSize: '12px', background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', padding: '4px 10px', borderRadius: '9999px', fontWeight: 600 }}>
                     🔥 Next Session
                   </span>
                 </div>
@@ -337,47 +337,47 @@ export default function CustomerDB() {
                   <strong style={{ color: 'var(--text-secondary)' }}>Service:</strong>{' '}
                   {latestBooking.service}
                 </p>
-                {/* High-Visibility Date & Time Ticket Banner (Warm Cream + Emerald + Walnut Brown Theme) */}
+                {/* High-Visibility Date & Time Ticket Banner (Dental Sky Blue Theme) */}
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    background: 'rgba(253, 251, 247, 0.9)',
-                    border: '1px solid rgba(120, 53, 15, 0.25)',
+                    background: 'rgba(14, 165, 233, 0.08)',
+                    border: '1px solid rgba(14, 165, 233, 0.4)',
                     borderRadius: '14px',
                     overflow: 'hidden',
-                    boxShadow: '0 4px 16px rgba(120, 53, 15, 0.08)',
+                    boxShadow: '0 4px 20px rgba(14, 165, 233, 0.15)',
                     margin: '8px 0',
                   }}
                 >
                   <div
                     style={{
                       padding: '10px 16px',
-                      background: 'rgba(120, 53, 15, 0.08)',
-                      borderRight: '1px solid rgba(120, 53, 15, 0.18)',
+                      background: 'rgba(14, 165, 233, 0.15)',
+                      borderRight: '1px solid rgba(14, 165, 233, 0.3)',
                       flex: 1,
                       textAlign: 'center',
                     }}
                   >
-                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#78350f', display: 'block' }}>
-                      LESSON DATE
+                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#0284c7', display: 'block' }}>
+                      APPOINTMENT DATE
                     </span>
-                    <span style={{ fontSize: '15px', fontWeight: 800, color: '#1c1917', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '15px', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap' }}>
                       📅 {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedDate ? latestBooking.requestedDate : latestBooking.date}
                     </span>
                   </div>
                   <div
                     style={{
                       padding: '10px 18px',
-                      background: 'rgba(5, 150, 105, 0.15)',
+                      background: 'rgba(14, 165, 233, 0.25)',
                       flex: 1,
                       textAlign: 'center',
                     }}
                   >
-                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#047857', display: 'block' }}>
+                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#0369a1', display: 'block' }}>
                       TIME SLOT
                     </span>
-                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#059669', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#0284c7', whiteSpace: 'nowrap' }}>
                       🕒 {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime ? latestBooking.requestedTime : latestBooking.time}
                     </span>
                   </div>
@@ -391,11 +391,11 @@ export default function CustomerDB() {
                     </span>
                   </p>
                 )}
-                {latestBooking.depositAmount != null && latestBooking.depositAmount > 0 && (
+                {latestBooking.depositAmount != null && (
                   <p>
                     <strong style={{ color: 'var(--text-secondary)' }}>Deposit Amount:</strong>{' '}
                     <span style={{ color: 'var(--accent-color)', fontWeight: 600 }}>
-                      {BUSINESS_CONFIG.currencySymbol || '$'}{latestBooking.depositAmount.toFixed(2)} (Paid)
+                      £{latestBooking.depositAmount.toFixed(2)} (Paid)
                     </span>
                   </p>
                 )}
@@ -520,7 +520,7 @@ export default function CustomerDB() {
                             justifyContent: 'center',
                             fontSize: '36px',
                             marginBottom: '12px',
-                            boxShadow: '0 0 16px rgba(79, 70, 229, 0.15)',
+                            boxShadow: '0 0 16px rgba(16, 185, 129, 0.2)',
                             overflow: 'hidden',
                           }}
                         >
@@ -543,15 +543,15 @@ export default function CustomerDB() {
                           </span>
                         )}
                         <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '12px', maxWidth: '260px', lineHeight: '1.4' }}>
-                          "Excited to work with you! Please complete your check-in guidelines before we begin."
+                          "Welcome to the clinic! We are committed to providing premium, comfortable care. Please bring your medical history and arrive 10 minutes early."
                         </p>
                       </div>
                     )
                   })() : (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <div style={{ fontSize: '40px', marginBottom: '8px' }}>{BUSINESS_CONFIG.staffLabel === 'Instructor' ? '🏫' : '🎨'}</div>
-                      <h3 style={{ fontSize: '16px', margin: '0 0 4px 0', fontWeight: 700 }}>No {BUSINESS_CONFIG.staffLabel} Assigned</h3>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '240px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '40px', marginBottom: '8px' }}>🩺</div>
+                      <h3 style={{ fontSize: '16px', margin: '0 0 4px 0', fontWeight: 700 }}>No {BUSINESS_CONFIG.staffLabel} Selected</h3>
+                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '240px' }}>
                         Any available professional {BUSINESS_CONFIG.staffLabel.toLowerCase()} will be assigned to your service.
                       </p>
                     </div>
@@ -584,7 +584,7 @@ export default function CustomerDB() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
               <h2 style={{ fontSize: '20px', margin: 0 }}>Preparation Checklist</h2>
-              <span style={{ fontSize: '12px', border: '1px solid var(--accent-color)', color: 'var(--accent-color)', padding: '3px 10px', borderRadius: '9999px', fontWeight: 600 }}>
+              <span style={{ fontSize: '12px', background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', padding: '4px 10px', borderRadius: '9999px', fontWeight: 600 }}>
                 📋 Visit Readiness
               </span>
             </div>
@@ -642,7 +642,7 @@ export default function CustomerDB() {
             </p>
           </div>
 
-          {/* Interactive Google Maps Embed Widget */}
+          {/* Interactive Map Embed Widget */}
           <div
             style={{
               width: '100%',
@@ -660,9 +660,7 @@ export default function CustomerDB() {
               height="100%"
               style={{ border: 0 }}
               loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              src={`https://maps.google.com/maps?q=${encodeURIComponent(BUSINESS_CONFIG.address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+              src={`https://maps.google.com/maps?q=${encodeURIComponent(BUSINESS_CONFIG.address)}&t=&z=14&ie=UTF8&iwloc=B&output=embed`}
             />
           </div>
 
@@ -719,9 +717,9 @@ export default function CustomerDB() {
                         <strong>{BUSINESS_CONFIG.staffLabel}:</strong> {booking.artistName}
                       </span>
                     )}
-                    {booking.depositAmount != null && booking.depositAmount > 0 && (
+                    {booking.depositAmount != null && (
                       <span>
-                        <strong>Deposit Paid:</strong> {BUSINESS_CONFIG.currencySymbol || '$'}{booking.depositAmount.toFixed(2)}
+                        <strong>Deposit Paid:</strong> £{booking.depositAmount.toFixed(2)}
                       </span>
                     )}
                   </div>
@@ -732,13 +730,13 @@ export default function CustomerDB() {
                       style={{
                         marginTop: '12px',
                         padding: '12px 16px',
-                        background: 'rgba(0, 0, 0, 0.02)',
-                        border: '1px solid var(--accent-color)',
+                        background: 'rgba(16, 185, 129, 0.05)',
+                        border: '1px solid rgba(16, 185, 129, 0.15)',
                         borderRadius: '12px',
                         fontSize: '14px',
                       }}
                     >
-                      <p style={{ fontWeight: 600, color: 'var(--accent-color)', marginBottom: '4px' }}>
+                      <p style={{ fontWeight: 600, color: '#34d399', marginBottom: '4px' }}>
                         ✨ {BUSINESS_CONFIG.adminNotesLabel}:
                       </p>
                       <p style={{ color: 'var(--text-primary)', margin: 0 }}>
@@ -807,15 +805,15 @@ export default function CustomerDB() {
               width: '100%',
               padding: '28px',
               borderRadius: '16px',
-              backgroundColor: '#1e293b',
-              border: '1px solid #334155',
-              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+              backgroundColor: '#ffffff',
+              border: '1px solid var(--border-color)',
+              boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
             }}
           >
-            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: '#ffffff' }}>
+            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>
               Cancel Appointment
             </h3>
-            <p style={{ fontSize: '14px', color: '#94a3b8', marginBottom: '20px', lineHeight: '1.5' }}>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: '1.5' }}>
               Are you sure you want to cancel your appointment for <strong>{latestBooking.service}</strong> on{' '}
               <strong>{latestBooking.date}</strong> at <strong>{latestBooking.time}</strong>?
             </p>
@@ -836,8 +834,8 @@ export default function CustomerDB() {
                   fontSize: '14px',
                   borderRadius: '8px',
                   resize: 'vertical',
-                  backgroundColor: 'rgba(15, 23, 42, 0.6)',
-                  color: '#ffffff',
+                  backgroundColor: 'rgba(0, 0, 0, 0.02)',
+                  color: 'var(--text-primary)',
                   border: '1px solid var(--border-color)',
                 }}
                 autoFocus
