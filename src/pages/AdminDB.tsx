@@ -5,7 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
-import { MapPinIcon, LockIcon, StudioIcon, ClockIcon, CalendarIcon, CheckIcon } from '../components/ui/Icons'
+import { MapPinIcon, LockIcon, StudioIcon, ClockIcon, CalendarIcon, CheckIcon, AlertIcon, ZapIcon } from '../components/ui/Icons'
 
 const adminBadgeStyle = (adminStatus: string): React.CSSProperties => {
   let bg = 'rgba(255, 255, 255, 0.05)'
@@ -570,16 +570,16 @@ export default function AdminDB() {
                   </div>                  {/* Request Type Badge */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                     {booking.adminStatus === 'Reschedule Requested' ? (
-                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px', borderRadius: '8px', background: 'rgba(234, 179, 8, 0.2)', color: '#facc15', border: '1px solid rgba(234, 179, 8, 0.4)' }}>
-                        🔄 RESCHEDULE REQUEST
+                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px', borderRadius: '8px', background: 'rgba(234, 179, 8, 0.2)', color: '#facc15', border: '1px solid rgba(234, 179, 8, 0.4)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <ClockIcon size={12} /> RESCHEDULE REQUEST
                       </span>
                     ) : booking.status === 'Pending' ? (
-                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px', borderRadius: '8px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.4)' }}>
-                        🆕 NEW BOOKING REQUEST
+                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px', borderRadius: '8px', background: 'rgba(56, 189, 248, 0.2)', color: '#38bdf8', border: '1px solid rgba(56, 189, 248, 0.4)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <CalendarIcon size={12} /> NEW BOOKING REQUEST
                       </span>
                     ) : booking.status === 'Cancelled' ? (
-                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.4)' }}>
-                        🛑 CANCELLATION
+                      <span style={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', padding: '4px 10px', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.2)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.4)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                        <AlertIcon size={12} /> CANCELLATION
                       </span>
                     ) : null}
                   </div>
@@ -598,26 +598,28 @@ export default function AdminDB() {
                       }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: 'var(--text-secondary)' }}>
-                        <span>📅 <strong>Original Slot:</strong></span>
+                        <CalendarIcon size={14} style={{ color: '#94a3b8' }} />
+                        <span><strong>Original Slot:</strong></span>
                         <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontWeight: 600 }}>
                           {booking.date} at {booking.time}
                         </span>
                       </div>
 
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', flexWrap: 'wrap' }}>
-                        <span style={{ color: '#facc15', fontWeight: 800 }}>⚡ <strong>Requested New Slot:</strong></span>
-                        <span style={{ background: 'rgba(234, 179, 8, 0.25)', border: '1px solid #facc15', color: '#fef08a', padding: '4px 10px', borderRadius: '8px', fontWeight: 900 }}>
-                          📅 {booking.requestedDate} 🕒 {booking.requestedTime}
+                        <ZapIcon size={14} style={{ color: '#facc15' }} />
+                        <span style={{ color: '#facc15', fontWeight: 800 }}><strong>Requested New Slot:</strong></span>
+                        <span style={{ background: 'rgba(234, 179, 8, 0.25)', border: '1px solid #facc15', color: '#fef08a', padding: '4px 10px', borderRadius: '8px', fontWeight: 900, display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                          <CalendarIcon size={12} /> {booking.requestedDate} <ClockIcon size={12} /> {booking.requestedTime}
                         </span>
                       </div>
                     </div>
                   ) : (
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', margin: '10px 0' }}>
-                      <span style={{ fontSize: '13px', fontWeight: 800, color: '#ffffff', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-color)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
-                        📅 {booking.date}
+                      <span style={{ fontSize: '13px', fontWeight: 800, color: '#ffffff', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-color)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <CalendarIcon size={13} /> {booking.date}
                       </span>
-                      <span style={{ fontSize: '13px', fontWeight: 900, color: '#34d399', background: 'rgba(16, 185, 129, 0.18)', border: '1px solid rgba(16, 185, 129, 0.45)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
-                        🕒 {booking.time}
+                      <span style={{ fontSize: '13px', fontWeight: 900, color: '#34d399', background: 'rgba(16, 185, 129, 0.18)', border: '1px solid rgba(16, 185, 129, 0.45)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <ClockIcon size={13} /> {booking.time}
                       </span>
                     </div>
                   )}
