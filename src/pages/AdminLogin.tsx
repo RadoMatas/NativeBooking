@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login, currentUserRole } from '../auth'
+import { SparklesIcon } from '../components/ui/Icons'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
@@ -146,7 +147,7 @@ export default function AdminLogin() {
             boxShadow: '0 4px 16px rgba(16,185,129,0.3)',
           }}
         >
-          {isLoggingIn ? 'Authenticating...' : 'Sign In to Central Control ⚡'}
+          {isLoggingIn ? 'Authenticating...' : <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>Sign In to Central Control <SparklesIcon size={16} /></span>}
         </button>
 
         <div style={{ textAlign: 'center', marginTop: '12px' }}>

@@ -5,7 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
-import { CalendarIcon, UserIcon, AlertIcon, ContractorIcon } from '../components/ui/Icons'
+import { CalendarIcon, ClockIcon, UserIcon, AlertIcon, CheckIcon, ContractorIcon, MapPinIcon, RefreshCwIcon, EyeIcon, XCircleIcon, SendIcon, SparklesIcon } from '../components/ui/Icons'
 
 const adminBadgeStyle = (adminStatus: string, status?: string): React.CSSProperties => {
   let bg = 'rgba(255, 255, 255, 0.05)'
@@ -365,7 +365,7 @@ export default function AdminDB() {
               {BUSINESS_CONFIG.name}
             </span>
             <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
-              📍 {BUSINESS_CONFIG.address}
+              <MapPinIcon size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />{BUSINESS_CONFIG.address}
             </span>
           </div>
         </div>
@@ -502,11 +502,11 @@ export default function AdminDB() {
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           {[
             { key: 'All', label: `All Jobs (${counts.all})` },
-            { key: 'Assigned', label: `🟨 Assigned / Unseen (${counts.assigned})` },
-            { key: 'Acknowledged', label: `🟦 Acknowledged (${counts.acknowledged})` },
-            { key: 'In Progress', label: `🚀 In Progress (${counts.inProgress})` },
-            { key: 'Completed', label: `✅ Completed (${counts.completed})` },
-            { key: 'Declined / Cancelled', label: `🛑 Declined / Cancelled (${counts.declinedCancelled})` },
+            { key: 'Assigned', label: `Assigned / Unseen (${counts.assigned})` },
+            { key: 'Acknowledged', label: `Acknowledged (${counts.acknowledged})` },
+            { key: 'In Progress', label: `In Progress (${counts.inProgress})` },
+            { key: 'Completed', label: `Completed (${counts.completed})` },
+            { key: 'Declined / Cancelled', label: `Declined / Cancelled (${counts.declinedCancelled})` },
           ].map((f) => {
             const isActive = statusFilter === f.key
             const isAlertState = f.key === 'Declined / Cancelled' && counts.declinedCancelled > 0
@@ -600,7 +600,7 @@ export default function AdminDB() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
                       <div>
                         <span style={adminBadgeStyle(job.adminStatus || job.status, job.status)}>
-                          {isDeclined ? '🛑 DECLINED BY TECH' : job.adminStatus || job.status}
+                          {isDeclined ? 'DECLINED BY TECH' : job.adminStatus || job.status}
                         </span>
                         <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#ffffff', marginTop: '6px' }}>
                           {job.service}
@@ -608,11 +608,11 @@ export default function AdminDB() {
                       </div>
                       {/* High-Visibility Date & Time Badge */}
                       <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#ffffff', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-color)', padding: '4px 10px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
-                          📅 {job.date}
+                        <span style={{ fontSize: '12px', fontWeight: 800, color: '#ffffff', background: 'rgba(255,255,255,0.06)', border: '1px solid var(--border-color)', padding: '4px 10px', borderRadius: '8px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <CalendarIcon size={12} /> {job.date}
                         </span>
-                        <span style={{ fontSize: '12px', fontWeight: 900, color: 'var(--accent-color)', background: 'rgba(245, 158, 11, 0.18)', border: '1px solid rgba(245, 158, 11, 0.45)', padding: '4px 10px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
-                          🕒 {job.time}
+                        <span style={{ fontSize: '12px', fontWeight: 900, color: 'var(--accent-color)', background: 'rgba(245, 158, 11, 0.18)', border: '1px solid rgba(245, 158, 11, 0.45)', padding: '4px 10px', borderRadius: '8px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <ClockIcon size={12} /> {job.time}
                         </span>
                       </div>
                     </div>
@@ -622,7 +622,7 @@ export default function AdminDB() {
                         <strong>Client:</strong> {job.customerName || 'Client'} ({job.customerPhone || 'No Phone'})
                       </div>
                       <div>
-                        <strong>Technician:</strong> {job.artistName} {job.acknowledgedByTech ? '👁️ (Seen)' : '⏳ (Unseen)'}
+                        <strong>Technician:</strong> {job.artistName} {job.acknowledgedByTech ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#34d399' }}><EyeIcon size={12} /> Seen</span> : <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', color: '#f59e0b' }}><ClockIcon size={12} /> Unseen</span>}
                       </div>
                       {job.notes && (
                         <div style={{ color: '#e2e8f0', fontSize: '12px', marginTop: '4px' }}>
@@ -631,7 +631,7 @@ export default function AdminDB() {
                       )}
                       {job.declineReason && (
                         <div style={{ color: '#f87171', fontSize: '12px', fontWeight: 700, background: 'rgba(239,68,68,0.15)', padding: '6px 10px', borderRadius: '6px', marginTop: '6px' }}>
-                          🚨 Declined Reason: "{job.declineReason}"
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><AlertIcon size={12} /> Declined Reason: "{job.declineReason}"</span>
                         </div>
                       )}
                     </div>
@@ -647,7 +647,7 @@ export default function AdminDB() {
                           className="btn btn-primary"
                           style={{ fontSize: '12px', padding: '5px 12px' }}
                         >
-                          🔄 Reassign Job Order
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><RefreshCwIcon size={12} /> Reassign Job Order</span>
                         </button>
                       )}
                       {job.status !== 'Completed' && !isDeclined && (
@@ -662,7 +662,7 @@ export default function AdminDB() {
                             className="btn btn-secondary"
                             style={{ fontSize: '11px', padding: '4px 10px' }}
                           >
-                            📅 Reschedule
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CalendarIcon size={12} /> Reschedule</span>
                           </button>
                           <button
                             onClick={(e) => {
@@ -673,7 +673,7 @@ export default function AdminDB() {
                             className="btn btn-secondary"
                             style={{ fontSize: '11px', padding: '4px 10px', color: '#f87171' }}
                           >
-                            🛑 Cancel Order
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><XCircleIcon size={12} /> Cancel Order</span>
                           </button>
                         </>
                       )}
@@ -720,37 +720,37 @@ export default function AdminDB() {
                   <strong style={{ color: 'var(--text-secondary)' }}>Assigned Technician:</strong>{' '}
                   <span style={{ color: '#ffffff', fontWeight: 700 }}>{selectedBooking.artistName}</span>{' '}
                   {selectedBooking.acknowledgedByTech ? (
-                    <span style={{ fontSize: '12px', color: '#34d399', fontWeight: 700 }}> (👁️ Acknowledged by Tech)</span>
+                    <span style={{ fontSize: '12px', color: '#34d399', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}> (<EyeIcon size={12} /> Acknowledged by Tech)</span>
                   ) : (
-                    <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 700 }}> (⏳ Unseen by Tech)</span>
+                    <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}> (<ClockIcon size={12} /> Unseen by Tech)</span>
                   )}
                 </div>
 
                 <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', padding: '12px 16px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-                  <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '13px' }}>📅 Scheduled Appointment:</span>
+                  <span style={{ color: 'var(--text-secondary)', fontWeight: 700, fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CalendarIcon size={13} style={{ color: '#f59e0b' }} /> Scheduled Appointment:</span>
                   <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                    <span style={{ fontSize: '13px', fontWeight: 800, color: '#ffffff' }}>📅 {selectedBooking.date}</span>
-                    <span style={{ fontSize: '14px', fontWeight: 900, color: 'var(--accent-color)', background: 'rgba(245, 158, 11, 0.2)', padding: '2px 8px', borderRadius: '6px' }}>🕒 {selectedBooking.time}</span>
+                    <span style={{ fontSize: '13px', fontWeight: 800, color: '#ffffff', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CalendarIcon size={13} /> {selectedBooking.date}</span>
+                    <span style={{ fontSize: '14px', fontWeight: 900, color: 'var(--accent-color)', background: 'rgba(245, 158, 11, 0.2)', padding: '2px 8px', borderRadius: '6px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}><ClockIcon size={13} /> {selectedBooking.time}</span>
                   </div>
                 </div>
 
                 {selectedBooking.declineReason && (
                   <div style={{ background: 'rgba(239,68,68,0.15)', padding: '14px', borderRadius: '10px', border: '1px solid #f87171', color: '#f87171' }}>
-                    <strong style={{ display: 'block', marginBottom: '4px' }}>🚨 Declined by Technician:</strong>
+                    <strong style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}><AlertIcon size={14} /> Declined by Technician:</strong>
                     "{selectedBooking.declineReason}"
                   </div>
                 )}
 
                 {selectedBooking.cancellationReason && (
                   <div style={{ background: 'rgba(239,68,68,0.15)', padding: '14px', borderRadius: '10px', border: '1px solid #f87171', color: '#f87171' }}>
-                    <strong style={{ display: 'block', marginBottom: '4px' }}>🛑 Admin Cancellation Reason:</strong>
+                    <strong style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}><XCircleIcon size={14} /> Admin Cancellation Reason:</strong>
                     "{selectedBooking.cancellationReason}"
                   </div>
                 )}
 
                 {selectedBooking.completionReport && (
                   <div style={{ background: 'rgba(16,185,129,0.15)', padding: '14px', borderRadius: '10px', border: '1px solid #34d399', color: '#34d399' }}>
-                    <strong style={{ display: 'block', marginBottom: '4px' }}>✅ Technician Work Report:</strong>
+                    <strong style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}><CheckIcon size={14} /> Technician Work Report:</strong>
                     "{selectedBooking.completionReport}"
                   </div>
                 )}
@@ -772,7 +772,7 @@ export default function AdminDB() {
                       className="btn btn-primary"
                       style={{ flex: 1, padding: '10px', fontSize: '13px' }}
                     >
-                      🔄 Reassign to Tech
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><RefreshCwIcon size={14} /> Reassign to Tech</span>
                     </button>
                   ) : (
                     <>
@@ -785,7 +785,7 @@ export default function AdminDB() {
                         className="btn btn-secondary"
                         style={{ flex: 1, padding: '10px', fontSize: '13px' }}
                       >
-                        📅 Reschedule Order
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CalendarIcon size={14} /> Reschedule Order</span>
                       </button>
                       <button
                         onClick={() => {
@@ -795,7 +795,7 @@ export default function AdminDB() {
                         className="btn btn-secondary"
                         style={{ padding: '10px 14px', fontSize: '13px', color: '#f87171' }}
                       >
-                        🛑 Cancel Order
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><XCircleIcon size={14} /> Cancel Order</span>
                       </button>
                     </>
                   )}
@@ -837,7 +837,7 @@ export default function AdminDB() {
             }}
           >
             <h3 style={{ fontSize: '20px', fontWeight: 800, color: 'var(--accent-color)' }}>
-              📅 Reschedule Job Order
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><CalendarIcon size={18} /> Reschedule Job Order</span>
             </h3>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
               Update schedule for <strong>{reschedulingJob.customerName}</strong> ({reschedulingJob.service}). Existing order record will be updated cleanly.
@@ -845,7 +845,7 @@ export default function AdminDB() {
 
             {rescheduleConflict && (
               <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #f87171', padding: '12px', borderRadius: '10px', color: '#f87171', fontSize: '13px' }}>
-                🛑 <strong>Time Slot Conflict!</strong> Technician {reschedulingJob.artistName} is ALREADY booked for "{rescheduleConflict.service}" ({rescheduleConflict.customerName}) at {adminNewTime} on {adminNewDate}.
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><XCircleIcon size={14} /> <strong>Time Slot Conflict!</strong></span> Technician {reschedulingJob.artistName} is ALREADY booked for "{rescheduleConflict.service}" ({rescheduleConflict.customerName}) at {adminNewTime} on {adminNewDate}.
               </div>
             )}
 
@@ -921,7 +921,7 @@ export default function AdminDB() {
                 className="btn btn-primary"
                 style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 700, opacity: rescheduleConflict ? 0.5 : 1 }}
               >
-                Update Schedule & Notify Tech 📅
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Update Schedule & Notify Tech <CalendarIcon size={14} /></span>
               </button>
             </div>
           </form>
@@ -957,7 +957,7 @@ export default function AdminDB() {
             }}
           >
             <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#f87171' }}>
-              🛑 Cancel Work Order
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}><XCircleIcon size={18} /> Cancel Work Order</span>
             </h3>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
               Are you sure you want to cancel the job order for <strong>{cancellingJob.customerName}</strong> assigned to <strong>{cancellingJob.artistName}</strong>?
@@ -992,7 +992,7 @@ export default function AdminDB() {
                 className="btn btn-danger"
                 style={{ padding: '8px 16px', fontSize: '13px' }}
               >
-                Confirm Cancel & Alert Tech 🛑
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>Confirm Cancel & Alert Tech <XCircleIcon size={14} /></span>
               </button>
             </div>
           </form>
@@ -1029,7 +1029,7 @@ export default function AdminDB() {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <h2 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff' }}>
-                {reassignJobId ? '🔄 Reassign Job Order' : '+ Dispatch New Job Order'}
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>{reassignJobId ? <><RefreshCwIcon size={18} /> Reassign Job Order</> : <><ContractorIcon size={18} /> + Dispatch New Job Order</>}</span>
               </h2>
               <button
                 type="button"
@@ -1042,7 +1042,7 @@ export default function AdminDB() {
 
             {dispatchConflict && (
               <div style={{ background: 'rgba(239, 68, 68, 0.15)', border: '1px solid #f87171', padding: '12px 16px', borderRadius: '12px', color: '#f87171', fontSize: '13px' }}>
-                🛑 <strong>Time Slot Conflict!</strong> Technician {BUSINESS_CONFIG.artists.find((a) => a.id === assignedTechId)?.name} is ALREADY booked for <strong>"{dispatchConflict.service}"</strong> ({dispatchConflict.customerName}) at {jobTime} on {jobDate}. Please select another time slot or technician.
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><XCircleIcon size={14} /> <strong>Time Slot Conflict!</strong></span> Technician {BUSINESS_CONFIG.artists.find((a) => a.id === assignedTechId)?.name} is ALREADY booked for <strong>"{dispatchConflict.service}"</strong> ({dispatchConflict.customerName}) at {jobTime} on {jobDate}. Please select another time slot or technician.
               </div>
             )}
 
@@ -1195,7 +1195,7 @@ export default function AdminDB() {
               className="btn btn-primary"
               style={{ padding: '14px', fontSize: '14px', marginTop: '6px', opacity: dispatchConflict ? 0.5 : 1 }}
             >
-              {reassignJobId ? 'Reassign Job to Technician 🚀' : 'Dispatch Job Order 🚀'}
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>{reassignJobId ? <><RefreshCwIcon size={14} /> Reassign Job to Technician</> : <><SendIcon size={14} /> Dispatch Job Order</>}</span>
             </button>
           </form>
         </div>
@@ -1203,7 +1203,7 @@ export default function AdminDB() {
 
       {/* Watermark Footer */}
       <div style={{ textAlign: 'center', marginTop: '48px', paddingTop: '20px', borderTop: '1px solid var(--border-color)', fontSize: '12px', color: 'var(--text-secondary)' }}>
-        Powered by NativeBooking Contractor Blueprint 🛠️
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>Powered by NativeBooking Contractor Blueprint <ContractorIcon size={14} /></span>
       </div>
     </div>
   )

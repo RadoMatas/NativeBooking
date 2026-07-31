@@ -5,7 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
-import { ContractorIcon, CalendarIcon, ClockIcon, CheckIcon, AlertIcon } from '../components/ui/Icons'
+import { ContractorIcon, CalendarIcon, ClockIcon, CheckIcon, AlertIcon, MapPinIcon, SparklesIcon } from '../components/ui/Icons'
 
 export default function CustomerDB() {
   const { bookings, updateBookingStatus, clearCustomerNotification, addNotification } = useBooking()
@@ -220,7 +220,7 @@ export default function CustomerDB() {
               {BUSINESS_CONFIG.name}
             </span>
             <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
-              📍 {BUSINESS_CONFIG.address}
+              <MapPinIcon size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />{BUSINESS_CONFIG.address}
             </span>
           </div>
         </div>
@@ -334,7 +334,7 @@ export default function CustomerDB() {
                           marginBottom: '8px',
                         }}
                       >
-                        {isCompleted ? '✓ Job Completed' : isInProgress ? '▶ In Progress' : '⏳ Assigned Work Order'}
+                        {isCompleted ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CheckIcon size={12} /> Job Completed</span> : isInProgress ? <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><ClockIcon size={12} /> In Progress</span> : <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><AlertIcon size={12} /> Assigned Work Order</span>}
                       </span>
                       <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', margin: 0 }}>
                         {job.service}
@@ -367,7 +367,7 @@ export default function CustomerDB() {
                   {job.notes && (
                     <div style={{ background: 'rgba(0,0,0,0.35)', padding: '14px 16px', borderRadius: '10px', border: '1px solid var(--border-color)' }}>
                       <strong style={{ color: '#f59e0b', display: 'block', marginBottom: '4px', fontSize: '13px' }}>
-                        📍 Job Site Address & Dispatch Notes:
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><MapPinIcon size={14} /> Job Site Address & Dispatch Notes:</span>
                       </strong>
                       <div style={{ color: '#ffffff', lineHeight: '1.5', fontSize: '14px' }}>
                         {job.notes}
@@ -411,7 +411,7 @@ export default function CustomerDB() {
 
       {/* Watermark Footer */}
       <div style={{ textAlign: 'center', marginTop: '60px', paddingTop: '20px', borderTop: '1px solid var(--border-color)', fontSize: '12px', color: 'var(--text-secondary)' }}>
-        Powered by NativeBooking Contractor Blueprint ⚡
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>Powered by NativeBooking Contractor Blueprint <ContractorIcon size={14} /></span>
       </div>
     </div>
   )

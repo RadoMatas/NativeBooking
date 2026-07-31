@@ -4,6 +4,7 @@ import { useBooking } from '../BookingContext'
 import { currentUserRole, currentUserEmail } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
+import { ContractorIcon, SparklesIcon } from '../components/ui/Icons'
 
 export default function BookAppointment() {
   const navigate = useNavigate()
@@ -568,7 +569,7 @@ export default function BookAppointment() {
                           style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                         />
                       ) : (
-                        art.avatarEmoji || '👤'
+                        <ContractorIcon size={24} style={{ color: '#f59e0b' }} />
                       )}
                     </div>
                     <span style={{ fontWeight: 700, fontSize: '14px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>
@@ -630,7 +631,7 @@ export default function BookAppointment() {
               </label>
               {date && !dateError && (
                 <span style={{ fontSize: '12px', color: '#f59e0b', fontWeight: 600 }}>
-                  ⚡ Field Crews Active Today
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><SparklesIcon size={12} style={{ color: '#f59e0b' }} /> Field Crews Active Today</span>
                 </span>
               )}
             </div>

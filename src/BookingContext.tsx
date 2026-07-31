@@ -156,14 +156,14 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   ]
 
   const [bookings, setBookings] = useState<Booking[]>(() => {
-    const saved = localStorage.getItem('bookings')
+    const saved = localStorage.getItem(bookingsKey)
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
         if (Array.isArray(parsed) && parsed.length > 0) {
           const isLegacy = parsed.some((b: any) => b.id?.includes('demo-') || b.service?.includes('Tattoo') || b.artistId === 'marcel')
           if (!isLegacy) return parsed
-          localStorage.removeItem('bookings')
+          localStorage.removeItem(bookingsKey)
         }
       } catch (e) {
         console.error(e)
@@ -173,7 +173,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   })
 
   const [notifications, setNotifications] = useState<AdminNotification[]>(() => {
-    const saved = localStorage.getItem('notifications')
+    const saved = localStorage.getItem(notificationsKey)
     return saved ? JSON.parse(saved) : []
   })
 

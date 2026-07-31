@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { login, register, currentUserRole } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
-import { ContractorIcon, SettingsIcon } from '../components/ui/Icons'
+import { ContractorIcon, SettingsIcon, SparklesIcon } from '../components/ui/Icons'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -278,7 +278,7 @@ export default function Login() {
             fontWeight: 600,
           }}
         >
-          Powered by NativeBooking Software ⚡
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>Powered by NativeBooking Software <SparklesIcon size={14} /></span>
         </div>
         <div style={{ textAlign: 'center', marginTop: '10px' }}>
           <a
