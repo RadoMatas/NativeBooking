@@ -9,24 +9,28 @@ interface FAQItem {
 
 const faqData: FAQItem[] = [
   {
-    question: "How is NativeBooking different from generic widgets like Calendly or Acuity?",
-    answer: "Unlike generic SaaS widgets that rent out standardized forms, NativeBooking gives you a custom-made, white-labeled software system. You own 100% of your database, customer data, branding, and schedule logic with zero per-booking commission fees.",
+    question: "Why build a custom reservation site instead of using a standard booking tool?",
+    answer: "Standard booking tools charge subscription fees or per-booking cuts, and force your clients into a generic template. With a custom build, you own the system, control your client database, match your brand look, and pay zero transaction commissions to middlemen.",
   },
   {
-    question: "Can I customize booking intake forms and staff/crew dispatch rules?",
-    answer: "Yes! Tier 2 (Operational Custom) and Tier 3 (Enterprise) allow fully dynamic intake questionnaires, staff split scheduling, and crew dispatch boards tailored to your exact operational workflows.",
+    question: "How long does it take to set up our business reservation portal?",
+    answer: "Most standard setups are up and running within a few business days. We configure your service menu, staff schedules, deposit settings, and automated customer reminders so you can start taking bookings smoothly.",
   },
   {
-    question: "How does payment processing work?",
-    answer: "Payments and reservation deposit holds connect directly to your own Stripe or PayPal account. You collect 100% of earnings immediately with no middleman holding your funds.",
+    question: "How do client payments and deposits work?",
+    answer: "Money goes directly into your business bank account through your own Stripe or PayPal connection. You can collect full payment, partial deposit holds, or allow pay-at-venue reservations.",
   },
   {
-    question: "Can NativeBooking be published as a native iOS or Android mobile app?",
-    answer: "Yes. Our Enterprise tier includes custom native mobile app builds powered by Capacitor JS, ready for deployment to the Apple App Store and Google Play Store under your business developer accounts.",
+    question: "Can we dispatch field crews or manage team shifts?",
+    answer: "Yes! Our Advanced Business Engine includes team dispatch boards, shift scheduling, address routing for field crews, and multi-staff calendars.",
   },
   {
-    question: "Where is my data stored and is each client isolated?",
-    answer: "We enforce strict Data Sovereignty. Each client gets dedicated Firebase Firestore rules, isolated database structures, and isolated domain assets to ensure maximum privacy and security.",
+    question: "Can our clients book from their phones?",
+    answer: "100%. Every setup is built mobile-first so your clients can easily book, reschedule, and pay from any iPhone, Android device, or desktop browser in seconds.",
+  },
+  {
+    question: "Can we get custom mobile apps in the App Store?",
+    answer: "Yes. For larger teams needing dedicated mobile apps, we build and publish native iOS and Android apps directly under your company's name.",
   },
 ];
 
