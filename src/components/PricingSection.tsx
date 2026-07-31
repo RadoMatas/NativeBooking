@@ -8,6 +8,8 @@ interface TierOption {
   badge?: string
   tagline: string
   forWho: string
+  setupFee: string
+  monthlyMaintenance: string
   keyBenefits: string[]
   features: string[]
   ctaText: string
@@ -20,6 +22,8 @@ const tiers: TierOption[] = [
     name: 'Standard Booking Setup',
     tagline: 'Your own branded reservation site with zero monthly booking fees.',
     forWho: 'Solo practitioners, studios, and small teams wanting a direct booking site.',
+    setupFee: '$490 one-time build',
+    monthlyMaintenance: '$29/mo (hosting & maintenance)',
     keyBenefits: [
       'Direct payments to your bank',
       'Matches your business branding',
@@ -41,6 +45,8 @@ const tiers: TierOption[] = [
     badge: 'Most Popular',
     tagline: 'Full dispatch boards, shift scheduling, and custom intake questionnaires.',
     forWho: 'Growing clinics, multi-staff businesses, and field service teams with crew schedules.',
+    setupFee: '$1,250 one-time build',
+    monthlyMaintenance: '$69/mo (hosting & maintenance)',
     keyBenefits: [
       'Crew dispatch & shift board',
       'Custom customer intake forms',
@@ -61,6 +67,8 @@ const tiers: TierOption[] = [
     name: 'Full Custom Mobile & Dedicated Setup',
     tagline: 'Native iOS & Android mobile apps published directly under your company brand.',
     forWho: 'Established businesses requiring custom mobile apps and dedicated infrastructure.',
+    setupFee: 'Custom quote (from $2,900)',
+    monthlyMaintenance: 'Custom dedicated hosting',
     keyBenefits: [
       'Your own mobile apps in App Store',
       'Dedicated private database',
@@ -273,6 +281,29 @@ export default function PricingSection() {
               <p style={{ fontSize: '14px', color: '#94a3b8', marginTop: '6px', lineHeight: 1.5 }}>
                 {currentTier.tagline}
               </p>
+
+              {/* Price Breakdown Badge */}
+              <div
+                style={{
+                  display: 'flex',
+                  gap: '12px',
+                  marginTop: '12px',
+                  background: 'rgba(0, 0, 0, 0.4)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '12px',
+                  padding: '10px 14px',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <div>
+                  <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#64748b', display: 'block' }}>One-Off Setup</span>
+                  <span style={{ fontSize: '14px', fontWeight: 800, color: '#ffffff' }}>{currentTier.setupFee}</span>
+                </div>
+                <div style={{ borderLeft: '1px solid rgba(255, 255, 255, 0.1)', paddingLeft: '12px' }}>
+                  <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.06em', color: '#64748b', display: 'block' }}>Maintenance & Hosting</span>
+                  <span style={{ fontSize: '14px', fontWeight: 800, color: currentTier.accentColor }}>{currentTier.monthlyMaintenance}</span>
+                </div>
+              </div>
             </div>
 
             {/* Benefits Badges */}

@@ -1,95 +1,160 @@
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronDownIcon, CheckIcon } from './ui/Icons'
 
 interface FAQItem {
-  question: string;
-  answer: string;
+  question: string
+  answer: string
+  category: string
 }
 
 const faqData: FAQItem[] = [
   {
-    question: "Why build a custom reservation site instead of using a standard booking tool?",
-    answer: "Standard booking tools charge subscription fees or per-booking cuts, and force your clients into a generic template. With a custom build, you own the system, control your client database, match your brand look, and pay zero transaction commissions to middlemen.",
+    category: 'Ownership & Fees',
+    question: 'Why choose a custom build over standard subscription software?',
+    answer: 'Standard subscription widgets charge per-booking commissions or recurring fees while keeping your client data locked in their platform. With NativeBooking, you own your custom reservation system and database with 0% booking commission cuts.',
   },
   {
-    question: "How long does it take to set up our business reservation portal?",
-    answer: "Most standard setups are up and running within a few business days. We configure your service menu, staff schedules, deposit settings, and automated customer reminders so you can start taking bookings smoothly.",
+    category: 'Pricing & Maintenance',
+    question: 'How do the setup fee and monthly maintenance work?',
+    answer: 'Each build starts with a transparent one-off setup fee covering custom workflow building, branding integration, and database setup. The small monthly maintenance fee covers secure cloud hosting, database backups, and server maintenance.',
   },
   {
-    question: "How do client payments and deposits work?",
-    answer: "Money goes directly into your business bank account through your own Stripe or PayPal connection. You can collect full payment, partial deposit holds, or allow pay-at-venue reservations.",
+    category: 'Setup & Launch',
+    question: 'How fast can our business reservation portal launch?',
+    answer: 'Most standard setups are configured and live within a few business days. We set up your service menu, staff schedules, deposit preferences, and automated customer reminders.',
   },
   {
-    question: "Can we dispatch field crews or manage team shifts?",
-    answer: "Yes! Our Advanced Business Engine includes team dispatch boards, shift scheduling, address routing for field crews, and multi-staff calendars.",
+    category: 'Payments',
+    question: 'How do customer deposits and payments work?',
+    answer: 'Funds transfer directly to your own Stripe or PayPal account. You can collect full upfront payment, partial deposit holds, or offer pay-at-venue options with zero middleman delays.',
   },
   {
-    question: "Can our clients book from their phones?",
-    answer: "100%. Every setup is built mobile-first so your clients can easily book, reschedule, and pay from any iPhone, Android device, or desktop browser in seconds.",
+    category: 'Team & Dispatch',
+    question: 'Can we manage multi-staff schedules or dispatch field crews?',
+    answer: 'Yes! The Advanced Business Engine includes team dispatch boards, shift scheduling, site address tracking for field crews, and practitioner rosters.',
   },
   {
-    question: "Can we get custom mobile apps in the App Store?",
-    answer: "Yes. For larger teams needing dedicated mobile apps, we build and publish native iOS and Android apps directly under your company's name.",
+    category: 'Mobile Experience',
+    question: 'Is the booking experience mobile-friendly for our clients?',
+    answer: '100%. Every portal is designed mobile-first so clients can easily view services, pick staff slots, and complete payments on any iPhone, Android, or desktop browser in seconds.',
   },
-];
+]
 
 export default function FAQSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   const toggleAccordion = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+    setOpenIndex(openIndex === index ? null : index)
+  }
 
   return (
-    <section className="w-full max-w-4xl mx-auto px-4 py-16 text-slate-100 border-t border-slate-800/60 mt-12">
-      <div className="text-center max-w-xl mx-auto mb-12">
-        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+    <div style={{ width: '100%', maxWidth: '900px', margin: '48px auto 0', padding: '0 16px' }}>
+      {/* Header */}
+      <div style={{ textAlign: 'center', maxWidth: '580px', margin: '0 auto 36px' }}>
+        <span
+          style={{
+            fontSize: '11px',
+            fontWeight: 800,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: '#38bdf8',
+            background: 'rgba(14, 165, 233, 0.12)',
+            border: '1px solid rgba(14, 165, 233, 0.25)',
+            padding: '6px 14px',
+            borderRadius: '9999px',
+            display: 'inline-block',
+            marginBottom: '12px',
+          }}
+        >
+          Got Questions?
+        </span>
+        <h2
+          style={{
+            fontSize: 'clamp(24px, 4vw, 36px)',
+            fontWeight: 800,
+            color: '#ffffff',
+            letterSpacing: '-0.02em',
+            marginBottom: '10px',
+          }}
+        >
           Frequently Asked Questions
         </h2>
-        <p className="mt-3 text-slate-400 text-sm sm:text-base">
-          Have questions about custom white-label booking software? Here is everything you need to know.
+        <p style={{ fontSize: '14px', color: '#94a3b8', lineHeight: 1.5 }}>
+          Everything you need to know about our custom reservation setups, pricing, and operations.
         </p>
       </div>
 
-      <div className="space-y-4">
+      {/* Accordion Cards Stack */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {faqData.map((faq, index) => {
-          const isOpen = openIndex === index;
+          const isOpen = openIndex === index
 
           return (
             <div
               key={index}
-              className={`rounded-2xl transition-all duration-200 border ${
-                isOpen
-                  ? 'bg-slate-900/80 border-emerald-500/30 shadow-lg'
-                  : 'bg-slate-900/40 border-slate-800 hover:border-slate-700'
-              }`}
+              style={{
+                background: isOpen ? 'rgba(23, 26, 35, 0.85)' : 'rgba(15, 17, 23, 0.65)',
+                border: isOpen ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                backdropFilter: 'blur(16px)',
+                transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                boxShadow: isOpen ? '0 12px 30px rgba(0, 0, 0, 0.4)' : 'none',
+              }}
             >
               <button
                 type="button"
                 onClick={() => toggleAccordion(index)}
-                className="w-full flex items-center justify-between p-6 text-left focus:outline-none rounded-2xl"
-                aria-expanded={isOpen}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '20px 24px',
+                  textAlign: 'left',
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  gap: '16px',
+                }}
               >
-                <span className="text-base sm:text-lg font-semibold text-slate-100 pr-4">
-                  {faq.question}
-                </span>
-
-                <motion.div
-                  animate={{ rotate: isOpen ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="shrink-0 text-slate-400"
-                >
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="2.5"
-                    stroke="currentColor"
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.08em',
+                      color: isOpen ? '#34d399' : '#64748b',
+                    }}
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                  </svg>
-                </motion.div>
+                    {faq.category}
+                  </span>
+                  <span style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff' }}>
+                    {faq.question}
+                  </span>
+                </div>
+
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '50%',
+                    background: isOpen ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: isOpen ? '#34d399' : '#94a3b8',
+                    flexShrink: 0,
+                    transition: 'all 0.25s ease',
+                  }}
+                >
+                  <motion.div animate={{ rotate: isOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                    <ChevronDownIcon size={16} />
+                  </motion.div>
+                </div>
               </button>
 
               <AnimatePresence initial={false}>
@@ -100,18 +165,30 @@ export default function FAQSection() {
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.25, ease: 'easeInOut' }}
-                    className="overflow-hidden"
+                    style={{ overflow: 'hidden' }}
                   >
-                    <div className="px-6 pb-6 text-sm sm:text-base text-slate-300 leading-relaxed border-t border-slate-800/60 pt-4">
-                      {faq.answer}
+                    <div
+                      style={{
+                        padding: '0 24px 20px',
+                        fontSize: '14px',
+                        color: '#cbd5e1',
+                        lineHeight: 1.6,
+                        borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+                        paddingTop: '16px',
+                        display: 'flex',
+                        gap: '12px',
+                      }}
+                    >
+                      <CheckIcon size={16} style={{ color: '#10b981', flexShrink: 0, marginTop: '3px' }} />
+                      <span>{faq.answer}</span>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
-          );
+          )
         })}
       </div>
-    </section>
-  );
+    </div>
+  )
 }
