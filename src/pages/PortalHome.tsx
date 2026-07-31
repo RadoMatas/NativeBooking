@@ -19,8 +19,7 @@ export default function PortalHome() {
       <div
         style={{
           minHeight: '100vh',
-          background: 'radial-gradient(rgba(255, 255, 255, 0.18) 1.5px, transparent 1.5px) #090a0f',
-          backgroundSize: '30px 30px',
+          background: 'linear-gradient(180deg, #07080c 0%, #090a0f 50%, #050608 100%)',
           color: '#f8fafc',
           fontFamily: "'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif",
           overflowX: 'hidden',
@@ -29,40 +28,84 @@ export default function PortalHome() {
           position: 'relative',
         }}
       >
+        {/* Vibrant Glowing Ambient Mesh Orbs */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '-5%',
+            left: '10%',
+            width: '750px',
+            height: '750px',
+            background: 'radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(16, 185, 129, 0.05) 50%, transparent 70%)',
+            filter: 'blur(70px)',
+            pointerEvents: 'none',
+            animation: 'floatOrb 14s ease-in-out infinite alternate',
+            zIndex: 0,
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            top: '30%',
+            right: '-5%',
+            width: '800px',
+            height: '800px',
+            background: 'radial-gradient(circle, rgba(168, 85, 247, 0.30) 0%, rgba(168, 85, 247, 0.04) 50%, transparent 70%)',
+            filter: 'blur(80px)',
+            pointerEvents: 'none',
+            animation: 'floatOrb 18s ease-in-out infinite alternate-reverse',
+            zIndex: 0,
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            top: '65%',
+            left: '-5%',
+            width: '700px',
+            height: '700px',
+            background: 'radial-gradient(circle, rgba(14, 165, 233, 0.28) 0%, rgba(14, 165, 233, 0.04) 50%, transparent 70%)',
+            filter: 'blur(75px)',
+            pointerEvents: 'none',
+            animation: 'floatOrb 16s ease-in-out infinite alternate',
+            zIndex: 0,
+          }}
+        />
+
         <style>{`
           @keyframes floatOrb {
             0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(40px, -50px) scale(1.15); }
-            100% { transform: translate(-30px, 30px) scale(0.9); }
+            50% { transform: translate(60px, -50px) scale(1.18); }
+            100% { transform: translate(-40px, 40px) scale(0.9); }
           }
           @keyframes pulseGlow {
             0%, 100% { opacity: 0.4; transform: scale(1); }
             50% { opacity: 0.7; transform: scale(1.05); }
           }
         .aave-text-gradient-emerald {
-          background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+          background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
         .aave-text-gradient-purple {
-          background: linear-gradient(135deg, #a855f7 0%, #c084fc 100%);
+          background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
         .aave-market-card {
-          background: rgba(20, 22, 28, 0.75);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(15, 17, 23, 0.65);
+          border: 1px solid rgba(255, 255, 255, 0.12);
           border-radius: 20px;
           padding: clamp(16px, 4vw, 28px);
           transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-          backdrop-filter: blur(16px);
+          backdrop-filter: blur(20px);
           box-sizing: border-box;
           width: 100%;
         }
         .aave-market-card:hover {
-          border-color: rgba(255, 255, 255, 0.18);
+          border-color: rgba(255, 255, 255, 0.25);
           transform: translateY(-4px);
-          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
         }
         .aave-token-pill {
           display: inline-flex;
@@ -70,8 +113,8 @@ export default function PortalHome() {
           gap: 6px;
           padding: 6px 12px;
           border-radius: 9999px;
-          background: rgba(255, 255, 255, 0.04);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.12);
           font-size: 12px;
           font-weight: 600;
           color: #f8fafc;
@@ -85,7 +128,7 @@ export default function PortalHome() {
           position: 'sticky',
           top: 0,
           zIndex: 100,
-          background: 'rgba(9, 10, 15, 0.85)',
+          background: 'rgba(9, 10, 15, 0.75)',
           backdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
           padding: 'clamp(12px, 3vw, 16px) clamp(14px, 4vw, 36px)',
@@ -153,8 +196,8 @@ export default function PortalHome() {
               wordBreak: 'break-word',
             }}
           >
-            Reservations & Scheduling for{' '}
-            <span className="aave-text-gradient-emerald">Everyone</span>
+            Save Staff Hours &{' '}
+            <span className="aave-text-gradient-emerald">Eliminate Missed Bookings</span>
           </h1>
 
           {/* Description */}
@@ -168,13 +211,13 @@ export default function PortalHome() {
               lineHeight: '1.6',
             }}
           >
-            Custom booking software built for your business. Pay once, save thousands compared to monthly subscription services, and keep 100% of your revenue.
+            A clean reservation and appointment system built for your business. Protect your schedule, streamline customer check-ins, and keep 100% of your earnings.
           </p>
 
           {/* Action Buttons */}
           <div className="aave-hero-buttons" style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '48px', flexWrap: 'wrap', width: '100%' }}>
             <Button variant="primary" size="lg" onClick={() => navigate('/book-call')}>
-              Schedule Intro Meeting ➔
+              Schedule Discovery Meeting
             </Button>
             <Button 
               variant="secondary" 
@@ -203,7 +246,6 @@ export default function PortalHome() {
         style={{
           position: 'relative',
           padding: 'clamp(40px, 8vw, 120px) clamp(14px, 4vw, 24px)',
-          background: 'radial-gradient(circle at center, rgba(168, 85, 247, 0.06) 0%, rgba(9, 10, 15, 1) 70%)',
           borderTop: '1px solid rgba(255, 255, 255, 0.08)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
           width: '100%',
@@ -225,15 +267,15 @@ export default function PortalHome() {
                 wordBreak: 'break-word',
               }}
             >
-              The <span className="aave-text-gradient-purple">Full Power</span> of Automated Operations
+              Streamline <span className="aave-text-gradient-purple">Daily Operations</span>
             </h2>
             <p style={{ fontSize: 'clamp(14px, 2.5vw, 16px)', color: '#94a3b8', maxWidth: '640px', margin: '0 auto', lineHeight: '1.6' }}>
-              Schedule, dispatch, collect deposits, and manage staff rosters. Built on NativeBooking core engine.
+              Organize schedules, manage deposits, and coordinate team availability seamlessly in one place.
             </p>
 
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginTop: '28px', flexWrap: 'wrap', width: '100%' }}>
-              <Button variant="purple" size="lg" onClick={() => navigate('/book-call')}>
-                Book Strategy Session ➔
+              <Button variant="primary" size="lg" onClick={() => navigate('/book-call')}>
+                Schedule Discovery Meeting
               </Button>
             </div>
           </div>
@@ -242,9 +284,9 @@ export default function PortalHome() {
           <div style={{ marginBottom: '32px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
               <div>
-                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff' }}>Markets for Every Strategy</h3>
+                <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff' }}>Solutions for Every Business</h3>
                 <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: '4px' }}>
-                  From conservative clinic intake to high-volume tattoo deposits, pick the operational market that fits your workflow.
+                  From clinic appointments to studio sessions, adapt scheduling rules to your operational needs.
                 </p>
               </div>
               <Button 
@@ -257,7 +299,7 @@ export default function PortalHome() {
                   }
                 }}
               >
-                View Schemas ➔
+                View Demonstration
               </Button>
             </div>
 
@@ -421,11 +463,11 @@ export default function PortalHome() {
           {/* Pre-Footer Meeting CTA Callout Box */}
           <div style={{ background: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '16px', padding: '32px', textAlign: 'left', marginBottom: '48px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
             <div>
-              <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff', margin: '0 0 6px 0' }}>Ready to discuss your custom build?</h3>
-              <p style={{ fontSize: '14px', color: '#94a3b8', margin: 0 }}>Schedule a 1-on-1 session to walk through your business rules, staff rosters, and Stripe setup.</p>
+              <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff', margin: '0 0 6px 0' }}>Ready to optimize your reservation workflow?</h3>
+              <p style={{ fontSize: '14px', color: '#94a3b8', margin: 0 }}>Schedule a 1-on-1 discovery call to explore your business rules, staff schedules, and payout options.</p>
             </div>
             <Button variant="primary" size="lg" onClick={() => navigate('/book-call')}>
-              Schedule Intro Meeting ➔
+              Schedule Discovery Meeting
             </Button>
           </div>
 

@@ -61,13 +61,13 @@ export default function WhiteLabelComparison() {
             marginBottom: '8px',
           }}
         >
-          Why White-Label Custom Software?
+          Dedicated Reservation System vs. Generic Platforms
         </span>
         <h2 className="aave-section-title" style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
-          Off-The-Shelf Widgets vs. NativeBooking White-Label System
+          Third-Party Platforms vs. Your Dedicated System
         </h2>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
-          Stop compromising your customer experience to fit into standard SaaS templates.
+          Stop compromising your customer experience to fit into standard third-party templates.
         </p>
       </div>
 
@@ -84,9 +84,9 @@ export default function WhiteLabelComparison() {
           <thead>
             <tr style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.1)' }}>
               <th style={{ padding: '16px', color: 'var(--text-secondary)', fontWeight: 600 }}>Capability</th>
-              <th style={{ padding: '16px', color: 'rgba(239, 68, 68, 0.85)', fontWeight: 700 }}>Generic SaaS Platforms</th>
+              <th style={{ padding: '16px', color: 'rgba(239, 68, 68, 0.85)', fontWeight: 700 }}>Third-Party Platforms</th>
               <th style={{ padding: '16px', color: 'var(--accent-color)', fontWeight: 800, background: 'rgba(16, 185, 129, 0.06)', borderRadius: '8px 8px 0 0' }}>
-                NativeBooking White-Label
+                NativeBooking System
               </th>
             </tr>
           </thead>

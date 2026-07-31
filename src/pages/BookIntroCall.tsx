@@ -207,7 +207,7 @@ export default function BookIntroCall() {
                 Thank You, {formData.name || 'Partner'}!
               </h2>
               <p style={{ fontSize: '14px', color: '#94a3b8', lineHeight: '1.6', marginBottom: '24px' }}>
-                Our team has received your demo request and will reach out to <strong>{formData.email}</strong> shortly.
+                Our team has received your request and will reach out to <strong>{formData.email}</strong> shortly to confirm your strategy call.
               </p>
               <Button variant="primary" size="md" onClick={() => navigate('/')}>
                 Return to NativeBooking Home
@@ -217,10 +217,10 @@ export default function BookIntroCall() {
             <>
               <div style={{ textAlign: 'center', marginBottom: '28px' }}>
                 <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#ffffff', marginBottom: '8px' }}>
-                  Schedule a White-Label Demo
+                  Schedule a Discovery Meeting
                 </h1>
                 <p style={{ fontSize: '14px', color: '#94a3b8' }}>
-                  Talk to our tech team about custom booking infrastructure, Stripe setup, and zero-commission deployments.
+                  Speak with our team to discover how a dedicated reservation system can streamline your appointments and protect your earnings.
                 </p>
               </div>
 
