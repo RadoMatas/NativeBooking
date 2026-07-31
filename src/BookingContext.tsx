@@ -220,7 +220,16 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     const channel = new BroadcastChannel('nativebooking_live_sync')
     channel.onmessage = (event) => {
       if (event.data?.type === 'BOOKINGS_UPDATED' && Array.isArray(event.data.payload)) {
-        setBookings(event.data.payload)
+        setBookings((current) => {
+          // Keep new local bookings if missing from broadcast payload
+          const merged = [...event.data.payload]
+          current.forEach((b) => {
+            if (!merged.some((m) => m.id === b.id)) {
+              merged.unshift(b)
+            }
+          })
+          return merged
+        })
       }
       if (event.data?.type === 'NOTIFICATIONS_UPDATED' && Array.isArray(event.data.payload)) {
         setNotifications(event.data.payload)
@@ -246,12 +255,10 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     localStorage.setItem('bookings', JSON.stringify(bookings))
-    broadcastUpdate('BOOKINGS_UPDATED', bookings)
   }, [bookings])
 
   useEffect(() => {
     localStorage.setItem('notifications', JSON.stringify(notifications))
-    broadcastUpdate('NOTIFICATIONS_UPDATED', notifications)
   }, [notifications])
 
   const addBooking = async (booking: Booking) => {
@@ -265,6 +272,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     setBookings((prev) => {
       const updated = [bookingWithId, ...prev.filter((b) => b.id !== bookingWithId.id)]
       localStorage.setItem('bookings', JSON.stringify(updated))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
       return updated
     })
 
@@ -275,10 +283,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error('Failed to add booking to Firestore:', err)
       }
-    } else {
-      console.error('Firebase not enabled – cannot add booking to Firestore')
     }
-
   }
 
   const resetBookings = async () => {
