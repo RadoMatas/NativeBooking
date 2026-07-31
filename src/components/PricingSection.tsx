@@ -1,16 +1,17 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { CheckIcon, SparklesIcon } from './ui/Icons'
 
 interface TierOption {
-  id: string;
-  name: string;
-  badge?: string;
-  tagline: string;
-  forWho: string;
-  keyBenefits: string[];
-  features: string[];
-  ctaText: string;
-  accentColor: string;
+  id: string
+  name: string
+  badge?: string
+  tagline: string
+  forWho: string
+  keyBenefits: string[]
+  features: string[]
+  ctaText: string
+  accentColor: string
 }
 
 const tiers: TierOption[] = [
@@ -18,7 +19,7 @@ const tiers: TierOption[] = [
     id: 'essential',
     name: 'Standard Booking Setup',
     tagline: 'Your own branded reservation site with zero monthly booking fees.',
-    forWho: 'Best for solo practitioners, studios, and small teams wanting a direct booking site.',
+    forWho: 'Solo practitioners, studios, and small teams wanting a direct booking site.',
     keyBenefits: [
       'Direct payments to your bank',
       'Matches your business branding',
@@ -39,7 +40,7 @@ const tiers: TierOption[] = [
     name: 'Advanced Business Engine',
     badge: 'Most Popular',
     tagline: 'Full dispatch boards, shift scheduling, and custom intake questionnaires.',
-    forWho: 'Best for growing clinics, multi-staff businesses, and field service teams with crew schedules.',
+    forWho: 'Growing clinics, multi-staff businesses, and field service teams with crew schedules.',
     keyBenefits: [
       'Crew dispatch & shift board',
       'Custom customer intake forms',
@@ -59,7 +60,7 @@ const tiers: TierOption[] = [
     id: 'enterprise',
     name: 'Full Custom Mobile & Dedicated Setup',
     tagline: 'Native iOS & Android mobile apps published directly under your company brand.',
-    forWho: 'Best for established businesses requiring custom mobile apps and dedicated infrastructure.',
+    forWho: 'Established businesses requiring custom mobile apps and dedicated infrastructure.',
     keyBenefits: [
       'Your own mobile apps in App Store',
       'Dedicated private database',
@@ -75,156 +76,299 @@ const tiers: TierOption[] = [
     ctaText: 'Talk to Engineering Team',
     accentColor: '#c084fc',
   },
-];
+]
 
 export default function PricingSection() {
-  const navigate = useNavigate();
-  const [selectedTier, setSelectedTier] = useState<string>('operational');
-  const [estimatedBookings, setEstimatedBookings] = useState<number>(150);
+  const navigate = useNavigate()
+  const [selectedTier, setSelectedTier] = useState<string>('operational')
+  const [estimatedBookings, setEstimatedBookings] = useState<number>(150)
 
-  const currentTier = tiers.find((t) => t.id === selectedTier) || tiers[1];
-
-  // Simple calculator to show zero-commission savings benefit visually
-  const estimatedSavings = Math.round(estimatedBookings * 4.5);
+  const currentTier = tiers.find((t) => t.id === selectedTier) || tiers[1]
+  const estimatedSavings = Math.round(estimatedBookings * 4.5)
 
   return (
-    <section className="w-full max-w-5xl mx-auto px-4 py-8 text-slate-100">
+    <div style={{ width: '100%', maxWidth: '1080px', margin: '0 auto', padding: '20px 0' }}>
       {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
-        <span className="text-xs sm:text-sm font-bold uppercase tracking-widest text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-3.5 py-1.5 rounded-full inline-block mb-3">
+      <div style={{ textAlign: 'center', maxWidth: '680px', margin: '0 auto 36px' }}>
+        <span
+          style={{
+            fontSize: '11px',
+            fontWeight: 800,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: '#34d399',
+            background: 'rgba(16, 185, 129, 0.12)',
+            border: '1px solid rgba(16, 185, 129, 0.25)',
+            padding: '6px 14px',
+            borderRadius: '9999px',
+            display: 'inline-block',
+            marginBottom: '14px',
+          }}
+        >
           Fair & Clear Setup
         </span>
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+        <h1
+          style={{
+            fontSize: 'clamp(28px, 5vw, 44px)',
+            fontWeight: 800,
+            color: '#ffffff',
+            letterSpacing: '-0.03em',
+            lineHeight: 1.15,
+            marginBottom: '12px',
+          }}
+        >
           How Our Custom Builds Work
         </h1>
-        <p className="mt-3 text-slate-300 text-base sm:text-lg leading-relaxed">
+        <p style={{ fontSize: '15px', color: '#94a3b8', lineHeight: 1.6 }}>
           No percentage cuts. No hidden widget fees. Choose the setup depth your team needs, and keep 100% of your earnings.
         </p>
       </div>
 
-      {/* Interactive Mobile-Friendly Tier Selector (Tabs on mobile, pills on desktop) */}
-      <div className="flex justify-center mb-8">
-        <div className="w-full max-w-2xl bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 flex flex-col sm:flex-row gap-1.5">
+      {/* Interactive Mobile-Friendly Tier Selector Pills */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginBottom: '32px',
+          width: '100%',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '8px',
+            background: 'rgba(15, 17, 23, 0.75)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '6px',
+            borderRadius: '16px',
+            maxWidth: '680px',
+            width: '100%',
+            backdropFilter: 'blur(16px)',
+          }}
+        >
           {tiers.map((tier) => {
-            const isActive = selectedTier === tier.id;
+            const isActive = selectedTier === tier.id
             return (
               <button
                 key={tier.id}
                 type="button"
                 onClick={() => setSelectedTier(tier.id)}
-                className={`flex-1 py-3 px-4 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${
-                  isActive
-                    ? 'bg-slate-800 text-white shadow-lg border border-slate-700'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-                }`}
+                style={{
+                  flex: '1 1 180px',
+                  padding: '12px 16px',
+                  borderRadius: '12px',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  border: isActive ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid transparent',
+                  background: isActive ? 'rgba(30, 41, 59, 0.9)' : 'transparent',
+                  color: isActive ? '#ffffff' : '#94a3b8',
+                  cursor: 'pointer',
+                  transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: isActive ? '0 8px 20px rgba(0, 0, 0, 0.4)' : 'none',
+                }}
               >
                 <span>{tier.name.split(' ')[0]} {tier.name.split(' ')[1]}</span>
                 {tier.badge && (
-                  <span className="bg-emerald-500/20 text-emerald-300 text-[10px] px-2 py-0.5 rounded-full font-semibold">
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: 800,
+                      background: 'rgba(16, 185, 129, 0.2)',
+                      color: '#34d399',
+                      padding: '2px 6px',
+                      borderRadius: '9999px',
+                    }}
+                  >
                     Popular
                   </span>
                 )}
               </button>
-            );
+            )
           })}
         </div>
       </div>
 
-      {/* Main Tier Highlight Card (Interactive View) */}
-      <div className="bg-slate-900/80 border-2 border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden backdrop-blur-xl">
-        {/* Glow accent matching selected tier */}
+      {/* Main Glassmorphism Featured Build Display Card */}
+      <div
+        style={{
+          background: 'rgba(15, 17, 23, 0.75)',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          borderRadius: '24px',
+          padding: 'clamp(20px, 4vw, 40px)',
+          backdropFilter: 'blur(20px)',
+          boxShadow: '0 24px 60px rgba(0, 0, 0, 0.6)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {/* Subtle Ambient Radial Glow */}
         <div
-          className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-500"
-          style={{ background: currentTier.accentColor }}
+          style={{
+            position: 'absolute',
+            top: '-20%',
+            right: '-10%',
+            width: '400px',
+            height: '400px',
+            background: `radial-gradient(circle, ${currentTier.accentColor}25 0%, transparent 70%)`,
+            filter: 'blur(50px)',
+            pointerEvents: 'none',
+            transition: 'background 0.5s ease',
+          }}
         />
 
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start justify-between">
-          {/* Left Column: Summary & Benefits */}
-          <div className="flex-1 space-y-6">
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+            gap: '36px',
+            alignItems: 'stretch',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          {/* Left Summary */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <div className="flex items-center gap-3 mb-2 flex-wrap">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', flexWrap: 'wrap' }}>
                 <span
-                  className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-md"
-                  style={{ background: `${currentTier.accentColor}20`, color: currentTier.accentColor }}
+                  style={{
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.06em',
+                    color: currentTier.accentColor,
+                    background: `${currentTier.accentColor}15`,
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                  }}
                 >
                   {currentTier.forWho}
                 </span>
                 {currentTier.badge && (
-                  <span className="bg-emerald-500 text-slate-950 text-xs font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.06em',
+                      color: '#08080a',
+                      background: '#10b981',
+                      padding: '3px 8px',
+                      borderRadius: '9999px',
+                    }}
+                  >
                     {currentTier.badge}
                   </span>
                 )}
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+
+              <h2 style={{ fontSize: '24px', fontWeight: 800, color: '#ffffff', letterSpacing: '-0.02em' }}>
                 {currentTier.name}
               </h2>
-              <p className="text-slate-300 text-base mt-2 leading-relaxed">
+              <p style={{ fontSize: '14px', color: '#94a3b8', marginTop: '6px', lineHeight: 1.5 }}>
                 {currentTier.tagline}
               </p>
             </div>
 
-            {/* Quick Benefits Pills for Mobile Scanning */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+            {/* Benefits Badges */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px' }}>
               {currentTier.keyBenefits.map((benefit, idx) => (
                 <div
                   key={idx}
-                  className="bg-slate-950/60 border border-slate-800 rounded-xl p-3 text-xs sm:text-sm font-semibold text-slate-200 flex items-center gap-2.5"
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.04)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '12px',
+                    padding: '10px 12px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    color: '#e2e8f0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                  }}
                 >
-                  <svg className="w-4 h-4 shrink-0 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
+                  <SparklesIcon size={14} style={{ color: currentTier.accentColor, flexShrink: 0 }} />
                   <span>{benefit}</span>
                 </div>
               ))}
             </div>
 
             {/* Features Checklist */}
-            <div className="pt-4 border-t border-slate-800/80">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-400 mb-4">
-                What's Included in this build:
+            <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '20px' }}>
+              <h3 style={{ fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#64748b', marginBottom: '14px' }}>
+                Features included in build:
               </h3>
-              <ul className="space-y-3">
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {currentTier.features.map((feat, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-sm text-slate-200">
-                    <div className="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-                      <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="3">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                      </svg>
-                    </div>
-                    <span className="leading-snug">{feat}</span>
+                  <li key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', fontSize: '13px', color: '#cbd5e1', lineHeight: 1.4 }}>
+                    <CheckIcon size={16} style={{ color: '#10b981', flexShrink: 0, marginTop: '2px' }} />
+                    <span>{feat}</span>
                   </li>
                 ))}
               </ul>
             </div>
           </div>
 
-          {/* Right Column: Interactive ROI & CTA Card */}
-          <div className="w-full lg:w-80 bg-slate-950/80 border border-slate-800 rounded-2xl p-6 flex flex-col justify-between space-y-6">
+          {/* Right Action & Interactive Calculator Panel */}
+          <div
+            style={{
+              background: 'rgba(8, 9, 12, 0.85)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '18px',
+              padding: '24px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              gap: '24px',
+            }}
+          >
             <div>
-              <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wider mb-2">
+              <h3 style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#ffffff', marginBottom: '6px' }}>
                 Estimate Monthly Savings
               </h3>
-              <p className="text-xs text-slate-400 mb-4">
-                Generic widgets take 3% to 5% per booking. With your own system, you keep all profits.
+              <p style={{ fontSize: '12px', color: '#64748b', lineHeight: 1.5, marginBottom: '16px' }}>
+                SaaS tools charge percentage commissions per booking. With your own system, keep 100% of profits.
               </p>
 
-              <div className="space-y-3 bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-                <div className="flex justify-between text-xs font-semibold text-slate-300">
+              <div
+                style={{
+                  background: 'rgba(255, 255, 255, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  borderRadius: '14px',
+                  padding: '16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '12px',
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 700, color: '#f1f5f9' }}>
                   <span>Monthly Bookings:</span>
-                  <span className="text-emerald-400 font-bold">{estimatedBookings} / mo</span>
+                  <span style={{ color: '#10b981' }}>{estimatedBookings} / mo</span>
                 </div>
                 <input
                   type="range"
-                  min="30"
-                  max="500"
-                  step="10"
+                  min={30}
+                  max={500}
+                  step={10}
                   value={estimatedBookings}
                   onChange={(e) => setEstimatedBookings(Number(e.target.value))}
-                  className="w-full accent-emerald-500 bg-slate-800 h-2 rounded-lg cursor-pointer"
+                  style={{
+                    width: '100%',
+                    accentColor: '#10b981',
+                    cursor: 'pointer',
+                  }}
                 />
-                <div className="pt-2 border-t border-slate-800/80 flex justify-between items-baseline">
-                  <span className="text-xs text-slate-400">Estimated money saved:</span>
-                  <span className="text-xl font-extrabold text-emerald-400">${estimatedSavings}<span className="text-xs font-normal text-slate-400">/mo</span></span>
+                <div style={{ borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                  <span style={{ fontSize: '11px', color: '#64748b' }}>Estimated savings:</span>
+                  <span style={{ fontSize: '20px', fontWeight: 800, color: '#34d399' }}>
+                    ${estimatedSavings}<span style={{ fontSize: '12px', fontWeight: 500, color: '#64748b' }}>/mo</span>
+                  </span>
                 </div>
               </div>
             </div>
@@ -232,14 +376,25 @@ export default function PricingSection() {
             <button
               type="button"
               onClick={() => navigate('/book-call')}
-              className="w-full py-3.5 px-5 rounded-xl font-extrabold text-sm text-slate-950 transition-all duration-200 shadow-lg cursor-pointer hover:brightness-110 active:scale-95"
-              style={{ background: currentTier.accentColor }}
+              style={{
+                width: '100%',
+                padding: '14px 20px',
+                borderRadius: '12px',
+                fontSize: '14px',
+                fontWeight: 800,
+                color: '#08080a',
+                background: currentTier.accentColor,
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: `0 8px 24px ${currentTier.accentColor}30`,
+              }}
             >
               {currentTier.ctaText}
             </button>
           </div>
         </div>
       </div>
-    </section>
-  );
-}
+    </div>
+  )
+}
