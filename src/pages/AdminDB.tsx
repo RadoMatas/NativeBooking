@@ -125,12 +125,64 @@ export default function AdminDB() {
     })
   }, [bookings, techFilter, statusFilter])
 
+  // Top-level 12-hour AM/PM date parsing and auto-completion for past dates
+  const getBookingDateTime = (booking: any) => {
+    if (!booking || !booking.date) return new Date()
+    const [year, month, day] = booking.date.split('-').map(Number)
+    let hours = 0
+    let minutes = 0
+
+    if (booking.time) {
+      const parts = booking.time.trim().split(' ')
+      const [rawHours, rawMinutes] = parts[0].split(':').map(Number)
+      hours = rawHours
+      minutes = rawMinutes || 0
+
+      if (parts[1]) {
+        const modifier = parts[1].toUpperCase()
+        if (modifier === 'PM' && hours < 12) hours += 12
+        if (modifier === 'AM' && hours === 12) hours = 0
+      }
+    }
+
+    return new Date(year, month - 1, day, hours, minutes)
+  }
+
+  const getDisplayStatus = (booking: any) => {
+    if (!booking) return 'Pending'
+
+    if (booking.status === 'Cancelled' || booking.adminStatus === 'Declined by Tech') {
+      return 'Cancelled'
+    }
+
+    const bookingDateTime = getBookingDateTime(booking)
+    const now = new Date()
+    if (bookingDateTime < now) {
+      return 'Completed'
+    }
+
+    if (
+      booking.status === 'Pending' ||
+      booking.adminStatus === 'New' ||
+      booking.adminStatus === 'Reschedule Requested' ||
+      booking.adminStatus === 'Needs Action'
+    ) {
+      return 'Pending'
+    }
+
+    if (booking.status === 'Confirmed') {
+      return 'Upcoming'
+    }
+
+    return booking.status || 'Pending'
+  }
+
   // Count Badges for Filters
   const counts = useMemo(() => {
-    const assigned = bookings.filter((b) => b.adminStatus === 'Assigned' && b.status !== 'Cancelled').length
-    const acknowledged = bookings.filter((b) => b.adminStatus === 'Acknowledged' && b.status !== 'Cancelled').length
-    const inProgress = bookings.filter((b) => b.adminStatus === 'In Progress' && b.status !== 'Cancelled').length
-    const completed = bookings.filter((b) => b.status === 'Completed' || b.adminStatus === 'Completed').length
+    const assigned = bookings.filter((b) => b.adminStatus === 'Assigned' && b.status !== 'Cancelled' && getDisplayStatus(b) !== 'Completed').length
+    const acknowledged = bookings.filter((b) => b.adminStatus === 'Acknowledged' && b.status !== 'Cancelled' && getDisplayStatus(b) !== 'Completed').length
+    const inProgress = bookings.filter((b) => b.adminStatus === 'In Progress' && b.status !== 'Cancelled' && getDisplayStatus(b) !== 'Completed').length
+    const completed = bookings.filter((b) => getDisplayStatus(b) === 'Completed' || b.status === 'Completed' || b.adminStatus === 'Completed').length
     const declinedCancelled = bookings.filter((b) => b.adminStatus === 'Declined by Tech' || b.status === 'Cancelled').length
 
     return {

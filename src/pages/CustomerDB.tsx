@@ -4,16 +4,32 @@ import { currentUserRole, currentUserEmail, logout } from '../auth'
 import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
-import PulseTypewriterHeader from '../components/InkTypewriterHeader'
+import InkTypewriterHeader from '../components/InkTypewriterHeader'
+import { CalendarIcon, ClockIcon, UserIcon, CheckIcon, AlertIcon, ContractorIcon } from '../components/ui/Icons'
 
 export default function CustomerDB() {
   const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
 
-  console.log('currentUserEmail:', currentUserEmail)
-  console.log('all bookings:', bookings)
-
   const getBookingDateTime = (booking: any) => {
-    return new Date(`${booking.date}T${booking.time}`)
+    if (!booking || !booking.date) return new Date()
+    const [year, month, day] = booking.date.split('-').map(Number)
+    let hours = 0
+    let minutes = 0
+
+    if (booking.time) {
+      const parts = booking.time.trim().split(' ')
+      const [rawHours, rawMinutes] = parts[0].split(':').map(Number)
+      hours = rawHours
+      minutes = rawMinutes || 0
+
+      if (parts[1]) {
+        const modifier = parts[1].toUpperCase()
+        if (modifier === 'PM' && hours < 12) hours += 12
+        if (modifier === 'AM' && hours === 12) hours = 0
+      }
+    }
+
+    return new Date(year, month - 1, day, hours, minutes)
   }
 
   const getDisplayStatus = (booking: any) => {
@@ -21,6 +37,13 @@ export default function CustomerDB() {
 
     if (booking.status === 'Cancelled') {
       return 'Cancelled'
+    }
+
+    // Auto-complete any job order whose scheduled date/time has passed!
+    const bookingDateTime = getBookingDateTime(booking)
+    const now = new Date()
+    if (bookingDateTime < now) {
+      return 'Completed'
     }
 
     if (
@@ -33,13 +56,6 @@ export default function CustomerDB() {
     }
 
     if (booking.status === 'Confirmed') {
-      const bookingDateTime = getBookingDateTime(booking)
-      const now = new Date()
-
-      if (bookingDateTime < now) {
-        return 'Completed'
-      }
-
       return 'Upcoming'
     }
 
@@ -47,26 +63,8 @@ export default function CustomerDB() {
   }
 
   const getBookingTimestamp = (booking: any) => {
-    const [year, month, day] = booking.date.split('-').map(Number)
-
-    let hours = 0
-    let minutes = 0
-
-    if (booking.time) {
-      const [timePart, modifier] = booking.time.split(' ')
-      const [rawHours, rawMinutes] = timePart.split(':').map(Number)
-
-      hours = rawHours
-      minutes = rawMinutes
-
-      if (modifier === 'AM' && hours === 12) {
-        hours = 0
-      } else if (modifier === 'PM' && hours !== 12) {
-        hours += 12
-      }
-    }
-
-    return new Date(year, month - 1, day, hours, minutes).getTime()
+    const bDate = getBookingDateTime(booking)
+    return bDate.getTime()
   }
 
   const sortHistoryBookingsPrioritizeCompleted = (items: any[]) => {
@@ -133,7 +131,6 @@ export default function CustomerDB() {
   const [toastVariant, setToastVariant] = useState<'success' | 'warning' | 'error'>('warning')
   const [showCancelModal, setShowCancelModal] = useState(false)
   const [cancelReasonInput, setCancelReasonInput] = useState('')
-  
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -185,25 +182,25 @@ export default function CustomerDB() {
             left: '50%',
             transform: 'translateX(-50%)',
             width: '90%',
-            maxWidth: '500px',
+            maxWidth: '520px',
             zIndex: 9999,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '16px',
-            background: 'rgba(255, 255, 255, 0.96)',
-            border: '1px solid rgba(14, 165, 233, 0.35)',
+            background: '#141417',
+            border: '1px solid rgba(245, 158, 11, 0.35)',
             borderRadius: '16px',
-            boxShadow: '0 12px 36px rgba(14, 165, 233, 0.2)',
+            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6)',
             borderLeft: `5px solid ${
               toastVariant === 'success'
-                ? '#0284c7'
+                ? '#f59e0b'
                 : toastVariant === 'error'
                 ? '#ef4444'
-                : '#f59e0b'
+                : '#fbbf24'
             }`,
             padding: '16px 20px',
-            color: '#0f172a',
+            color: '#ffffff',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
@@ -212,7 +209,7 @@ export default function CustomerDB() {
                 width: '34px',
                 height: '34px',
                 borderRadius: '50%',
-                background: 'rgba(14, 165, 233, 0.12)',
+                background: 'rgba(245, 158, 11, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -220,13 +217,17 @@ export default function CustomerDB() {
                 fontWeight: 700,
                 color:
                   toastVariant === 'success'
-                    ? '#0284c7'
+                    ? '#fbbf24'
                     : toastVariant === 'error'
-                    ? '#ef4444'
-                    : '#d97706',
+                    ? '#f87171'
+                    : '#f59e0b',
               }}
             >
-              {toastVariant === 'success' ? '✓' : toastVariant === 'error' ? '✕' : 'ℹ'}
+              {toastVariant === 'success' ? (
+                <CheckIcon size={18} style={{ color: '#fbbf24' }} />
+              ) : (
+                <AlertIcon size={18} style={{ color: toastVariant === 'error' ? '#f87171' : '#f59e0b' }} />
+              )}
             </div>
             <div>
               <p
@@ -236,17 +237,17 @@ export default function CustomerDB() {
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  color: '#0284c7',
+                  color: '#fbbf24',
                 }}
               >
-                Appointment Status Alert
+                Dispatch Work Order Alert
               </p>
               <p
                 style={{
                   margin: '2px 0 0 0',
                   fontSize: '14px',
                   fontWeight: 600,
-                  color: '#0f172a',
+                  color: '#ffffff',
                 }}
               >
                 {toastMessage}
@@ -255,22 +256,21 @@ export default function CustomerDB() {
           </div>
           <button
             onClick={() => setShowToast(false)}
-            aria-label="Dismiss notification"
             style={{
               background: 'none',
               border: 'none',
               color: 'var(--text-secondary)',
               cursor: 'pointer',
-              fontSize: '20px',
+              fontSize: '16px',
               padding: '4px',
             }}
           >
-            ×
+            ✕
           </button>
         </div>
       )}
 
-      {/* Branding Navigation Header Bar */}
+      {/* Header Bar */}
       <div
         style={{
           display: 'flex',
@@ -294,131 +294,110 @@ export default function CustomerDB() {
             </span>
           </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <PulseTypewriterHeader text="Manage Your Booking" />
-          <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '7px 12px', fontSize: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <InkTypewriterHeader text="Field Worker Terminal" />
+          <button onClick={handleLogout} className="btn btn-secondary" style={{ padding: '8px 16px', fontSize: '13px' }}>
             Logout
           </button>
         </div>
       </div>
 
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '36px', marginBottom: '4px' }}>My Dashboard</h1>
-        <p>View your bookings, check appointment updates, and manage your visits.</p>
+      <div style={{ marginBottom: '28px' }}>
+        <h1 style={{ fontSize: '36px', marginBottom: '4px' }}>Field Worker Schedule Board</h1>
+        <p>Review your assigned trade work orders, job site addresses, and dispatch logs.</p>
       </div>
 
-      <div
-        className="premium-card"
-        style={{
-          marginBottom: '32px',
-        }}
-      >
-        <h2 style={{ fontSize: '20px', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          Current Appointments
-        </h2>
-
+      {/* Hero Showcase / Split View */}
+      <div className="premium-card" style={{ marginBottom: '32px', padding: '28px' }}>
         {latestBooking ? (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '24px',
-            }}
-          >
-            {/* Left Column: Next Appointment Details */}
-            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '15px', color: 'var(--text-primary)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <span style={{ fontSize: '12px', background: 'rgba(16, 185, 129, 0.12)', color: '#34d399', padding: '4px 10px', borderRadius: '9999px', fontWeight: 600 }}>
-                    🔥 Next Session
-                  </span>
-                </div>
-                <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Service:</strong>{' '}
-                  {latestBooking.service}
-                </p>
-                {/* High-Visibility Date & Time Ticket Banner (Dental Sky Blue Theme) */}
+          <div className="booking-split-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+            {/* Left Column: Primary Active Session */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <span className={`status-badge ${getDisplayStatus(latestBooking).toLowerCase()}`}>
+                  {getDisplayStatus(latestBooking)}
+                </span>
+                <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                  Primary Work Order
+                </span>
+              </div>
+
+              <h2 style={{ fontSize: '24px', marginBottom: '8px', color: 'var(--text-primary)' }}>
+                {latestBooking.service}
+              </h2>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', margin: '16px 0', fontSize: '14px', color: 'var(--text-secondary)' }}>
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    background: 'rgba(14, 165, 233, 0.08)',
-                    border: '1px solid rgba(14, 165, 233, 0.4)',
-                    borderRadius: '14px',
+                    gap: '12px',
+                    borderRadius: '12px',
                     overflow: 'hidden',
-                    boxShadow: '0 4px 20px rgba(14, 165, 233, 0.15)',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
                     margin: '8px 0',
                   }}
                 >
                   <div
                     style={{
                       padding: '10px 16px',
-                      background: 'rgba(14, 165, 233, 0.15)',
-                      borderRight: '1px solid rgba(14, 165, 233, 0.3)',
+                      background: 'rgba(245, 158, 11, 0.08)',
+                      borderRight: '1px solid rgba(245, 158, 11, 0.25)',
                       flex: 1,
                       textAlign: 'center',
                     }}
                   >
-                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#0284c7', display: 'block' }}>
-                      APPOINTMENT DATE
+                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#f59e0b', display: 'block' }}>
+                      SCHEDULED DATE
                     </span>
-                    <span style={{ fontSize: '15px', fontWeight: 800, color: '#0f172a', whiteSpace: 'nowrap' }}>
-                      📅 {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedDate ? latestBooking.requestedDate : latestBooking.date}
+                    <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <CalendarIcon size={15} style={{ color: '#f59e0b' }} /> {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedDate ? latestBooking.requestedDate : latestBooking.date}
                     </span>
                   </div>
                   <div
                     style={{
                       padding: '10px 18px',
-                      background: 'rgba(14, 165, 233, 0.25)',
+                      background: 'rgba(245, 158, 11, 0.15)',
                       flex: 1,
                       textAlign: 'center',
                     }}
                   >
-                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#0369a1', display: 'block' }}>
-                      TIME SLOT
+                    <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#fbbf24', display: 'block' }}>
+                      DISPATCH TIME
                     </span>
-                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#0284c7', whiteSpace: 'nowrap' }}>
-                      🕒 {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime ? latestBooking.requestedTime : latestBooking.time}
+                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#f59e0b', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <ClockIcon size={16} /> {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime ? latestBooking.requestedTime : latestBooking.time}
                     </span>
                   </div>
                 </div>
                 {latestBooking.artistName && (
                   <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong>{' '}
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
-                      {BUSINESS_CONFIG.artists.find((a) => a.id === latestBooking.artistId || a.name === latestBooking.artistName)?.avatarEmoji || '👤'}{' '}
-                      {latestBooking.artistName}
-                    </span>
-                  </p>
-                )}
-                {latestBooking.depositAmount != null && (
-                  <p>
-                    <strong style={{ color: 'var(--text-secondary)' }}>Deposit Amount:</strong>{' '}
-                    <span style={{ color: 'var(--accent-color)', fontWeight: 600 }}>
-                      £{latestBooking.depositAmount.toFixed(2)} (Paid)
+                    <strong style={{ color: 'var(--text-secondary)' }}>Assigned {BUSINESS_CONFIG.staffLabel}:</strong>{' '}
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600, color: '#fbbf24' }}>
+                      <ContractorIcon size={16} style={{ color: '#f59e0b' }} /> {latestBooking.artistName}
                     </span>
                   </p>
                 )}
                 <p style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Status:</strong>{' '}
+                  <strong style={{ color: 'var(--text-secondary)' }}>Job Status:</strong>{' '}
                   <span className={`status-badge ${getDisplayStatus(latestBooking).toLowerCase()}`}>
                     {getDisplayStatus(latestBooking)}
                   </span>
                 </p>
                 {latestBooking.adminStatus === 'Reschedule Requested' && (
-                  <p style={{ color: '#facc15', fontWeight: 600, fontSize: '13px', marginTop: '4px' }}>
-                    ★ Requested new slot — awaiting approval
+                  <p style={{ color: '#fbbf24', fontWeight: 600, fontSize: '13px', marginTop: '4px' }}>
+                    ★ Requested new dispatch slot — awaiting office approval
                   </p>
                 )}
                 <p>
-                  <strong style={{ color: 'var(--text-secondary)' }}>Notes:</strong>{' '}
-                  {latestBooking.notes || 'No notes added'}
+                  <strong style={{ color: 'var(--text-secondary)' }}>Site & Gate Notes:</strong>{' '}
+                  {latestBooking.notes || 'No site notes added'}
                 </p>
               </div>
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
                 <Link to="/book" style={{ textDecoration: 'none' }}>
-                  <button className="btn btn-primary" style={{ padding: '8px 14px', fontSize: '13px' }}>Book New</button>
+                  <button className="btn btn-primary" style={{ padding: '8px 14px', fontSize: '13px' }}>Log New Work Order</button>
                 </Link>
                 {canManageLatestBooking && getDisplayStatus(latestBooking) === 'Upcoming' && (
                   <button
@@ -430,7 +409,7 @@ export default function CustomerDB() {
                       })
                     }
                   >
-                    Reschedule
+                    Reschedule Job
                   </button>
                 )}
                 {canManageLatestBooking && (
@@ -442,7 +421,7 @@ export default function CustomerDB() {
                       setCancelReasonInput('')
                     }}
                   >
-                    Cancel
+                    Recall Job
                   </button>
                 )}
               </div>
@@ -454,7 +433,7 @@ export default function CustomerDB() {
                 // Case B: Show other active sessions list
                 <div>
                   <h3 style={{ fontSize: '16px', marginBottom: '14px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    ⏳ Other Scheduled Sessions ({sortedActiveBookings.length - 1})
+                    <ClockIcon size={16} style={{ color: '#f59e0b' }} /> Other Dispatched Jobs ({sortedActiveBookings.length - 1})
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '240px', overflowY: 'auto', paddingRight: '8px' }}>
                     {sortedActiveBookings.slice(1).map((booking) => {
@@ -475,25 +454,25 @@ export default function CustomerDB() {
                         >
                           <div>
                             <p style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>{booking.service}</p>
-                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                              📅 {booking.date} at {booking.time}
-                            </p>
                             <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              👤 {matchedArtist?.avatarEmoji || '👤'} {booking.artistName}
+                              <CalendarIcon size={12} /> {booking.date} at {booking.time}
+                            </p>
+                            <p style={{ fontSize: '12px', color: '#fbbf24', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <UserIcon size={12} /> {booking.artistName || matchedArtist?.name}
                             </p>
                           </div>
                           <button
                             className="btn btn-danger"
                             style={{ padding: '6px 10px', fontSize: '11px' }}
                             onClick={() => {
-                              const reason = prompt('Please enter cancellation reason:')
+                              const reason = prompt('Please enter recall reason:')
                               if (reason !== null) {
-                                cancelBooking(booking.id, reason || 'Cancelled by customer')
-                                addNotification(`Customer cancelled booking: ${booking.service} with ${booking.artistName}`)
+                                cancelBooking(booking.id, reason || 'Recalled by field technician')
+                                addNotification(`Technician recalled job work order: ${booking.service} for ${booking.artistName}`)
                               }
                             }}
                           >
-                            Cancel
+                            Recall Job
                           </button>
                         </div>
                       )
@@ -501,7 +480,7 @@ export default function CustomerDB() {
                   </div>
                 </div>
               ) : (
-                // Case A: Show Premium Artist Profile Showcase
+                // Case A: Show Premium Instructor Profile Showcase
                 <div style={{ textAlign: 'center', padding: '10px 0' }}>
                   {latestBooking.artistName ? (() => {
                     const artist = BUSINESS_CONFIG.artists.find((a) => a.id === latestBooking.artistId || a.name === latestBooking.artistName)
@@ -512,47 +491,40 @@ export default function CustomerDB() {
                             width: '80px',
                             height: '80px',
                             borderRadius: '50%',
-                            background: 'rgba(16, 185, 129, 0.08)',
+                            background: 'rgba(245, 158, 11, 0.12)',
                             border: '2px solid var(--accent-color)',
-                            color: 'var(--text-primary)',
+                            color: '#f59e0b',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            fontSize: '36px',
+                            fontSize: '28px',
+                            fontWeight: 800,
                             marginBottom: '12px',
-                            boxShadow: '0 0 16px rgba(16, 185, 129, 0.2)',
+                            boxShadow: '0 0 16px rgba(245, 158, 11, 0.25)',
                             overflow: 'hidden',
                           }}
                         >
-                          {artist?.avatarUrl ? (
-                            <img
-                              src={artist.avatarUrl}
-                              alt={artist.name}
-                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                            />
-                          ) : (
-                            artist?.avatarEmoji || '👤'
-                          )}
+                          <ContractorIcon size={36} style={{ color: '#f59e0b' }} />
                         </div>
                         <h3 style={{ fontSize: '17px', margin: '0 0 4px 0', fontWeight: 700, color: 'var(--text-primary)' }}>
-                          Your {BUSINESS_CONFIG.staffLabel}: {latestBooking.artistName}
+                          Assigned {BUSINESS_CONFIG.staffLabel}: {latestBooking.artistName}
                         </h3>
                         {artist?.specialty && (
-                          <span style={{ fontSize: '11px', background: 'rgba(255, 255, 255, 0.05)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
+                          <span style={{ fontSize: '11px', background: 'rgba(245, 158, 11, 0.12)', color: '#fbbf24', padding: '2px 8px', borderRadius: '9999px', fontWeight: 600 }}>
                             ✦ {artist.specialty}
                           </span>
                         )}
                         <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginTop: '12px', maxWidth: '260px', lineHeight: '1.4' }}>
-                          "Welcome to the clinic! We are committed to providing premium, comfortable care. Please bring your medical history and arrive 10 minutes early."
+                          "Apex Trade Operations: Inspect site address and gate notes prior to dispatch. Pre-load tools & confirm arrival with dispatch."
                         </p>
                       </div>
                     )
                   })() : (
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <div style={{ fontSize: '40px', marginBottom: '8px' }}>🩺</div>
-                      <h3 style={{ fontSize: '16px', margin: '0 0 4px 0', fontWeight: 700 }}>No {BUSINESS_CONFIG.staffLabel} Selected</h3>
+                      <ContractorIcon size={40} style={{ color: '#f59e0b', marginBottom: '8px' }} />
+                      <h3 style={{ fontSize: '16px', margin: '0 0 4px 0', fontWeight: 700 }}>No {BUSINESS_CONFIG.staffLabel} Assigned</h3>
                       <p style={{ fontSize: '12px', color: 'var(--text-secondary)', maxWidth: '240px' }}>
-                        Any available professional {BUSINESS_CONFIG.staffLabel.toLowerCase()} will be assigned to your service.
+                        An available trade crew will be assigned by dispatch.
                       </p>
                     </div>
                   )}
@@ -563,10 +535,10 @@ export default function CustomerDB() {
         ) : (
           <div style={{ textAlign: 'center', padding: '32px 0' }}>
             <p style={{ color: 'var(--text-secondary)', fontSize: '15px', marginBottom: '20px' }}>
-              No appointments scheduled right now.
+              No work orders assigned right now.
             </p>
             <Link to="/book" style={{ textDecoration: 'none' }}>
-              <button className="btn btn-primary" style={{ padding: '10px 20px' }}>Book Your First Appointment</button>
+              <button className="btn btn-primary" style={{ padding: '10px 20px' }}>Log New Work Order</button>
             </Link>
           </div>
         )}
