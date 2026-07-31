@@ -5,20 +5,21 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
+import { AcademicIcon, ClockIcon, CalendarIcon, CheckIcon } from '../components/ui/Icons'
 
 const adminBadgeStyle = (adminStatus: string): React.CSSProperties => {
   let bg = 'rgba(255, 255, 255, 0.05)'
   let color = 'var(--text-secondary)'
 
   if (adminStatus === 'New' || adminStatus === 'Reschedule Requested') {
-    bg = 'rgba(16, 185, 129, 0.15)'
-    color = '#34d399'
+    bg = 'rgba(5, 150, 105, 0.15)'
+    color = '#059669'
   } else if (adminStatus === 'Needs Action') {
     bg = 'rgba(234, 179, 8, 0.15)'
-    color = '#facc15'
+    color = '#b45309'
   } else if (adminStatus === 'Cancelled') {
     bg = 'rgba(239, 68, 68, 0.15)'
-    color = '#f87171'
+    color = '#dc2626'
   }
 
   return {
@@ -56,7 +57,7 @@ export default function AdminDB() {
   const [blockStaffId, setBlockStaffId] = useState(BUSINESS_CONFIG.artists[0].id)
   const [blockDate, setBlockDate] = useState(() => new Date().toISOString().split('T')[0])
   const [blockTime, setBlockTime] = useState('12:00')
-  const [blockReason, setBlockReason] = useState('Lunch Break / Out of Office')
+  const [blockReason, setBlockReason] = useState('Faculty Office Hours / Campus Break')
 
   const [statusFilter, setStatusFilter] = useState('All')
   const [artistFilter, setArtistFilter] = useState('All')
@@ -77,6 +78,16 @@ export default function AdminDB() {
       booking.adminStatus === 'Needs Action'
   )
 
+  // Admin Toast Alert State
+  const [adminToast, setAdminToast] = useState<{ message: string; subtext: string; variant: 'success' | 'warning' | 'error' } | null>(null)
+
+  const triggerAdminToast = (message: string, subtext: string, variant: 'success' | 'warning' | 'error' = 'success') => {
+    setAdminToast({ message, subtext, variant })
+    setTimeout(() => {
+      setAdminToast(null)
+    }, 6000)
+  }
+
   const selectedBooking = useMemo(
     () => bookings.find((booking) => booking.id === selectedBookingId) || null,
     [bookings, selectedBookingId]
@@ -92,19 +103,36 @@ export default function AdminDB() {
     return <Navigate to="/" replace />
   }
 
-  const getTodayString = () => {
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = String(today.getMonth() + 1).padStart(2, '0')
-    const day = String(today.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-  }
-
   const getDisplayStatus = (booking: any) => {
     if (!booking) return 'Pending'
 
     if (booking.status === 'Cancelled') {
       return 'Cancelled'
+    }
+
+    if (!booking || !booking.date) return 'Pending'
+    const [year, month, day] = booking.date.split('-').map(Number)
+    let hours = 0
+    let minutes = 0
+
+    if (booking.time) {
+      const parts = booking.time.trim().split(' ')
+      const [rawHours, rawMinutes] = parts[0].split(':').map(Number)
+      hours = rawHours
+      minutes = rawMinutes || 0
+
+      if (parts[1]) {
+        const modifier = parts[1].toUpperCase()
+        if (modifier === 'PM' && hours < 12) hours += 12
+        if (modifier === 'AM' && hours === 12) hours = 0
+      }
+    }
+
+    const bookingDateTime = new Date(year, month - 1, day, hours, minutes)
+    const now = new Date()
+
+    if (bookingDateTime < now) {
+      return 'Completed'
     }
 
     if (
@@ -113,10 +141,6 @@ export default function AdminDB() {
       booking.adminStatus === 'Needs Action'
     ) {
       return 'Pending'
-    }
-
-    if (booking.status === 'Confirmed' && booking.date && booking.date < getTodayString()) {
-      return 'Completed'
     }
 
     if (booking.status === 'Confirmed') {
@@ -147,9 +171,10 @@ export default function AdminDB() {
 
   // Synchronize form inputs when the selected completed booking changes
   useEffect(() => {
-    if (selectedBooking && getDisplayStatus(selectedBooking) === 'Completed') {
-      const matchedService = BUSINESS_CONFIG.services.find((s) => s.name === selectedBooking.service)
-      const defaultPrice = matchedService ? matchedService.price : 0
+    if (selectedBooking) {
+      const defaultPrice = selectedBooking.service
+        ? BUSINESS_CONFIG.services.find((s) => s.name === selectedBooking.service)?.price || 0
+        : 0
 
       setPriceChargedInput(String(selectedBooking.priceCharged ?? defaultPrice))
       setAftercareInput(selectedBooking.adminNotesForCustomer || '')
@@ -181,7 +206,11 @@ export default function AdminDB() {
       adminNotesForCustomer: aftercareInput,
       internalAdminNotes: internalNotesInput,
     })
-    alert('Session notes and pricing updated successfully!')
+    triggerAdminToast(
+      'Syllabus & Notes Updated!',
+      `Updated attendance notes & tuition for ${selectedBooking.customerName || 'student'}. Student will receive an instant notification banner.`,
+      'success'
+    )
   }
 
   useEffect(() => {
@@ -197,6 +226,74 @@ export default function AdminDB() {
         margin: '0 auto',
       }}
     >
+      {/* Admin Action Feedback Toast Popup */}
+      {adminToast && (
+        <div
+          role="alert"
+          style={{
+            position: 'fixed',
+            top: '24px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '90%',
+            maxWidth: '560px',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            background: '#ffffff',
+            border: `1px solid ${adminToast.variant === 'success' ? '#059669' : adminToast.variant === 'error' ? '#ef4444' : '#facc15'}`,
+            borderRadius: '16px',
+            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.12)',
+            padding: '16px 20px',
+            color: '#0f172a',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
+            <div
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                background: adminToast.variant === 'success' ? 'rgba(5, 150, 105, 0.15)' : adminToast.variant === 'error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(234, 179, 8, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              {adminToast.variant === 'success' ? (
+                <CheckIcon size={20} style={{ color: '#059669' }} />
+              ) : (
+                <ClockIcon size={20} style={{ color: adminToast.variant === 'error' ? '#dc2626' : '#b45309' }} />
+              )}
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>
+                {adminToast.message}
+              </p>
+              <p style={{ margin: '3px 0 0 0', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                {adminToast.subtext}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setAdminToast(null)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontSize: '16px',
+              padding: '4px',
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* Branding Navigation Header Bar */}
       <div
         style={{
@@ -242,8 +339,8 @@ export default function AdminDB() {
       </div>
 
       <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ fontSize: '36px', marginBottom: '4px' }}>Admin Dashboard</h1>
-        <p>Review bookings, statuses, and customer notes for {BUSINESS_CONFIG.name}.</p>
+        <h1 style={{ fontSize: '36px', marginBottom: '4px' }}>Faculty Dashboard</h1>
+        <p>Review course reservations, student rosters, and instructor notes for {BUSINESS_CONFIG.name}.</p>
       </div>
 
       {/* ─── PROMINENT ACTION QUEUE TOP BANNER ───────────────────── */}
@@ -259,20 +356,20 @@ export default function AdminDB() {
             style={{
               marginBottom: '28px',
               padding: '22px 26px',
-              border: '1px solid #0d9488',
-              background: 'rgba(13, 148, 136, 0.08)',
-              boxShadow: '0 8px 32px rgba(13, 148, 136, 0.16)',
+              border: '1px solid #059669',
+              background: 'rgba(5, 150, 105, 0.06)',
+              boxShadow: '0 8px 32px rgba(5, 150, 105, 0.12)',
               borderRadius: '20px',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <span style={{ fontSize: '26px' }}>🎓</span>
+              <AcademicIcon size={24} style={{ color: '#059669' }} />
               <div>
-                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0d9488', margin: 0 }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#059669', margin: 0 }}>
                   Course Enrollment Roster ({pendingRequests.length} Student Reservation{pendingRequests.length > 1 ? 's' : ''})
                 </h3>
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                  Cohort Seat Allocations (12/15 Seats Filled), Instructor Syllabi & Pre-Course Assessments.
+                  Cohort Seat Allocations, Instructor Syllabi & Pre-Course Assessments.
                 </span>
               </div>
             </div>
@@ -282,8 +379,8 @@ export default function AdminDB() {
                 <div
                   key={req.id}
                   style={{
-                    background: 'rgba(13, 148, 136, 0.06)',
-                    border: '1px solid rgba(13, 148, 136, 0.3)',
+                    background: '#ffffff',
+                    border: '1px solid rgba(5, 150, 105, 0.25)',
                     borderRadius: '14px',
                     padding: '16px 20px',
                     display: 'flex',
@@ -291,37 +388,41 @@ export default function AdminDB() {
                     alignItems: 'center',
                     flexWrap: 'wrap',
                     gap: '14px',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
                   }}
                 >
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
                       {req.adminStatus === 'Reschedule Requested' ? (
-                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(120, 53, 15, 0.15)', color: '#78350f', border: '1px solid #78350f' }}>
-                          🔄 RESCHEDULE REQUEST
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(234, 179, 8, 0.15)', color: '#b45309', border: '1px solid #f59e0b', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <ClockIcon size={12} /> RESCHEDULE REQUEST
                         </span>
                       ) : (
-                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(5, 150, 105, 0.15)', color: '#047857', border: '1px solid #059669' }}>
-                          🆕 NEW LESSON REQUEST
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(5, 150, 105, 0.15)', color: '#059669', border: '1px solid #059669', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <CalendarIcon size={12} /> NEW LESSON REQUEST
                         </span>
                       )}
-                      <strong style={{ color: '#773601', fontSize: '15px' }}>{req.service}</strong>
+                      <strong style={{ color: '#0f172a', fontSize: '15px' }}>{req.service}</strong>
                       <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                         — {req.customerName || 'Student'} ({req.customerEmail})
+                      </span>
+                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px', background: 'rgba(5, 150, 105, 0.12)', color: '#059669', border: '1px solid rgba(5, 150, 105, 0.3)' }}>
+                        {BUSINESS_CONFIG.staffLabel}: {req.artistName || 'Unassigned'}
                       </span>
                     </div>
 
                     {req.adminStatus === 'Reschedule Requested' ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px', marginTop: '4px', flexWrap: 'wrap' }}>
-                        <span style={{ color: '#78350f', textDecoration: 'line-through' }}>
+                        <span style={{ color: '#64748b', textDecoration: 'line-through' }}>
                           Original: {req.date} @ {req.time}
                         </span>
-                        <span style={{ color: '#047857', fontWeight: 800, background: 'rgba(5, 150, 105, 0.15)', padding: '2px 8px', borderRadius: '6px' }}>
+                        <span style={{ color: '#b45309', fontWeight: 800, background: 'rgba(245, 158, 11, 0.15)', padding: '2px 8px', borderRadius: '6px' }}>
                           👉 Requested New: {req.requestedDate} @ {req.requestedTime}
                         </span>
                       </div>
                     ) : (
-                      <div style={{ fontSize: '13px', color: '#059669', fontWeight: 700, marginTop: '4px' }}>
-                        📅 Requested Slot: {req.date} at {req.time}
+                      <div style={{ fontSize: '13px', color: '#059669', fontWeight: 700, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <CalendarIcon size={13} /> Requested Slot: {req.date} at {req.time}
                       </div>
                     )}
                   </div>
@@ -330,31 +431,59 @@ export default function AdminDB() {
                     {req.adminStatus === 'Reschedule Requested' ? (
                       <>
                         <button
-                          onClick={() => acceptReschedule(req.id)}
+                          onClick={() => {
+                            acceptReschedule(req.id)
+                            triggerAdminToast(
+                              'Reschedule Approved!',
+                              `Session with student ${req.customerName || 'Student'} confirmed for ${req.requestedDate || req.date} at ${req.requestedTime || req.time}. Review in All Bookings.`,
+                              'success'
+                            )
+                          }}
                           className="btn btn-primary"
-                          style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
+                          style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                         >
-                          ✅ Approve New Slot
+                          <CheckIcon size={12} /> Approve New Slot
                         </button>
                         <button
-                          onClick={() => declineReschedule(req.id)}
+                          onClick={() => {
+                            declineReschedule(req.id)
+                            triggerAdminToast(
+                              'Reschedule Declined',
+                              `Original session with ${req.customerName || 'Student'} on ${req.date} at ${req.time} remains active.`,
+                              'warning'
+                            )
+                          }}
                           className="btn btn-danger"
                           style={{ fontSize: '12px', padding: '6px 14px' }}
                         >
-                          ❌ Decline
+                          Decline
                         </button>
                       </>
                     ) : (
                       <>
                         <button
-                          onClick={() => updateBookingStatus(req.id, 'Confirmed')}
+                          onClick={() => {
+                            updateBookingStatus(req.id, 'Confirmed')
+                            triggerAdminToast(
+                              'Course Enrollment Confirmed!',
+                              `Lesson "${req.service}" for ${req.customerName || 'Student'} confirmed for ${req.date} at ${req.time}. Review in All Bookings.`,
+                              'success'
+                            )
+                          }}
                           className="btn btn-primary"
                           style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
                         >
-                          Confirm Lesson
+                          Confirm Enrollment
                         </button>
                         <button
-                          onClick={() => updateBookingStatus(req.id, 'Cancelled')}
+                          onClick={() => {
+                            updateBookingStatus(req.id, 'Cancelled')
+                            triggerAdminToast(
+                              'Reservation Declined',
+                              `Lesson "${req.service}" for ${req.customerName || 'Student'} was cancelled.`,
+                              'error'
+                            )
+                          }}
                           className="btn btn-danger"
                           style={{ fontSize: '12px', padding: '6px 14px' }}
                         >
@@ -480,11 +609,11 @@ export default function AdminDB() {
                     </div>
                   ) : (
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', margin: '10px 0' }}>
-                      <span style={{ fontSize: '13px', fontWeight: 800, color: '#78350f', background: 'rgba(120, 53, 15, 0.08)', border: '1px solid rgba(120, 53, 15, 0.25)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
-                        📅 {booking.date}
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#059669', background: 'rgba(5, 150, 105, 0.08)', border: '1px solid rgba(5, 150, 105, 0.25)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <CalendarIcon size={14} /> {booking.date}
                       </span>
-                      <span style={{ fontSize: '13px', fontWeight: 900, color: '#059669', background: 'rgba(5, 150, 105, 0.15)', border: '1px solid rgba(5, 150, 105, 0.35)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap' }}>
-                        🕒 {booking.time}
+                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#059669', background: 'rgba(5, 150, 105, 0.12)', border: '1px solid rgba(5, 150, 105, 0.35)', padding: '5px 12px', borderRadius: '8px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                        <ClockIcon size={14} /> {booking.time}
                       </span>
                     </div>
                   )}
@@ -588,8 +717,11 @@ export default function AdminDB() {
                     }}
                   >
                     <p style={{ fontWeight: 600, fontSize: '15px' }}>{booking.service}</p>
-                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '4px 0 8px 0' }}>
-                      Client: {booking.customerName}
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '2px 0' }}>
+                      Student: {booking.customerName}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#059669', fontWeight: 600, margin: '2px 0 8px 0' }}>
+                      {BUSINESS_CONFIG.staffLabel}: {booking.artistName || 'Unassigned'}
                     </p>
 
                     {booking.adminStatus === 'Reschedule Requested' ? (
@@ -608,7 +740,7 @@ export default function AdminDB() {
                           <strong>From:</strong> {booking.originalDate || booking.date} at{' '}
                           {booking.originalTime || booking.time}
                         </p>
-                        <p style={{ margin: '2px 0', color: '#facc15' }}>
+                        <p style={{ margin: '2px 0', color: '#b45309' }}>
                           <strong>To:</strong> {booking.requestedDate} at {booking.requestedTime}
                         </p>
                       </div>
@@ -623,10 +755,13 @@ export default function AdminDB() {
                         onClick={() => {
                           if (booking.adminStatus === 'Reschedule Requested') {
                             acceptReschedule(booking.id)
+                            triggerAdminToast('Reschedule Approved!', `Approved new date ${booking.requestedDate || booking.date} at ${booking.requestedTime || booking.time} for student ${booking.customerName}.`, 'success')
                           } else if (booking.status === 'Cancelled' && booking.adminStatus === 'Needs Action') {
                             acknowledgeBooking(booking.id)
+                            triggerAdminToast('Cancellation Acknowledged', `Acknowledged cancellation from student ${booking.customerName}.`, 'warning')
                           } else {
                             updateBookingStatus(booking.id, 'Confirmed')
+                            triggerAdminToast('Course Enrollment Confirmed!', `Confirmed session "${booking.service}" for student ${booking.customerName} on ${booking.date} at ${booking.time}.`, 'success')
                           }
                         }}
                         className="btn btn-primary"

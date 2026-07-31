@@ -4,6 +4,7 @@ import { useBooking } from '../BookingContext'
 import { currentUserRole, currentUserEmail } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
+import { ClockIcon } from '../components/ui/Icons'
 
 export default function BookAppointment() {
   const navigate = useNavigate()
@@ -496,8 +497,8 @@ export default function BookAppointment() {
                       <p style={{ fontWeight: 700, fontSize: '15px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>
                         {srv.name}
                       </p>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                        ⏱️ {srv.durationMin} mins
+                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <ClockIcon size={12} /> {srv.durationMin} mins
                       </p>
                     </div>
                     <span
@@ -542,7 +543,7 @@ export default function BookAppointment() {
                       alignItems: 'center',
                       padding: '14px 10px',
                       borderRadius: '14px',
-                      background: isSelected ? 'rgba(16, 185, 129, 0.12)' : 'rgba(255, 255, 255, 0.03)',
+                      background: isSelected ? 'rgba(5, 150, 105, 0.12)' : 'rgba(255, 255, 255, 0.03)',
                       border: `2px solid ${isSelected ? 'var(--accent-color)' : 'var(--border-color)'}`,
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
@@ -554,14 +555,15 @@ export default function BookAppointment() {
                         width: '48px',
                         height: '48px',
                         borderRadius: '50%',
-                        background: isSelected ? 'var(--accent-color)' : 'rgba(255, 255, 255, 0.08)',
-                        color: isSelected ? '#ffffff' : 'var(--text-primary)',
+                        background: isSelected ? 'var(--accent-color)' : 'rgba(5, 150, 105, 0.15)',
+                        color: isSelected ? '#ffffff' : '#059669',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '22px',
+                        fontSize: '20px',
+                        fontWeight: 800,
                         marginBottom: '8px',
-                        boxShadow: isSelected ? '0 0 12px rgba(16, 185, 129, 0.4)' : 'none',
+                        boxShadow: isSelected ? '0 0 12px rgba(5, 150, 105, 0.4)' : 'none',
                       }}
                     >
                       {art.avatarUrl ? (
@@ -571,7 +573,7 @@ export default function BookAppointment() {
                           style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                         />
                       ) : (
-                        art.avatarEmoji || '👤'
+                        art.name.charAt(0)
                       )}
                     </div>
                     <span style={{ fontWeight: 700, fontSize: '14px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>

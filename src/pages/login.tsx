@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { login, register, currentUserRole } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
+import { UserIcon, SettingsIcon, SparklesIcon } from '../components/ui/Icons'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -93,7 +94,7 @@ export default function Login() {
           boxShadow: '0 4px 24px rgba(0,0,0,0.35)',
         }}
       >
-        <span style={{ fontSize: '14px' }}>⚡</span>
+        <SparklesIcon size={14} style={{ color: '#059669' }} />
         <span>Live product demo — all data is simulated for demonstration purposes only.</span>
       </div>
 
@@ -102,7 +103,8 @@ export default function Login() {
         className="premium-card"
         style={{
           width: '100%',
-          maxWidth: '420px',
+          maxWidth: '440px',
+          boxShadow: 'var(--shadow-elevated)',
           display: 'flex',
           flexDirection: 'column',
         }}
@@ -111,11 +113,11 @@ export default function Login() {
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
             <Logo size="large" />
           </div>
-          <h1 style={{ fontSize: '32px', marginBottom: '6px' }}>
-            {isSignUpMode ? 'Create Account' : BUSINESS_CONFIG.name}
-          </h1>
-          <p style={{ fontSize: '15px' }}>
-            {isSignUpMode ? 'Join us and start booking your sessions.' : BUSINESS_CONFIG.tagline}
+          <h1 style={{ fontSize: '28px', marginBottom: '6px' }}>{BUSINESS_CONFIG.name}</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+            {isSignUpMode
+              ? 'Create an account to book your appointments'
+              : 'Sign in to access your appointment dashboard'}
           </p>
         </div>
 
@@ -137,16 +139,24 @@ export default function Login() {
           </div>
         )}
 
-        {/* Quick Demo Access */}
+        {/* Demo Quick-Login Bar */}
         {!isSignUpMode && (
-          <div style={{ marginBottom: '24px' }}>
+          <div
+            style={{
+              marginBottom: '20px',
+              padding: '12px 14px',
+              background: 'rgba(5, 150, 105, 0.06)',
+              border: '1px solid rgba(5, 150, 105, 0.25)',
+              borderRadius: '12px',
+            }}
+          >
             <p
               style={{
                 fontSize: '11px',
                 fontWeight: 700,
+                color: '#059669',
                 textTransform: 'uppercase',
-                letterSpacing: '0.08em',
-                color: 'var(--text-secondary)',
+                letterSpacing: '0.05em',
                 textAlign: 'center',
                 marginBottom: '10px',
               }}
@@ -159,18 +169,18 @@ export default function Login() {
                 onClick={() => handleDemoLogin('customer')}
                 disabled={isLoggingIn}
                 className="btn btn-primary"
-                style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
+                style={{ flex: 1, fontSize: '13px', padding: '10px 8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                👤 Try as Customer
+                <UserIcon size={14} /> Try as Student
               </button>
               <button
                 type="button"
                 onClick={() => handleDemoLogin('admin')}
                 disabled={isLoggingIn}
                 className="btn btn-secondary"
-                style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
+                style={{ flex: 1, fontSize: '13px', padding: '10px 8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                ⚙️ Try as Admin
+                <SettingsIcon size={14} /> Try as Faculty
               </button>
             </div>
           </div>

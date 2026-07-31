@@ -157,21 +157,25 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : []
   })
 
+  const bookingsCollectionName = BUSINESS_CONFIG.dbPrefix ? `${BUSINESS_CONFIG.dbPrefix}_bookings` : 'bookings'
+  const notificationsCollectionName = BUSINESS_CONFIG.dbPrefix ? `${BUSINESS_CONFIG.dbPrefix}_notifications` : 'notifications'
+
   // Real-time Firebase Sync
   // Sync with Firestore when database is initialized
   useEffect(() => {
     if (!db) return
 
     const unsubscribeBookings = onSnapshot(
-      safeCollection('bookings'),
+      safeCollection(bookingsCollectionName),
       async (snapshot) => {
         if (snapshot.empty) {
           try {
             const batch = writeBatch(db)
             INITIAL_BOOKINGS.forEach((booking) => {
-              batch.set(safeDoc('bookings', booking.id), booking)
+              batch.set(safeDoc(bookingsCollectionName, booking.id), booking)
             })
             await batch.commit()
+            setBookings(INITIAL_BOOKINGS)
           } catch (err) {
             console.error('Failed to auto-seed initial bookings to Firestore:', err)
           }
@@ -190,7 +194,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     )
 
     const unsubscribeNotifications = onSnapshot(
-      safeCollection('notifications'),
+      safeCollection(notificationsCollectionName),
       (snapshot) => {
         const updatedNotifications: AdminNotification[] = []
         snapshot.forEach((doc) => {
@@ -216,6 +220,46 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  // ⚡ Live Instant Multi-Tab Broadcast Channel (Real-time sync without page refresh)
+  useEffect(() => {
+    if (typeof BroadcastChannel === 'undefined') return
+
+    const channel = new BroadcastChannel('nativebooking_live_sync')
+    channel.onmessage = (event) => {
+      if (event.data?.type === 'BOOKINGS_UPDATED' && Array.isArray(event.data.payload)) {
+        setBookings((current) => {
+          // Keep new local bookings if missing from broadcast payload
+          const merged = [...event.data.payload]
+          current.forEach((b) => {
+            if (!merged.some((m) => m.id === b.id)) {
+              merged.unshift(b)
+            }
+          })
+          return merged
+        })
+      }
+      if (event.data?.type === 'NOTIFICATIONS_UPDATED' && Array.isArray(event.data.payload)) {
+        setNotifications(event.data.payload)
+      }
+    }
+
+    return () => {
+      channel.close()
+    }
+  }, [])
+
+  const broadcastUpdate = (type: string, payload: any) => {
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        const channel = new BroadcastChannel('nativebooking_live_sync')
+        channel.postMessage({ type, payload })
+        channel.close()
+      } catch (err) {
+        console.warn('BroadcastChannel sync error:', err)
+      }
+    }
+  }
+
   useEffect(() => {
     localStorage.setItem(bookingsKey, JSON.stringify(bookings))
   }, [bookings])
@@ -223,28 +267,6 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     localStorage.setItem(notificationsKey, JSON.stringify(notifications))
   }, [notifications])
-
-  useEffect(() => {
-    if (isFirebaseEnabled) return
-
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === bookingsKey) {
-        const updatedBookings = event.newValue ? JSON.parse(event.newValue) : []
-        setBookings(updatedBookings)
-      }
-
-      if (event.key === notificationsKey) {
-        const updatedNotifications = event.newValue ? JSON.parse(event.newValue) : []
-        setNotifications(updatedNotifications)
-      }
-    }
-
-    window.addEventListener('storage', handleStorageChange)
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-    }
-  }, [])
 
   const addBooking = async (booking: Booking) => {
     const bookingWithId: Booking = {
@@ -256,37 +278,39 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     setBookings((prev) => {
       const updated = [bookingWithId, ...prev.filter((b) => b.id !== bookingWithId.id)]
-      localStorage.setItem('bookings', JSON.stringify(updated))
+      localStorage.setItem(bookingsKey, JSON.stringify(updated))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
       return updated
     })
 
     if (isFirebaseEnabled) {
       try {
         const cleanData = JSON.parse(JSON.stringify(bookingWithId))
-        await safeSetDoc(safeDoc('bookings', bookingWithId.id), cleanData)
+        await safeSetDoc(safeDoc(bookingsCollectionName, bookingWithId.id), cleanData)
       } catch (err) {
         console.error('Failed to add booking to Firestore:', err)
       }
-    } else {
-      console.error('Firebase not enabled – cannot add booking to Firestore')
     }
-
   }
 
   const resetBookings = async () => {
-    setBookings([])
+    setBookings(INITIAL_BOOKINGS)
     setNotifications([])
-    localStorage.removeItem('bookings')
-    localStorage.removeItem('notifications')
+    localStorage.setItem(bookingsKey, JSON.stringify(INITIAL_BOOKINGS))
+    localStorage.removeItem(notificationsKey)
 
     if (isFirebaseEnabled) {
       try {
-        const bookingsSnapshot = await getDocs(collection(db, 'bookings'))
-        const notificationsSnapshot = await getDocs(collection(db, 'notifications'))
+        const bookingsSnapshot = await getDocs(collection(db, bookingsCollectionName))
+        const notificationsSnapshot = await getDocs(collection(db, notificationsCollectionName))
 
         const batch = writeBatch(db)
         bookingsSnapshot.forEach((doc) => batch.delete(doc.ref))
         notificationsSnapshot.forEach((doc) => batch.delete(doc.ref))
+
+        INITIAL_BOOKINGS.forEach((booking) => {
+          batch.set(safeDoc(bookingsCollectionName, booking.id), booking)
+        })
         await batch.commit()
       } catch (err) {
         console.error('Failed to reset Firestore bookings:', err)
@@ -302,24 +326,30 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     if (isFirebaseEnabled) {
       try {
-        await safeSetDoc(safeDoc('notifications', crypto.randomUUID()), newNotif)
+        await safeSetDoc(safeDoc(notificationsCollectionName, crypto.randomUUID()), newNotif)
       } catch (err) {
         console.error('Failed to add notification to Firestore:', err)
       }
     } else {
-      setNotifications((prev) => [newNotif, ...prev])
+      setNotifications((prev) => {
+        const updated = [newNotif, ...prev]
+        broadcastUpdate('NOTIFICATIONS_UPDATED', updated)
+        return updated
+      })
     }
   }
 
   const updateBooking = async (id: string, updatedBooking: Booking) => {
     const cleanData = JSON.parse(JSON.stringify(updatedBooking))
-    setBookings((prev) =>
-      prev.map((booking) => (booking.id === id ? updatedBooking : booking))
-    )
+    setBookings((prev) => {
+      const updated = prev.map((booking) => (booking.id === id ? updatedBooking : booking))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
-        await safeSetDoc(safeDoc('bookings', id), cleanData)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanData)
       } catch (err) {
         console.error('Failed to update Firestore booking:', err)
       }
@@ -339,9 +369,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       cancellationReason: newStatus === 'Cancelled' ? (reason || null) : null,
       customerNotification:
         newStatus === 'Confirmed'
-          ? 'Your appointment was confirmed.'
+          ? 'Your course enrollment seat was confirmed.'
           : newStatus === 'Cancelled'
-          ? `Your booking was cancelled by admin${reason ? `: ${reason}` : '.'}`
+          ? `Your booking was cancelled by academic admin${reason ? `: ${reason}` : '.'}`
           : null,
       customerNotificationType:
         newStatus === 'Confirmed'
@@ -351,8 +381,8 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
           : null,
     }
 
-    setBookings((prev) =>
-      prev.map((booking) =>
+    setBookings((prev) => {
+      const updated = prev.map((booking) =>
         booking.id === id
           ? {
               ...booking,
@@ -360,12 +390,14 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
             }
           : booking
       )
-    )
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
         const cleanPayload = JSON.parse(JSON.stringify(updatePayload))
-        await safeSetDoc(safeDoc('bookings', id), cleanPayload)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanPayload)
       } catch (err) {
         console.error('Failed to update booking status in Firestore:', err)
       }
@@ -381,7 +413,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       time: booking.requestedTime || booking.time,
       status: 'Confirmed',
       adminStatus: null,
-      customerNotification: `Your reschedule request was accepted. Your appointment is now confirmed for ${
+      customerNotification: `Your reschedule request was accepted. Your session is confirmed for ${
         booking.requestedDate || booking.date
       } at ${booking.requestedTime || booking.time}.`,
       customerNotificationType: 'success',
@@ -391,14 +423,16 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       requestedTime: null,
     }
 
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
-    )
+    setBookings((prev) => {
+      const updated = prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanUpdates)
       } catch (err) {
         console.error('Failed to accept reschedule in Firestore:', err)
       }
@@ -414,9 +448,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       time: booking.originalTime || booking.time,
       status: 'Confirmed',
       adminStatus: null,
-      customerNotification: `Your reschedule request was declined. Your original appointment on ${
+      customerNotification: `Your reschedule request was declined. Your original session on ${
         booking.originalDate || booking.date
-      } at ${booking.originalTime || booking.time} is still confirmed. You can keep this booking or cancel it if it no longer works for you.`,
+      } at ${booking.originalTime || booking.time} remains confirmed.`,
       customerNotificationType: 'warning',
       originalDate: null,
       originalTime: null,
@@ -424,14 +458,16 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       requestedTime: null,
     }
 
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
-    )
+    setBookings((prev) => {
+      const updated = prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanUpdates)
       } catch (err) {
         console.error('Failed to decline reschedule in Firestore:', err)
       }
@@ -446,8 +482,8 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       adminStatus: booking.status === 'Cancelled' ? 'Acknowledged' : (booking.adminStatus || null),
     }
 
-    setBookings((prev) =>
-      prev.map((b) =>
+    setBookings((prev) => {
+      const updated = prev.map((b) =>
         b.id === id
           ? {
               ...b,
@@ -455,12 +491,14 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
             }
           : b
       )
-    )
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanUpdates)
       } catch (err) {
         console.error('Failed to acknowledge booking in Firestore:', err)
       }
@@ -473,7 +511,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       adminStatus: 'Needs Action',
       cancelledBy: 'customer',
       cancellationReason: reason || null,
-      customerNotification: 'Your appointment was cancelled.',
+      customerNotification: 'Your course seat was cancelled.',
       customerNotificationType: 'error',
       requestedDate: null,
       requestedTime: null,
@@ -486,7 +524,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanUpdates)
       } catch (err) {
         console.error('Failed to cancel booking in Firestore:', err)
       }
@@ -496,13 +534,13 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   const clearBookings = async () => {
     setBookings([])
     setNotifications([])
-    localStorage.removeItem('bookings')
-    localStorage.removeItem('notifications')
+    localStorage.removeItem(bookingsKey)
+    localStorage.removeItem(notificationsKey)
 
     if (isFirebaseEnabled) {
       try {
-        const bookingsSnapshot = await getDocs(collection(db, 'bookings'))
-        const notificationsSnapshot = await getDocs(collection(db, 'notifications'))
+        const bookingsSnapshot = await getDocs(collection(db, bookingsCollectionName))
+        const notificationsSnapshot = await getDocs(collection(db, notificationsCollectionName))
 
         const batch = writeBatch(db)
         bookingsSnapshot.forEach((doc) => batch.delete(doc.ref))
@@ -529,7 +567,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     if (isFirebaseEnabled) {
       try {
-        await safeSetDoc(safeDoc('bookings', id), {
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), {
             customerNotification: null,
             customerNotificationType: null,
           })
@@ -543,26 +581,35 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     id: string,
     details: { priceCharged: number; adminNotesForCustomer: string; internalAdminNotes: string }
   ) => {
-    setBookings((prev) =>
-      prev.map((booking) =>
-        booking.id === id
+    const booking = bookings.find((b) => b.id === id)
+    const notifMsg = `Your instructor has updated the syllabus & attendance notes for your ${booking?.service || 'course session'} on ${booking?.date || 'past date'}.`
+
+    setBookings((prev) => {
+      const updated = prev.map((b) =>
+        b.id === id
           ? {
-              ...booking,
+              ...b,
               priceCharged: details.priceCharged,
               adminNotesForCustomer: details.adminNotesForCustomer,
               internalAdminNotes: details.internalAdminNotes,
+              customerNotification: notifMsg,
+              customerNotificationType: 'success' as const,
             }
-          : booking
+          : b
       )
-    )
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
-        await safeSetDoc(safeDoc('bookings', id), {
-           priceCharged: details.priceCharged,
-           adminNotesForCustomer: details.adminNotesForCustomer,
-           internalAdminNotes: details.internalAdminNotes,
-         })
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), {
+          priceCharged: details.priceCharged,
+          adminNotesForCustomer: details.adminNotesForCustomer,
+          internalAdminNotes: details.internalAdminNotes,
+          customerNotification: notifMsg,
+          customerNotificationType: 'success',
+        })
       } catch (err) {
         console.error('Failed to update session details in Firestore:', err)
       }
