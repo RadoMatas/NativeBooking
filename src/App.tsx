@@ -5,6 +5,7 @@ import CustomerDB from './pages/CustomerDB'
 import AdminDB from './pages/AdminDB'
 import BookAppointment from './pages/BookAppointment'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import Pricing from './pages/Pricing'
 import BookIntroCall from './pages/BookIntroCall'
 import AdminLogin from './pages/AdminLogin'
 // login.tsx file remains intact for sandbox branches (tattoo, dental, academic)
@@ -59,6 +60,7 @@ function App() {
             <Route path="/admin" element={<AdminDB />} />
             <Route path="/book" element={<BookAppointment />} />
             <Route path="/book-call" element={<BookIntroCall />} />
+            <Route path="/pricing" element={<Pricing />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
           </Routes>
         </BrowserRouter>

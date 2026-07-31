@@ -157,6 +157,13 @@ export default function PortalHome() {
         {/* Right Action Buttons */}
         <div className="aave-header-buttons" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <Button 
+            variant="secondary" 
+            size="sm" 
+            onClick={() => navigate('/pricing')}
+          >
+            Pricing
+          </Button>
+          <Button 
             variant="primary" 
             size="sm" 
             onClick={() => navigate('/book-call')}
@@ -494,6 +501,7 @@ export default function PortalHome() {
                 Products
               </h4>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#94a3b8' }}>
+                <li style={{ cursor: 'pointer' }} onClick={() => navigate('/pricing')}>Service Tiers & Pricing</li>
                 <li style={{ cursor: 'pointer' }} onClick={() => navigate('/book')}>Client Booking Portal</li>
                 <li style={{ cursor: 'pointer' }} onClick={() => navigate('/book-call')}>Discovery Call Engine</li>
               </ul>
