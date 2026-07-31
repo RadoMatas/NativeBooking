@@ -157,21 +157,25 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     return saved ? JSON.parse(saved) : []
   })
 
+  const bookingsCollectionName = BUSINESS_CONFIG.dbPrefix ? `${BUSINESS_CONFIG.dbPrefix}_bookings` : 'bookings'
+  const notificationsCollectionName = BUSINESS_CONFIG.dbPrefix ? `${BUSINESS_CONFIG.dbPrefix}_notifications` : 'notifications'
+
   // Real-time Firebase Sync
   // Sync with Firestore when database is initialized
   useEffect(() => {
     if (!db) return
 
     const unsubscribeBookings = onSnapshot(
-      safeCollection('bookings'),
+      safeCollection(bookingsCollectionName),
       async (snapshot) => {
         if (snapshot.empty) {
           try {
             const batch = writeBatch(db)
             INITIAL_BOOKINGS.forEach((booking) => {
-              batch.set(safeDoc('bookings', booking.id), booking)
+              batch.set(safeDoc(bookingsCollectionName, booking.id), booking)
             })
             await batch.commit()
+            setBookings(INITIAL_BOOKINGS)
           } catch (err) {
             console.error('Failed to auto-seed initial bookings to Firestore:', err)
           }
@@ -190,7 +194,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     )
 
     const unsubscribeNotifications = onSnapshot(
-      safeCollection('notifications'),
+      safeCollection(notificationsCollectionName),
       (snapshot) => {
         const updatedNotifications: AdminNotification[] = []
         snapshot.forEach((doc) => {
@@ -304,7 +308,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanData = JSON.parse(JSON.stringify(bookingWithId))
-        await safeSetDoc(safeDoc('bookings', bookingWithId.id), cleanData)
+        await safeSetDoc(safeDoc(bookingsCollectionName, bookingWithId.id), cleanData)
       } catch (err) {
         console.error('Failed to add booking to Firestore:', err)
       }
@@ -312,19 +316,23 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   }
 
   const resetBookings = async () => {
-    setBookings([])
+    setBookings(INITIAL_BOOKINGS)
     setNotifications([])
-    localStorage.removeItem('bookings')
-    localStorage.removeItem('notifications')
+    localStorage.setItem(bookingsKey, JSON.stringify(INITIAL_BOOKINGS))
+    localStorage.removeItem(notificationsKey)
 
     if (isFirebaseEnabled) {
       try {
-        const bookingsSnapshot = await getDocs(collection(db, 'bookings'))
-        const notificationsSnapshot = await getDocs(collection(db, 'notifications'))
+        const bookingsSnapshot = await getDocs(collection(db, bookingsCollectionName))
+        const notificationsSnapshot = await getDocs(collection(db, notificationsCollectionName))
 
         const batch = writeBatch(db)
         bookingsSnapshot.forEach((doc) => batch.delete(doc.ref))
         notificationsSnapshot.forEach((doc) => batch.delete(doc.ref))
+
+        INITIAL_BOOKINGS.forEach((booking) => {
+          batch.set(safeDoc(bookingsCollectionName, booking.id), booking)
+        })
         await batch.commit()
       } catch (err) {
         console.error('Failed to reset Firestore bookings:', err)
@@ -340,7 +348,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     if (isFirebaseEnabled) {
       try {
-        await safeSetDoc(safeDoc('notifications', crypto.randomUUID()), newNotif)
+        await safeSetDoc(safeDoc(notificationsCollectionName, crypto.randomUUID()), newNotif)
       } catch (err) {
         console.error('Failed to add notification to Firestore:', err)
       }
@@ -363,7 +371,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     if (isFirebaseEnabled) {
       try {
-        await safeSetDoc(safeDoc('bookings', id), cleanData)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanData)
       } catch (err) {
         console.error('Failed to update Firestore booking:', err)
       }
@@ -411,7 +419,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanPayload = JSON.parse(JSON.stringify(updatePayload))
-        await safeSetDoc(safeDoc('bookings', id), cleanPayload)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanPayload)
       } catch (err) {
         console.error('Failed to update booking status in Firestore:', err)
       }
@@ -446,7 +454,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanUpdates)
       } catch (err) {
         console.error('Failed to accept reschedule in Firestore:', err)
       }
@@ -481,7 +489,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanUpdates)
       } catch (err) {
         console.error('Failed to decline reschedule in Firestore:', err)
       }
@@ -512,7 +520,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanUpdates)
       } catch (err) {
         console.error('Failed to acknowledge booking in Firestore:', err)
       }
@@ -538,7 +546,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     if (isFirebaseEnabled) {
       try {
         const cleanUpdates = JSON.parse(JSON.stringify(updates))
-        await safeSetDoc(safeDoc('bookings', id), cleanUpdates)
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), cleanUpdates)
       } catch (err) {
         console.error('Failed to cancel booking in Firestore:', err)
       }
@@ -548,13 +556,13 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
   const clearBookings = async () => {
     setBookings([])
     setNotifications([])
-    localStorage.removeItem('bookings')
-    localStorage.removeItem('notifications')
+    localStorage.removeItem(bookingsKey)
+    localStorage.removeItem(notificationsKey)
 
     if (isFirebaseEnabled) {
       try {
-        const bookingsSnapshot = await getDocs(collection(db, 'bookings'))
-        const notificationsSnapshot = await getDocs(collection(db, 'notifications'))
+        const bookingsSnapshot = await getDocs(collection(db, bookingsCollectionName))
+        const notificationsSnapshot = await getDocs(collection(db, notificationsCollectionName))
 
         const batch = writeBatch(db)
         bookingsSnapshot.forEach((doc) => batch.delete(doc.ref))
@@ -581,7 +589,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     if (isFirebaseEnabled) {
       try {
-        await safeSetDoc(safeDoc('bookings', id), {
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), {
             customerNotification: null,
             customerNotificationType: null,
           })
@@ -610,7 +618,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
 
     if (isFirebaseEnabled) {
       try {
-        await safeSetDoc(safeDoc('bookings', id), {
+        await safeSetDoc(safeDoc(bookingsCollectionName, id), {
            priceCharged: details.priceCharged,
            adminNotesForCustomer: details.adminNotesForCustomer,
            internalAdminNotes: details.internalAdminNotes,
