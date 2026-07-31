@@ -8,7 +8,7 @@ import InkTypewriterHeader from '../components/InkTypewriterHeader'
 import { ContractorIcon, CalendarIcon, ClockIcon, CheckIcon, AlertIcon } from '../components/ui/Icons'
 
 export default function CustomerDB() {
-  const { bookings, updateBookingStatus, clearCustomerNotification } = useBooking()
+  const { bookings, updateBookingStatus, clearCustomerNotification, addNotification } = useBooking()
   const navigate = useNavigate()
 
   const [activeTechId, setActiveTechId] = useState(BUSINESS_CONFIG.artists[0]?.id || 'crew_a')
@@ -379,7 +379,10 @@ export default function CustomerDB() {
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', paddingTop: '12px', borderTop: '1px solid var(--border-color)' }}>
                     {!isInProgress && !isCompleted && (
                       <button
-                        onClick={() => updateBookingStatus(job.id, 'Confirmed', 'In Progress')}
+                        onClick={() => {
+                          updateBookingStatus(job.id, 'Confirmed', 'In Progress')
+                          addNotification(`▶ IN PROGRESS: ${activeTech.name} started job for ${job.customerName} (${job.service}).`)
+                        }}
                         className="btn btn-secondary"
                         style={{ padding: '10px 18px', fontSize: '13px', color: '#38bdf8', border: '1px solid rgba(14, 165, 233, 0.4)' }}
                       >
@@ -388,7 +391,10 @@ export default function CustomerDB() {
                     )}
                     {!isCompleted && (
                       <button
-                        onClick={() => updateBookingStatus(job.id, 'Completed', 'Completed')}
+                        onClick={() => {
+                          updateBookingStatus(job.id, 'Completed', 'Completed')
+                          addNotification(`✅ COMPLETED: ${activeTech.name} marked job as completed for ${job.customerName} (${job.service}).`)
+                        }}
                         className="btn btn-primary"
                         style={{ padding: '10px 18px', fontSize: '13px', fontWeight: 700 }}
                       >

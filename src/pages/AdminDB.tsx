@@ -254,6 +254,7 @@ export default function AdminDB() {
       setReassignJobId(null)
     } else {
       // Create new job
+      const notifMsg = `🚨 NEW DISPATCH ASSIGNMENT: You have been assigned a new job (${serviceObj?.name || 'Service'}) scheduled for ${jobDate} at ${jobTime}.`
       addBooking({
         id: `job_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
         ownerEmail: 'admin@test.com',
@@ -271,6 +272,8 @@ export default function AdminDB() {
         artistName: techObj?.name || 'Field Technician',
         depositAmount: serviceObj?.price || 0,
         depositPaid: false,
+        customerNotification: notifMsg,
+        customerNotificationType: 'success',
       })
       addNotification(`🛠️ DISPATCHED: New Job Order for ${clientName} assigned to Technician ${techObj?.name} for ${jobDate} at ${jobTime}`)
     }
