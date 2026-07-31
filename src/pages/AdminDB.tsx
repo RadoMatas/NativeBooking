@@ -198,7 +198,11 @@ export default function AdminDB() {
       adminNotesForCustomer: aftercareInput,
       internalAdminNotes: internalNotesInput,
     })
-    alert('Session notes and pricing updated successfully!')
+    triggerAdminToast(
+      'Session Notes Updated!',
+      `Updated notes & pricing for ${selectedBooking.customerName || 'patient'}. Patient will receive an instant notification.`,
+      'success'
+    )
   }
 
   // Admin Toast Alert State

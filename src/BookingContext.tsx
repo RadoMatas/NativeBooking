@@ -603,26 +603,35 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     id: string,
     details: { priceCharged: number; adminNotesForCustomer: string; internalAdminNotes: string }
   ) => {
-    setBookings((prev) =>
-      prev.map((booking) =>
-        booking.id === id
+    const booking = bookings.find((b) => b.id === id)
+    const notifMsg = `Your doctor has updated the clinical session notes & recommendations for your ${booking?.service || 'appointment'} on ${booking?.date || 'past date'}.`
+
+    setBookings((prev) => {
+      const updated = prev.map((b) =>
+        b.id === id
           ? {
-              ...booking,
+              ...b,
               priceCharged: details.priceCharged,
               adminNotesForCustomer: details.adminNotesForCustomer,
               internalAdminNotes: details.internalAdminNotes,
+              customerNotification: notifMsg,
+              customerNotificationType: 'success' as const,
             }
-          : booking
+          : b
       )
-    )
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
         await safeSetDoc(safeDoc(bookingsCollectionName, id), {
-           priceCharged: details.priceCharged,
-           adminNotesForCustomer: details.adminNotesForCustomer,
-           internalAdminNotes: details.internalAdminNotes,
-         })
+          priceCharged: details.priceCharged,
+          adminNotesForCustomer: details.adminNotesForCustomer,
+          internalAdminNotes: details.internalAdminNotes,
+          customerNotification: notifMsg,
+          customerNotificationType: 'success',
+        })
       } catch (err) {
         console.error('Failed to update session details in Firestore:', err)
       }
