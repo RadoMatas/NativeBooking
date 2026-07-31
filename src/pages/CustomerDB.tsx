@@ -5,7 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import PulseTypewriterHeader from '../components/InkTypewriterHeader'
-import { MapPinIcon, CalendarIcon, ClockIcon, UsersIcon, StudioIcon } from '../components/ui/Icons'
+import { MapPinIcon, CalendarIcon, ClockIcon, UsersIcon, StudioIcon, CheckIcon, AlertIcon } from '../components/ui/Icons'
 
 export default function CustomerDB() {
   const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
@@ -227,7 +227,13 @@ export default function CustomerDB() {
                     : '#d97706',
               }}
             >
-              {toastVariant === 'success' ? '✓' : toastVariant === 'error' ? '✕' : 'ℹ'}
+              {toastVariant === 'success' ? (
+                <CheckIcon size={18} style={{ color: '#0284c7' }} />
+              ) : toastVariant === 'error' ? (
+                <AlertIcon size={18} style={{ color: '#ef4444' }} />
+              ) : (
+                <AlertIcon size={18} style={{ color: '#d97706' }} />
+              )}
             </div>
             <div>
               <p

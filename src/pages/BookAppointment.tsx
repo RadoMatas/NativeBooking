@@ -4,7 +4,7 @@ import { useBooking } from '../BookingContext'
 import { currentUserRole, currentUserEmail } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
-import { LockIcon, ClockIcon } from '../components/ui/Icons'
+import { LockIcon, ClockIcon, ArrowRightIcon } from '../components/ui/Icons'
 
 export default function BookAppointment() {
   const navigate = useNavigate()
@@ -434,11 +434,11 @@ export default function BookAppointment() {
           }}
         >
           <span style={{ color: 'var(--accent-color)' }}>① Client & Service</span>
-          <span style={{ color: 'var(--text-secondary)' }}>➔</span>
+          <ArrowRightIcon size={12} style={{ color: 'var(--text-secondary)' }} />
           <span style={{ color: artistId && date && time ? 'var(--accent-color)' : 'var(--text-secondary)' }}>
             ② Slot & {BUSINESS_CONFIG.staffLabel}
           </span>
-          <span style={{ color: 'var(--text-secondary)' }}>➔</span>
+          <ArrowRightIcon size={12} style={{ color: 'var(--text-secondary)' }} />
           <span style={{ color: 'var(--text-secondary)' }}>③ Confirm</span>
         </div>
 
@@ -596,7 +596,7 @@ export default function BookAppointment() {
                           style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                         />
                       ) : (
-                        art.avatarEmoji || '👤'
+                        <span style={{ fontSize: '14px', fontWeight: 800 }}>{art.name.slice(0, 2).toUpperCase()}</span>
                       )}
                     </div>
                     <span style={{ fontWeight: 700, fontSize: '14px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>
