@@ -4,7 +4,7 @@ import { useBooking } from '../BookingContext'
 import { currentUserRole, currentUserEmail } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
-import { LockIcon, ClockIcon, ArrowRightIcon } from '../components/ui/Icons'
+import { LockIcon, ClockIcon, ArrowRightIcon, PaletteIcon, StethoscopeIcon, GraduationCapIcon, ContractorIcon, UserIcon } from '../components/ui/Icons'
 
 export default function BookAppointment() {
   const navigate = useNavigate()
@@ -576,17 +576,17 @@ export default function BookAppointment() {
                   >
                     <div
                       style={{
-                        width: '48px',
-                        height: '48px',
+                        width: '44px',
+                        height: '44px',
                         borderRadius: '50%',
-                        background: isSelected ? 'var(--accent-color)' : 'rgba(255, 255, 255, 0.08)',
-                        color: isSelected ? '#ffffff' : 'var(--text-primary)',
+                        background: isSelected ? 'var(--accent-color)' : 'rgba(16, 185, 129, 0.15)',
+                        color: isSelected ? '#ffffff' : '#10b981',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '22px',
                         marginBottom: '8px',
-                        boxShadow: isSelected ? '0 0 12px rgba(16, 185, 129, 0.4)' : 'none',
+                        boxShadow: isSelected ? '0 0 16px rgba(16, 185, 129, 0.5)' : 'none',
+                        transition: 'all 0.2s ease',
                       }}
                     >
                       {art.avatarUrl ? (
@@ -595,8 +595,16 @@ export default function BookAppointment() {
                           alt={art.name}
                           style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                         />
+                      ) : BUSINESS_CONFIG.dbPrefix === 'tattoo' ? (
+                        <PaletteIcon size={22} />
+                      ) : BUSINESS_CONFIG.dbPrefix === 'dental' ? (
+                        <StethoscopeIcon size={22} />
+                      ) : BUSINESS_CONFIG.dbPrefix === 'academic' ? (
+                        <GraduationCapIcon size={22} />
+                      ) : BUSINESS_CONFIG.dbPrefix === 'contractor' ? (
+                        <ContractorIcon size={22} />
                       ) : (
-                        <span style={{ fontSize: '14px', fontWeight: 800 }}>{art.name.slice(0, 2).toUpperCase()}</span>
+                        <UserIcon size={22} />
                       )}
                     </div>
                     <span style={{ fontWeight: 700, fontSize: '14px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>
