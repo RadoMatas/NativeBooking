@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { login, register, currentUserRole } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
+import { ContractorIcon, SettingsIcon } from '../components/ui/Icons'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -159,18 +160,18 @@ export default function Login() {
                 onClick={() => handleDemoLogin('customer')}
                 disabled={isLoggingIn}
                 className="btn btn-primary"
-                style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
+                style={{ flex: 1, fontSize: '13px', padding: '10px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                🛠️ Try as Field Technician
+                <ContractorIcon size={15} /> Try as Field Technician
               </button>
               <button
                 type="button"
                 onClick={() => handleDemoLogin('admin')}
                 disabled={isLoggingIn}
                 className="btn btn-secondary"
-                style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
+                style={{ flex: 1, fontSize: '13px', padding: '10px 8px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                ⚙️ Try as Dispatch Admin
+                <SettingsIcon size={15} /> Try as Dispatch Admin
               </button>
             </div>
           </div>

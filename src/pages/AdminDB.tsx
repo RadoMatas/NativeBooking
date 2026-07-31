@@ -5,6 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
+import { CalendarIcon, UserIcon, AlertIcon, ContractorIcon } from '../components/ui/Icons'
 
 const adminBadgeStyle = (adminStatus: string, status?: string): React.CSSProperties => {
   let bg = 'rgba(255, 255, 255, 0.05)'
@@ -377,9 +378,9 @@ export default function AdminDB() {
               setShowDispatchModal(true)
             }}
             className="btn btn-primary"
-            style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 700 }}
+            style={{ padding: '8px 16px', fontSize: '13px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '6px' }}
           >
-            + Dispatch New Job Order 🛠️
+            <ContractorIcon size={16} /> + Dispatch New Job Order
           </button>
           <button onClick={resetBookings} className="btn btn-danger" style={{ padding: '7px 12px', fontSize: '12px' }}>
             Reset Board
@@ -405,7 +406,9 @@ export default function AdminDB() {
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '28px' }}>🛑</span>
+              <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(239, 68, 68, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <AlertIcon size={20} style={{ color: '#f87171' }} />
+              </div>
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#f87171', margin: 0 }}>
                   Urgent Action Queue ({urgentDeclinedJobs.length} Order{urgentDeclinedJobs.length > 1 ? 's' : ''} Declined)
@@ -444,12 +447,12 @@ export default function AdminDB() {
                   </div>
 
                   <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: '#e2e8f0', flexWrap: 'wrap' }}>
-                    <span>📅 <strong>Initial Date & Time:</strong> {job.date} at {job.time}</span>
-                    <span>👷 <strong>Assigned Tech:</strong> {job.artistName}</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><CalendarIcon size={14} style={{ color: '#f59e0b' }} /> <strong>Initial Date & Time:</strong> {job.date} at {job.time}</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><UserIcon size={14} style={{ color: '#f59e0b' }} /> <strong>Assigned Tech:</strong> {job.artistName}</span>
                   </div>
 
-                  <div style={{ marginTop: '6px', color: '#f87171', fontSize: '13px', fontWeight: 600 }}>
-                    🚨 <strong>Decline Reason:</strong> "{job.declineReason || 'No reason specified'}"
+                  <div style={{ marginTop: '6px', color: '#f87171', fontSize: '13px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <AlertIcon size={14} /> <strong>Decline Reason:</strong> "{job.declineReason || 'No reason specified'}"
                   </div>
                 </div>
 
@@ -459,14 +462,14 @@ export default function AdminDB() {
                     className="btn btn-secondary"
                     style={{ fontSize: '12px', padding: '8px 14px' }}
                   >
-                    👁️ Inspect Order Details
+                    Inspect Order Details
                   </button>
                   <button
                     onClick={() => handleReassignClick(job)}
                     className="btn btn-primary"
-                    style={{ fontSize: '12px', padding: '8px 16px', fontWeight: 700 }}
+                    style={{ fontSize: '12px', padding: '8px 16px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                   >
-                    🔄 Reassign Job Order →
+                    Reassign Job Order →
                   </button>
                 </div>
               </div>
