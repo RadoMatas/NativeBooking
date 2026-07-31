@@ -93,19 +93,36 @@ export default function AdminDB() {
     return <Navigate to="/" replace />
   }
 
-  const getTodayString = () => {
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = String(today.getMonth() + 1).padStart(2, '0')
-    const day = String(today.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-  }
-
   const getDisplayStatus = (booking: any) => {
     if (!booking) return 'Pending'
 
     if (booking.status === 'Cancelled') {
       return 'Cancelled'
+    }
+
+    if (!booking || !booking.date) return 'Pending'
+    const [year, month, day] = booking.date.split('-').map(Number)
+    let hours = 0
+    let minutes = 0
+
+    if (booking.time) {
+      const parts = booking.time.trim().split(' ')
+      const [rawHours, rawMinutes] = parts[0].split(':').map(Number)
+      hours = rawHours
+      minutes = rawMinutes || 0
+
+      if (parts[1]) {
+        const modifier = parts[1].toUpperCase()
+        if (modifier === 'PM' && hours < 12) hours += 12
+        if (modifier === 'AM' && hours === 12) hours = 0
+      }
+    }
+
+    const bookingDateTime = new Date(year, month - 1, day, hours, minutes)
+    const now = new Date()
+
+    if (bookingDateTime < now) {
+      return 'Completed'
     }
 
     if (
@@ -114,10 +131,6 @@ export default function AdminDB() {
       booking.adminStatus === 'Needs Action'
     ) {
       return 'Pending'
-    }
-
-    if (booking.status === 'Confirmed' && booking.date && booking.date < getTodayString()) {
-      return 'Completed'
     }
 
     if (booking.status === 'Confirmed') {
@@ -182,7 +195,11 @@ export default function AdminDB() {
       adminNotesForCustomer: aftercareInput,
       internalAdminNotes: internalNotesInput,
     })
-    alert('Session notes and pricing updated successfully!')
+    triggerAdminToast(
+      'Session Notes Updated!',
+      `Updated notes & pricing for ${selectedBooking.customerName || 'client'}. Client will receive an instant notification banner.`,
+      'success'
+    )
   }
 
   // Admin Toast Alert State

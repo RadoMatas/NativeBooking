@@ -14,7 +14,25 @@ export default function CustomerDB() {
   console.log('all bookings:', bookings)
 
   const getBookingDateTime = (booking: any) => {
-    return new Date(`${booking.date}T${booking.time}`)
+    if (!booking || !booking.date) return new Date()
+    const [year, month, day] = booking.date.split('-').map(Number)
+    let hours = 0
+    let minutes = 0
+
+    if (booking.time) {
+      const parts = booking.time.trim().split(' ')
+      const [rawHours, rawMinutes] = parts[0].split(':').map(Number)
+      hours = rawHours
+      minutes = rawMinutes || 0
+
+      if (parts[1]) {
+        const modifier = parts[1].toUpperCase()
+        if (modifier === 'PM' && hours < 12) hours += 12
+        if (modifier === 'AM' && hours === 12) hours = 0
+      }
+    }
+
+    return new Date(year, month - 1, day, hours, minutes)
   }
 
   const getDisplayStatus = (booking: any) => {
@@ -22,6 +40,13 @@ export default function CustomerDB() {
 
     if (booking.status === 'Cancelled') {
       return 'Cancelled'
+    }
+
+    // Auto-complete any appointment whose scheduled date/time has passed!
+    const bookingDateTime = getBookingDateTime(booking)
+    const now = new Date()
+    if (bookingDateTime < now) {
+      return 'Completed'
     }
 
     if (
@@ -34,13 +59,6 @@ export default function CustomerDB() {
     }
 
     if (booking.status === 'Confirmed') {
-      const bookingDateTime = getBookingDateTime(booking)
-      const now = new Date()
-
-      if (bookingDateTime < now) {
-        return 'Completed'
-      }
-
       return 'Upcoming'
     }
 
