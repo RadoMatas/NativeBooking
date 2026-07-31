@@ -54,7 +54,7 @@ export const BUSINESS_CONFIG: BusinessConfig = {
   closingHour: 21,
   slotInterval: 60,
   closedDays: [0], // Sunday closed
-  depositPercentage: 10, // 10% enrollment seat deposit
+  depositPercentage: 0, // No deposit screen required
   currencySymbol: "$",
   services: [
     { id: "bootcamp", name: "Full-Stack Software Architecture Bootcamp", price: 250, durationMin: 120 },
