@@ -12,33 +12,33 @@ interface FAQItem {
 const faqData: FAQItem[] = [
   {
     category: 'Ownership & Fees',
-    question: 'Why choose a custom build over standard subscription software?',
-    answer: 'Standard subscription widgets charge per-booking commissions or recurring fees while keeping your client data locked in their platform. With NativeBooking, you own your custom reservation system and database with 0% booking commission cuts.',
+    question: 'Why choose a custom build over standard booking widgets?',
+    answer: 'Standard booking tools charge subscription fees or per-booking cuts, keeping client data on their platform. With NativeBooking, you get a custom setup and own your database with 0% transaction commissions.',
   },
   {
     category: 'Pricing & Maintenance',
     question: 'How do the setup fee and monthly maintenance work?',
-    answer: 'Each build starts with a transparent one-off setup fee covering custom workflow building, branding integration, and database setup. The small monthly maintenance fee covers secure cloud hosting, database backups, and server maintenance.',
+    answer: 'You pay a one-off build fee for custom workflow setup, branding, and database integration. The monthly fee covers server hosting, database backups, and maintenance.',
   },
   {
     category: 'Setup & Launch',
-    question: 'How fast can our business reservation portal launch?',
-    answer: 'Most standard setups are configured and live within a few business days. We set up your service menu, staff schedules, deposit preferences, and automated customer reminders.',
+    question: 'How fast can our portal go live?',
+    answer: 'Most standard portals go live within a few business days. We handle setting up your service menu, staff calendars, deposit rules, and automated reminders.',
   },
   {
     category: 'Payments',
     question: 'How do customer deposits and payments work?',
-    answer: 'Funds transfer directly to your own Stripe or PayPal account. You can collect full upfront payment, partial deposit holds, or offer pay-at-venue options with zero middleman delays.',
+    answer: 'Payments go straight to your own Stripe or PayPal account. You can collect full payment, deposit holds, or offer pay-at-venue options with no payout delays.',
   },
   {
     category: 'Team & Dispatch',
-    question: 'Can we manage multi-staff schedules or dispatch field crews?',
-    answer: 'Yes! The Advanced Business Engine includes team dispatch boards, shift scheduling, site address tracking for field crews, and practitioner rosters.',
+    question: 'Can we manage staff shifts or dispatch field crews?',
+    answer: 'Yes. The Advanced Operations Build includes shift scheduling, crew dispatch boards, address tracking, and staff rosters.',
   },
   {
     category: 'Mobile Experience',
-    question: 'Is the booking experience mobile-friendly for our clients?',
-    answer: '100%. Every portal is designed mobile-first so clients can easily view services, pick staff slots, and complete payments on any iPhone, Android, or desktop browser in seconds.',
+    question: 'Is the booking experience mobile-friendly?',
+    answer: 'Yes. Every portal is built mobile-first so your clients can view services, pick slots, and pay from any phone or desktop.',
   },
 ]
 
@@ -50,39 +50,39 @@ export default function FAQSection() {
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: '900px', margin: '48px auto 0', padding: '0 16px' }}>
+    <div style={{ width: '100%', maxWidth: '840px', margin: '40px auto 0', padding: '0 16px' }}>
       {/* Header */}
-      <div style={{ textAlign: 'center', maxWidth: '580px', margin: '0 auto 36px' }}>
+      <div style={{ textAlign: 'center', maxWidth: '540px', margin: '0 auto 32px' }}>
         <span
           style={{
             fontSize: '11px',
             fontWeight: 800,
-            letterSpacing: '0.1em',
+            letterSpacing: '0.08em',
             textTransform: 'uppercase',
             color: '#38bdf8',
             background: 'rgba(14, 165, 233, 0.12)',
             border: '1px solid rgba(14, 165, 233, 0.25)',
-            padding: '6px 14px',
+            padding: '4px 12px',
             borderRadius: '9999px',
             display: 'inline-block',
-            marginBottom: '12px',
+            marginBottom: '10px',
           }}
         >
-          Got Questions?
+          Common Questions
         </span>
         <h2
           style={{
-            fontSize: 'clamp(24px, 4vw, 36px)',
+            fontSize: 'clamp(24px, 4vw, 34px)',
             fontWeight: 800,
             color: '#ffffff',
             letterSpacing: '-0.02em',
-            marginBottom: '10px',
+            marginBottom: '8px',
           }}
         >
           Frequently Asked Questions
         </h2>
         <p style={{ fontSize: '14px', color: '#94a3b8', lineHeight: 1.5 }}>
-          Everything you need to know about our custom reservation setups, pricing, and operations.
+          Clear details about custom setups, pricing, and system operations.
         </p>
       </div>
 
