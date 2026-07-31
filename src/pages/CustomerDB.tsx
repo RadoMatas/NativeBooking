@@ -210,19 +210,19 @@ export default function CustomerDB() {
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: '16px',
-            background: 'rgba(255, 255, 255, 0.96)',
-            border: '1px solid rgba(14, 165, 233, 0.35)',
+            background: '#13151c',
+            border: '1px solid rgba(16, 185, 129, 0.35)',
             borderRadius: '16px',
-            boxShadow: '0 12px 36px rgba(14, 165, 233, 0.2)',
+            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6)',
             borderLeft: `5px solid ${
               toastVariant === 'success'
-                ? '#0284c7'
+                ? '#10b981'
                 : toastVariant === 'error'
                 ? '#ef4444'
-                : '#f59e0b'
+                : '#facc15'
             }`,
             padding: '16px 20px',
-            color: '#0f172a',
+            color: '#ffffff',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
@@ -231,7 +231,7 @@ export default function CustomerDB() {
                 width: '34px',
                 height: '34px',
                 borderRadius: '50%',
-                background: 'rgba(14, 165, 233, 0.12)',
+                background: 'rgba(16, 185, 129, 0.15)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -239,18 +239,18 @@ export default function CustomerDB() {
                 fontWeight: 700,
                 color:
                   toastVariant === 'success'
-                    ? '#0284c7'
+                    ? '#34d399'
                     : toastVariant === 'error'
-                    ? '#ef4444'
-                    : '#d97706',
+                    ? '#f87171'
+                    : '#facc15',
               }}
             >
               {toastVariant === 'success' ? (
-                <CheckIcon size={18} style={{ color: '#0284c7' }} />
+                <CheckIcon size={18} style={{ color: '#34d399' }} />
               ) : toastVariant === 'error' ? (
-                <AlertIcon size={18} style={{ color: '#ef4444' }} />
+                <AlertIcon size={18} style={{ color: '#f87171' }} />
               ) : (
-                <AlertIcon size={18} style={{ color: '#d97706' }} />
+                <AlertIcon size={18} style={{ color: '#facc15' }} />
               )}
             </div>
             <div>
@@ -261,7 +261,7 @@ export default function CustomerDB() {
                   fontWeight: 700,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
-                  color: '#0284c7',
+                  color: '#34d399',
                 }}
               >
                 Appointment Status Alert
@@ -271,7 +271,7 @@ export default function CustomerDB() {
                   margin: '2px 0 0 0',
                   fontSize: '14px',
                   fontWeight: 600,
-                  color: '#0f172a',
+                  color: '#ffffff',
                 }}
               >
                 {toastMessage}
