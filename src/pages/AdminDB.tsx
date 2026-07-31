@@ -309,6 +309,9 @@ export default function AdminDB() {
                       <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                         — {req.customerName || 'Client'} ({req.customerEmail})
                       </span>
+                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px', background: 'rgba(16, 185, 129, 0.15)', color: '#34d399', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                        {BUSINESS_CONFIG.staffLabel}: {req.artistName || 'Unassigned'}
+                      </span>
                     </div>
 
                     {req.adminStatus === 'Reschedule Requested' ? (
@@ -613,8 +616,11 @@ export default function AdminDB() {
                     }}
                   >
                     <p style={{ fontWeight: 600, fontSize: '15px' }}>{booking.service}</p>
-                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '4px 0 8px 0' }}>
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '2px 0' }}>
                       Client: {booking.customerName}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#34d399', fontWeight: 600, margin: '2px 0 8px 0' }}>
+                      {BUSINESS_CONFIG.staffLabel}: {booking.artistName || 'Unassigned'}
                     </p>
 
                     {booking.adminStatus === 'Reschedule Requested' ? (
