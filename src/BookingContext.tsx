@@ -364,8 +364,8 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
           : null,
     }
 
-    setBookings((prev) =>
-      prev.map((booking) =>
+    setBookings((prev) => {
+      const updated = prev.map((booking) =>
         booking.id === id
           ? {
               ...booking,
@@ -373,7 +373,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
             }
           : booking
       )
-    )
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
@@ -404,9 +406,11 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       requestedTime: null,
     }
 
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
-    )
+    setBookings((prev) => {
+      const updated = prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
@@ -437,9 +441,11 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       requestedTime: null,
     }
 
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
-    )
+    setBookings((prev) => {
+      const updated = prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {

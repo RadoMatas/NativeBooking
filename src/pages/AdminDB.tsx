@@ -185,6 +185,16 @@ export default function AdminDB() {
     alert('Session notes and pricing updated successfully!')
   }
 
+  // Admin Toast Alert State
+  const [adminToast, setAdminToast] = useState<{ message: string; subtext: string; variant: 'success' | 'warning' | 'error' } | null>(null)
+
+  const triggerAdminToast = (message: string, subtext: string, variant: 'success' | 'warning' | 'error' = 'success') => {
+    setAdminToast({ message, subtext, variant })
+    setTimeout(() => {
+      setAdminToast(null)
+    }, 6000)
+  }
+
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
@@ -198,6 +208,73 @@ export default function AdminDB() {
         margin: '0 auto',
       }}
     >
+      {/* Admin Action Feedback Toast Popup */}
+      {adminToast && (
+        <div
+          role="alert"
+          style={{
+            position: 'fixed',
+            top: '24px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '90%',
+            maxWidth: '560px',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            background: '#13151c',
+            border: `1px solid ${adminToast.variant === 'success' ? '#10b981' : adminToast.variant === 'error' ? '#ef4444' : '#facc15'}`,
+            borderRadius: '16px',
+            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6)',
+            padding: '16px 20px',
+            color: '#ffffff',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
+            <div
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                background: adminToast.variant === 'success' ? 'rgba(16, 185, 129, 0.15)' : adminToast.variant === 'error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(234, 179, 8, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              {adminToast.variant === 'success' ? (
+                <CheckIcon size={20} style={{ color: '#34d399' }} />
+              ) : (
+                <ClockIcon size={20} style={{ color: adminToast.variant === 'error' ? '#f87171' : '#facc15' }} />
+              )}
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '14px', fontWeight: 800, color: '#ffffff' }}>
+                {adminToast.message}
+              </p>
+              <p style={{ margin: '3px 0 0 0', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                {adminToast.subtext}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setAdminToast(null)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontSize: '16px',
+              padding: '4px',
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
       {/* Branding Navigation Header Bar */}
       <div
         style={{
@@ -334,14 +411,28 @@ export default function AdminDB() {
                     {req.adminStatus === 'Reschedule Requested' ? (
                       <>
                         <button
-                          onClick={() => acceptReschedule(req.id)}
+                          onClick={() => {
+                            acceptReschedule(req.id)
+                            triggerAdminToast(
+                              'Reschedule Approved!',
+                              `Session with ${req.customerName || 'Client'} confirmed for ${req.requestedDate || req.date} at ${req.requestedTime || req.time}. Review in All Bookings below.`,
+                              'success'
+                            )
+                          }}
                           className="btn btn-primary"
                           style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                         >
                           <CheckIcon size={12} /> Approve New Slot
                         </button>
                         <button
-                          onClick={() => declineReschedule(req.id)}
+                          onClick={() => {
+                            declineReschedule(req.id)
+                            triggerAdminToast(
+                              'Reschedule Declined',
+                              `Original session with ${req.customerName || 'Client'} on ${req.date} at ${req.time} remains active.`,
+                              'warning'
+                            )
+                          }}
                           className="btn btn-danger"
                           style={{ fontSize: '12px', padding: '6px 14px' }}
                         >
@@ -351,14 +442,28 @@ export default function AdminDB() {
                     ) : (
                       <>
                         <button
-                          onClick={() => updateBookingStatus(req.id, 'Confirmed')}
+                          onClick={() => {
+                            updateBookingStatus(req.id, 'Confirmed')
+                            triggerAdminToast(
+                              'Booking Confirmed!',
+                              `Session "${req.service}" with ${req.customerName || 'Client'} confirmed for ${req.date} at ${req.time}. Review in All Bookings below.`,
+                              'success'
+                            )
+                          }}
                           className="btn btn-primary"
                           style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
                         >
                           Confirm Booking
                         </button>
                         <button
-                          onClick={() => updateBookingStatus(req.id, 'Cancelled')}
+                          onClick={() => {
+                            updateBookingStatus(req.id, 'Cancelled')
+                            triggerAdminToast(
+                              'Booking Cancelled',
+                              `Session "${req.service}" with ${req.customerName || 'Client'} was cancelled.`,
+                              'error'
+                            )
+                          }}
                           className="btn btn-danger"
                           style={{ fontSize: '12px', padding: '6px 14px' }}
                         >
@@ -654,10 +759,13 @@ export default function AdminDB() {
                         onClick={() => {
                           if (booking.adminStatus === 'Reschedule Requested') {
                             acceptReschedule(booking.id)
+                            triggerAdminToast('Reschedule Approved!', `Approved new date ${booking.requestedDate || booking.date} at ${booking.requestedTime || booking.time} for ${booking.customerName}.`, 'success')
                           } else if (booking.status === 'Cancelled' && booking.adminStatus === 'Needs Action') {
                             acknowledgeBooking(booking.id)
+                            triggerAdminToast('Cancellation Acknowledged', `Acknowledged cancellation from ${booking.customerName}.`, 'warning')
                           } else {
                             updateBookingStatus(booking.id, 'Confirmed')
+                            triggerAdminToast('Booking Confirmed!', `Confirmed session "${booking.service}" for ${booking.customerName} on ${booking.date} at ${booking.time}.`, 'success')
                           }
                         }}
                         className="btn btn-primary"
