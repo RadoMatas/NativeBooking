@@ -54,7 +54,7 @@ export const BUSINESS_CONFIG: BusinessConfig = {
   closingHour: 20,
   slotInterval: 30,
   closedDays: [0], // Sunday closed
-  depositPercentage: 20, // 20% deposit
+  depositPercentage: 0, // 0% deposit (bypass payment modal for direct booking)
   currencySymbol: "$",
   services: [
     { id: "tattoo", name: "Custom Tattoo Session", price: 120, durationMin: 60 },

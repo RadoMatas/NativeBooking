@@ -4,6 +4,8 @@ import { login, register, currentUserRole } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 
+import { SparklesIcon, UsersIcon, SettingsIcon } from '../components/ui/Icons'
+
 export default function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
@@ -93,7 +95,7 @@ export default function Login() {
           boxShadow: '0 4px 24px rgba(0,0,0,0.35)',
         }}
       >
-        <span style={{ fontSize: '14px' }}>⚡</span>
+        <SparklesIcon size={14} style={{ color: 'var(--accent-color)' }} />
         <span>Live product demo — all data is simulated for demonstration purposes only.</span>
       </div>
 
@@ -159,18 +161,18 @@ export default function Login() {
                 onClick={() => handleDemoLogin('customer')}
                 disabled={isLoggingIn}
                 className="btn btn-primary"
-                style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
+                style={{ flex: 1, fontSize: '13px', padding: '10px 8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                👤 Try as Customer
+                <UsersIcon size={14} /> Try as Customer
               </button>
               <button
                 type="button"
                 onClick={() => handleDemoLogin('admin')}
                 disabled={isLoggingIn}
                 className="btn btn-secondary"
-                style={{ flex: 1, fontSize: '13px', padding: '10px 8px' }}
+                style={{ flex: 1, fontSize: '13px', padding: '10px 8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
               >
-                ⚙️ Try as Admin
+                <SettingsIcon size={14} /> Try as Admin
               </button>
             </div>
           </div>

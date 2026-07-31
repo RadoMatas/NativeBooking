@@ -5,6 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import PulseTypewriterHeader from '../components/InkTypewriterHeader'
+import { MapPinIcon, CalendarIcon, ClockIcon, UsersIcon, StudioIcon } from '../components/ui/Icons'
 
 export default function CustomerDB() {
   const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
@@ -289,8 +290,8 @@ export default function CustomerDB() {
             <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: 'var(--accent-color)', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1 }}>
               {BUSINESS_CONFIG.name}
             </span>
-            <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
-              📍 {BUSINESS_CONFIG.address}
+            <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <MapPinIcon size={12} style={{ color: 'var(--accent-color)' }} /> {BUSINESS_CONFIG.address}
             </span>
           </div>
         </div>
@@ -362,8 +363,8 @@ export default function CustomerDB() {
                     <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-secondary)', display: 'block' }}>
                       APPOINTMENT DATE
                     </span>
-                    <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap' }}>
-                      📅 {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedDate ? latestBooking.requestedDate : latestBooking.date}
+                    <span style={{ fontSize: '15px', fontWeight: 800, color: '#ffffff', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <CalendarIcon size={14} style={{ color: '#ffffff' }} /> {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedDate ? latestBooking.requestedDate : latestBooking.date}
                     </span>
                   </div>
                   <div
@@ -377,8 +378,8 @@ export default function CustomerDB() {
                     <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#34d399', display: 'block' }}>
                       TIME SLOT
                     </span>
-                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#34d399', whiteSpace: 'nowrap' }}>
-                      🕒 {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime ? latestBooking.requestedTime : latestBooking.time}
+                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#34d399', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <ClockIcon size={14} /> {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime ? latestBooking.requestedTime : latestBooking.time}
                     </span>
                   </div>
                 </div>
@@ -454,7 +455,7 @@ export default function CustomerDB() {
                 // Case B: Show other active sessions list
                 <div>
                   <h3 style={{ fontSize: '16px', marginBottom: '14px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    ⏳ Other Scheduled Sessions ({sortedActiveBookings.length - 1})
+                    <ClockIcon size={16} style={{ color: '#38bdf8' }} /> Other Scheduled Sessions ({sortedActiveBookings.length - 1})
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '240px', overflowY: 'auto', paddingRight: '8px' }}>
                     {sortedActiveBookings.slice(1).map((booking) => {
@@ -475,11 +476,11 @@ export default function CustomerDB() {
                         >
                           <div>
                             <p style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>{booking.service}</p>
-                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                              📅 {booking.date} at {booking.time}
+                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <CalendarIcon size={12} /> {booking.date} at {booking.time}
                             </p>
                             <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              👤 {matchedArtist?.avatarEmoji || '👤'} {booking.artistName}
+                              {booking.artistName}
                             </p>
                           </div>
                           <button

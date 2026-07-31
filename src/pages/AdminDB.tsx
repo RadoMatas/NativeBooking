@@ -5,6 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
+import { MapPinIcon, LockIcon, StudioIcon, ClockIcon, CalendarIcon, AlertIcon, CheckIcon } from '../components/ui/Icons'
 
 const adminBadgeStyle = (adminStatus: string): React.CSSProperties => {
   let bg = 'rgba(255, 255, 255, 0.05)'
@@ -216,8 +217,8 @@ export default function AdminDB() {
             <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: '#ffffff', textTransform: 'uppercase', letterSpacing: '0.05em', lineHeight: 1.1 }}>
               {BUSINESS_CONFIG.name}
             </span>
-            <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px' }}>
-              📍 {BUSINESS_CONFIG.address}
+            <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginTop: '2px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+              <MapPinIcon size={12} style={{ color: 'var(--accent-color)' }} /> {BUSINESS_CONFIG.address}
             </span>
           </div>
         </div>
@@ -227,9 +228,9 @@ export default function AdminDB() {
             <button
               onClick={() => setShowBlockModal(true)}
               className="btn btn-secondary"
-              style={{ padding: '7px 12px', fontSize: '12px', border: '1px solid #10b981', color: '#34d399' }}
+              style={{ padding: '7px 12px', fontSize: '12px', border: '1px solid #10b981', color: '#34d399', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
             >
-              🚫 Block Time Slot
+              <LockIcon size={12} /> Block Time Slot
             </button>
             <button onClick={resetBookings} className="btn btn-danger" style={{ padding: '7px 12px', fontSize: '12px' }}>
               Reset Data
@@ -266,7 +267,7 @@ export default function AdminDB() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <span style={{ fontSize: '26px' }}>🎨</span>
+              <StudioIcon size={24} style={{ color: '#10b981' }} />
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#10b981', margin: 0 }}>
                   Studio Action Queue ({pendingRequests.length} Pending Request{pendingRequests.length > 1 ? 's' : ''})
@@ -296,12 +297,12 @@ export default function AdminDB() {
                   <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                       {req.adminStatus === 'Reschedule Requested' ? (
-                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(234, 179, 8, 0.25)', color: '#facc15', border: '1px solid #facc15' }}>
-                          🔄 RESCHEDULE REQUEST
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(234, 179, 8, 0.25)', color: '#facc15', border: '1px solid #facc15', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <ClockIcon size={12} /> RESCHEDULE REQUEST
                         </span>
                       ) : (
-                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(56, 189, 248, 0.25)', color: '#38bdf8', border: '1px solid #38bdf8' }}>
-                          🆕 NEW BOOKING REQUEST
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(56, 189, 248, 0.25)', color: '#38bdf8', border: '1px solid #38bdf8', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <CalendarIcon size={12} /> NEW BOOKING REQUEST
                         </span>
                       )}
                       <strong style={{ color: '#ffffff', fontSize: '15px' }}>{req.service}</strong>
@@ -320,8 +321,8 @@ export default function AdminDB() {
                         </span>
                       </div>
                     ) : (
-                      <div style={{ fontSize: '13px', color: '#34d399', fontWeight: 700, marginTop: '4px' }}>
-                        📅 Requested Slot: {req.date} at {req.time}
+                      <div style={{ fontSize: '13px', color: '#34d399', fontWeight: 700, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <CalendarIcon size={13} /> Requested Slot: {req.date} at {req.time}
                       </div>
                     )}
                   </div>
@@ -332,9 +333,9 @@ export default function AdminDB() {
                         <button
                           onClick={() => acceptReschedule(req.id)}
                           className="btn btn-primary"
-                          style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
+                          style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                         >
-                          ✅ Approve New Slot
+                          <CheckIcon size={12} /> Approve New Slot
                         </button>
                         <button
                           onClick={() => declineReschedule(req.id)}

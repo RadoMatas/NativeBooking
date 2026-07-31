@@ -4,6 +4,7 @@ import { useBooking } from '../BookingContext'
 import { currentUserRole, currentUserEmail } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
+import { LockIcon, ClockIcon } from '../components/ui/Icons'
 
 export default function BookAppointment() {
   const navigate = useNavigate()
@@ -366,7 +367,9 @@ export default function BookAppointment() {
                 color: 'var(--text-secondary)',
               }}
             >
-              <span style={{ color: '#10b981', fontWeight: 800 }}>🔒 256-Bit SSL Encrypted</span>
+              <span style={{ color: '#10b981', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <LockIcon size={12} /> 256-Bit SSL Encrypted
+              </span>
               <span>·</span>
               <span>Powered by Stripe</span>
               <span>·</span>
@@ -518,8 +521,8 @@ export default function BookAppointment() {
                       <p style={{ fontWeight: 700, fontSize: '15px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>
                         {srv.name}
                       </p>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                        ⏱️ {srv.durationMin} mins
+                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <ClockIcon size={12} /> {srv.durationMin} mins
                       </p>
                     </div>
                     <span
