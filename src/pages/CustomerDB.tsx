@@ -5,7 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
-import { ContractorIcon, CalendarIcon, ClockIcon, CheckIcon, AlertIcon, MapPinIcon, SparklesIcon } from '../components/ui/Icons'
+import { ContractorIcon, CalendarIcon, ClockIcon, CheckIcon, AlertIcon, MapPinIcon } from '../components/ui/Icons'
 
 export default function CustomerDB() {
   const { bookings, updateBookingStatus, clearCustomerNotification, addNotification } = useBooking()
