@@ -24,6 +24,13 @@ export default function CustomerDB() {
       return 'Cancelled'
     }
 
+    // Auto-complete any appointment whose scheduled date/time has passed!
+    const bookingDateTime = getBookingDateTime(booking)
+    const now = new Date()
+    if (bookingDateTime < now) {
+      return 'Completed'
+    }
+
     if (
       booking.status === 'Pending' ||
       booking.adminStatus === 'New' ||
@@ -34,13 +41,6 @@ export default function CustomerDB() {
     }
 
     if (booking.status === 'Confirmed') {
-      const bookingDateTime = getBookingDateTime(booking)
-      const now = new Date()
-
-      if (bookingDateTime < now) {
-        return 'Completed'
-      }
-
       return 'Upcoming'
     }
 

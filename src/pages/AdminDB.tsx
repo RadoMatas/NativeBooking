@@ -94,13 +94,7 @@ export default function AdminDB() {
     return <Navigate to="/" replace />
   }
 
-  const getTodayString = () => {
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = String(today.getMonth() + 1).padStart(2, '0')
-    const day = String(today.getDate()).padStart(2, '0')
-    return `${year}-${month}-${day}`
-  }
+
 
   const getDisplayStatus = (booking: any) => {
     if (!booking) return 'Pending'
@@ -109,16 +103,20 @@ export default function AdminDB() {
       return 'Cancelled'
     }
 
+    const bookingTime = booking.time || '00:00'
+    const bookingDateTime = new Date(`${booking.date}T${bookingTime}`)
+    const now = new Date()
+
+    if (bookingDateTime < now) {
+      return 'Completed'
+    }
+
     if (
       booking.adminStatus === 'New' ||
       booking.adminStatus === 'Reschedule Requested' ||
       booking.adminStatus === 'Needs Action'
     ) {
       return 'Pending'
-    }
-
-    if (booking.status === 'Confirmed' && booking.date && booking.date < getTodayString()) {
-      return 'Completed'
     }
 
     if (booking.status === 'Confirmed') {
