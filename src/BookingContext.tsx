@@ -216,6 +216,46 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  // ⚡ Live Instant Multi-Tab Broadcast Channel (Real-time sync without page refresh)
+  useEffect(() => {
+    if (typeof BroadcastChannel === 'undefined') return
+
+    const channel = new BroadcastChannel('nativebooking_live_sync')
+    channel.onmessage = (event) => {
+      if (event.data?.type === 'BOOKINGS_UPDATED' && Array.isArray(event.data.payload)) {
+        setBookings((current) => {
+          // Keep new local bookings if missing from broadcast payload
+          const merged = [...event.data.payload]
+          current.forEach((b) => {
+            if (!merged.some((m) => m.id === b.id)) {
+              merged.unshift(b)
+            }
+          })
+          return merged
+        })
+      }
+      if (event.data?.type === 'NOTIFICATIONS_UPDATED' && Array.isArray(event.data.payload)) {
+        setNotifications(event.data.payload)
+      }
+    }
+
+    return () => {
+      channel.close()
+    }
+  }, [])
+
+  const broadcastUpdate = (type: string, payload: any) => {
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        const channel = new BroadcastChannel('nativebooking_live_sync')
+        channel.postMessage({ type, payload })
+        channel.close()
+      } catch (err) {
+        console.warn('BroadcastChannel sync error:', err)
+      }
+    }
+  }
+
   useEffect(() => {
     localStorage.setItem(bookingsKey, JSON.stringify(bookings))
   }, [bookings])
@@ -257,6 +297,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     setBookings((prev) => {
       const updated = [bookingWithId, ...prev.filter((b) => b.id !== bookingWithId.id)]
       localStorage.setItem('bookings', JSON.stringify(updated))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
       return updated
     })
 
@@ -267,10 +308,7 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error('Failed to add booking to Firestore:', err)
       }
-    } else {
-      console.error('Firebase not enabled – cannot add booking to Firestore')
     }
-
   }
 
   const resetBookings = async () => {
@@ -307,15 +345,21 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
         console.error('Failed to add notification to Firestore:', err)
       }
     } else {
-      setNotifications((prev) => [newNotif, ...prev])
+      setNotifications((prev) => {
+        const updated = [newNotif, ...prev]
+        broadcastUpdate('NOTIFICATIONS_UPDATED', updated)
+        return updated
+      })
     }
   }
 
   const updateBooking = async (id: string, updatedBooking: Booking) => {
     const cleanData = JSON.parse(JSON.stringify(updatedBooking))
-    setBookings((prev) =>
-      prev.map((booking) => (booking.id === id ? updatedBooking : booking))
-    )
+    setBookings((prev) => {
+      const updated = prev.map((booking) => (booking.id === id ? updatedBooking : booking))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
@@ -351,8 +395,8 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
           : null,
     }
 
-    setBookings((prev) =>
-      prev.map((booking) =>
+    setBookings((prev) => {
+      const updated = prev.map((booking) =>
         booking.id === id
           ? {
               ...booking,
@@ -360,7 +404,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
             }
           : booking
       )
-    )
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
@@ -391,9 +437,11 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       requestedTime: null,
     }
 
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
-    )
+    setBookings((prev) => {
+      const updated = prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
@@ -424,9 +472,11 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       requestedTime: null,
     }
 
-    setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
-    )
+    setBookings((prev) => {
+      const updated = prev.map((b) => (b.id === id ? { ...b, ...updates } : b))
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {
@@ -446,8 +496,8 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
       adminStatus: booking.status === 'Cancelled' ? 'Acknowledged' : (booking.adminStatus || null),
     }
 
-    setBookings((prev) =>
-      prev.map((b) =>
+    setBookings((prev) => {
+      const updated = prev.map((b) =>
         b.id === id
           ? {
               ...b,
@@ -455,7 +505,9 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
             }
           : b
       )
-    )
+      broadcastUpdate('BOOKINGS_UPDATED', updated)
+      return updated
+    })
 
     if (isFirebaseEnabled) {
       try {

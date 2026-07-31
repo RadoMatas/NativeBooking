@@ -5,6 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import PulseTypewriterHeader from '../components/InkTypewriterHeader'
+import { CalendarIcon, ClockIcon, UserIcon } from '../components/ui/Icons'
 
 export default function CustomerDB() {
   const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
@@ -377,8 +378,8 @@ export default function CustomerDB() {
                     <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#0369a1', display: 'block' }}>
                       TIME SLOT
                     </span>
-                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#0284c7', whiteSpace: 'nowrap' }}>
-                      🕒 {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime ? latestBooking.requestedTime : latestBooking.time}
+                    <span style={{ fontSize: '17px', fontWeight: 900, color: '#0284c7', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <ClockIcon size={16} /> {latestBooking.adminStatus === 'Reschedule Requested' && latestBooking.requestedTime ? latestBooking.requestedTime : latestBooking.time}
                     </span>
                   </div>
                 </div>
@@ -386,7 +387,9 @@ export default function CustomerDB() {
                   <p style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <strong style={{ color: 'var(--text-secondary)' }}>{BUSINESS_CONFIG.staffLabel}:</strong>{' '}
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
-                      {BUSINESS_CONFIG.artists.find((a) => a.id === latestBooking.artistId || a.name === latestBooking.artistName)?.avatarEmoji || '👤'}{' '}
+                      <span style={{ width: '22px', height: '22px', borderRadius: '50%', background: 'rgba(14, 165, 233, 0.15)', color: '#0284c7', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 800 }}>
+                        {latestBooking.artistName.charAt(0)}
+                      </span>{' '}
                       {latestBooking.artistName}
                     </span>
                   </p>
@@ -454,11 +457,10 @@ export default function CustomerDB() {
                 // Case B: Show other active sessions list
                 <div>
                   <h3 style={{ fontSize: '16px', marginBottom: '14px', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    ⏳ Other Scheduled Sessions ({sortedActiveBookings.length - 1})
+                    <ClockIcon size={16} style={{ color: '#0284c7' }} /> Other Scheduled Sessions ({sortedActiveBookings.length - 1})
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '240px', overflowY: 'auto', paddingRight: '8px' }}>
                     {sortedActiveBookings.slice(1).map((booking) => {
-                      const matchedArtist = BUSINESS_CONFIG.artists.find((a) => a.id === booking.artistId || a.name === booking.artistName)
                       return (
                         <div
                           key={booking.id}
@@ -475,11 +477,11 @@ export default function CustomerDB() {
                         >
                           <div>
                             <p style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>{booking.service}</p>
-                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                              📅 {booking.date} at {booking.time}
+                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <CalendarIcon size={12} /> {booking.date} at {booking.time}
                             </p>
                             <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              👤 {matchedArtist?.avatarEmoji || '👤'} {booking.artistName}
+                              <UserIcon size={12} /> {booking.artistName}
                             </p>
                           </div>
                           <button

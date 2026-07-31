@@ -5,6 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import PulseTypewriterHeader from '../components/InkTypewriterHeader'
+import { ClinicIcon, ClockIcon, CalendarIcon, CheckIcon } from '../components/ui/Icons'
 
 const adminBadgeStyle = (adminStatus: string): React.CSSProperties => {
   let bg = 'rgba(255, 255, 255, 0.05)'
@@ -185,6 +186,16 @@ export default function AdminDB() {
     alert('Session notes and pricing updated successfully!')
   }
 
+  // Admin Toast Alert State
+  const [adminToast, setAdminToast] = useState<{ message: string; subtext: string; variant: 'success' | 'warning' | 'error' } | null>(null)
+
+  const triggerAdminToast = (message: string, subtext: string, variant: 'success' | 'warning' | 'error' = 'success') => {
+    setAdminToast({ message, subtext, variant })
+    setTimeout(() => {
+      setAdminToast(null)
+    }, 6000)
+  }
+
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [])
@@ -198,6 +209,73 @@ export default function AdminDB() {
         margin: '0 auto',
       }}
     >
+      {/* Admin Action Feedback Toast Popup */}
+      {adminToast && (
+        <div
+          role="alert"
+          style={{
+            position: 'fixed',
+            top: '24px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: '90%',
+            maxWidth: '560px',
+            zIndex: 9999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '16px',
+            background: '#ffffff',
+            border: `1px solid ${adminToast.variant === 'success' ? '#0284c7' : adminToast.variant === 'error' ? '#ef4444' : '#facc15'}`,
+            borderRadius: '16px',
+            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.12)',
+            padding: '16px 20px',
+            color: '#0f172a',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: 1 }}>
+            <div
+              style={{
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                background: adminToast.variant === 'success' ? 'rgba(2, 132, 199, 0.15)' : adminToast.variant === 'error' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(234, 179, 8, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}
+            >
+              {adminToast.variant === 'success' ? (
+                <CheckIcon size={20} style={{ color: '#0284c7' }} />
+              ) : (
+                <ClockIcon size={20} style={{ color: adminToast.variant === 'error' ? '#f87171' : '#facc15' }} />
+              )}
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '14px', fontWeight: 800, color: '#0f172a' }}>
+                {adminToast.message}
+              </p>
+              <p style={{ margin: '3px 0 0 0', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                {adminToast.subtext}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setAdminToast(null)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontSize: '16px',
+              padding: '4px',
+            }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
       {/* Branding Navigation Header Bar */}
       <div
         style={{
@@ -267,13 +345,13 @@ export default function AdminDB() {
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <span style={{ fontSize: '26px' }}>🩺</span>
+              <ClinicIcon size={24} style={{ color: '#0284c7' }} />
               <div>
                 <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0284c7', margin: 0 }}>
                   Clinical Patient Queue ({pendingRequests.length} Scheduled Patient{pendingRequests.length > 1 ? 's' : ''})
                 </h3>
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                  Assigned Doctors, Intake Symptoms & Clinical Room Allocations (Room 1 & Room 2).
+                  Assigned Doctors, Intake Symptoms & Clinical Room Allocations.
                 </span>
               </div>
             </div>
@@ -283,8 +361,8 @@ export default function AdminDB() {
                 <div
                   key={req.id}
                   style={{
-                    background: 'rgb(122, 219, 243)',
-                    border: '1px solid rgba(197, 19, 19, 0.3)',
+                    background: '#ffffff',
+                    border: '1px solid rgba(2, 132, 199, 0.25)',
                     borderRadius: '14px',
                     padding: '16px 20px',
                     display: 'flex',
@@ -292,22 +370,26 @@ export default function AdminDB() {
                     alignItems: 'center',
                     flexWrap: 'wrap',
                     gap: '14px',
+                    boxShadow: '0 2px 10px rgba(0,0,0,0.04)',
                   }}
                 >
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
                       {req.adminStatus === 'Reschedule Requested' ? (
-                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(234, 179, 8, 0.2)', color: '#b45309', border: '1px solid #f59e0b' }}>
-                          🔄 RESCHEDULE REQUEST
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(234, 179, 8, 0.15)', color: '#b45309', border: '1px solid #f59e0b', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <ClockIcon size={12} /> RESCHEDULE REQUEST
                         </span>
                       ) : (
-                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(14, 165, 233, 0.2)', color: '#0284c7', border: '1px solid #0284c7' }}>
-                          🆕 NEW BOOKING REQUEST
+                        <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', padding: '3px 8px', borderRadius: '6px', background: 'rgba(14, 165, 233, 0.15)', color: '#0284c7', border: '1px solid #0284c7', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <CalendarIcon size={12} /> NEW PATIENT APPOINTMENT
                         </span>
                       )}
-                      <strong style={{ color: '#f8fafc', fontSize: '15px' }}>{req.service}</strong>
+                      <strong style={{ color: '#0f172a', fontSize: '15px' }}>{req.service}</strong>
                       <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                         — {req.customerName || 'Patient'} ({req.customerEmail})
+                      </span>
+                      <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '6px', background: 'rgba(2, 132, 199, 0.12)', color: '#0284c7', border: '1px solid rgba(2, 132, 199, 0.3)' }}>
+                        {BUSINESS_CONFIG.staffLabel}: {req.artistName || 'Unassigned'}
                       </span>
                     </div>
 
@@ -321,8 +403,8 @@ export default function AdminDB() {
                         </span>
                       </div>
                     ) : (
-                      <div style={{ fontSize: '13px', color: '#0284c7', fontWeight: 700, marginTop: '4px' }}>
-                        📅 Requested Slot: {req.date} at {req.time}
+                      <div style={{ fontSize: '13px', color: '#0284c7', fontWeight: 700, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <CalendarIcon size={13} /> Requested Slot: {req.date} at {req.time}
                       </div>
                     )}
                   </div>
@@ -331,31 +413,59 @@ export default function AdminDB() {
                     {req.adminStatus === 'Reschedule Requested' ? (
                       <>
                         <button
-                          onClick={() => acceptReschedule(req.id)}
+                          onClick={() => {
+                            acceptReschedule(req.id)
+                            triggerAdminToast(
+                              'Reschedule Approved!',
+                              `Patient session with ${req.customerName || 'Patient'} confirmed for ${req.requestedDate || req.date} at ${req.requestedTime || req.time}. Review in All Appointments.`,
+                              'success'
+                            )
+                          }}
                           className="btn btn-primary"
-                          style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
+                          style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}
                         >
-                          ✅ Approve New Slot
+                          <CheckIcon size={12} /> Approve New Slot
                         </button>
                         <button
-                          onClick={() => declineReschedule(req.id)}
+                          onClick={() => {
+                            declineReschedule(req.id)
+                            triggerAdminToast(
+                              'Reschedule Declined',
+                              `Original session with ${req.customerName || 'Patient'} on ${req.date} at ${req.time} remains active.`,
+                              'warning'
+                            )
+                          }}
                           className="btn btn-danger"
                           style={{ fontSize: '12px', padding: '6px 14px' }}
                         >
-                          ❌ Decline
+                          Decline
                         </button>
                       </>
                     ) : (
                       <>
                         <button
-                          onClick={() => updateBookingStatus(req.id, 'Confirmed')}
+                          onClick={() => {
+                            updateBookingStatus(req.id, 'Confirmed')
+                            triggerAdminToast(
+                              'Appointment Confirmed!',
+                              `Patient session "${req.service}" with ${req.customerName || 'Patient'} confirmed for ${req.date} at ${req.time}. Review in All Appointments.`,
+                              'success'
+                            )
+                          }}
                           className="btn btn-primary"
                           style={{ fontSize: '12px', padding: '6px 14px', fontWeight: 700 }}
                         >
-                          Confirm Booking
+                          Confirm Appointment
                         </button>
                         <button
-                          onClick={() => updateBookingStatus(req.id, 'Cancelled')}
+                          onClick={() => {
+                            updateBookingStatus(req.id, 'Cancelled')
+                            triggerAdminToast(
+                              'Appointment Declined',
+                              `Session "${req.service}" with ${req.customerName || 'Patient'} was cancelled.`,
+                              'error'
+                            )
+                          }}
                           className="btn btn-danger"
                           style={{ fontSize: '12px', padding: '6px 14px' }}
                         >
@@ -589,8 +699,11 @@ export default function AdminDB() {
                     }}
                   >
                     <p style={{ fontWeight: 600, fontSize: '15px' }}>{booking.service}</p>
-                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '4px 0 8px 0' }}>
-                      Client: {booking.customerName}
+                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '2px 0' }}>
+                      Patient: {booking.customerName}
+                    </p>
+                    <p style={{ fontSize: '12px', color: '#0284c7', fontWeight: 600, margin: '2px 0 8px 0' }}>
+                      {BUSINESS_CONFIG.staffLabel}: {booking.artistName || 'Unassigned'}
                     </p>
 
                     {booking.adminStatus === 'Reschedule Requested' ? (
@@ -624,10 +737,13 @@ export default function AdminDB() {
                         onClick={() => {
                           if (booking.adminStatus === 'Reschedule Requested') {
                             acceptReschedule(booking.id)
+                            triggerAdminToast('Reschedule Approved!', `Approved new date ${booking.requestedDate || booking.date} at ${booking.requestedTime || booking.time} for ${booking.customerName}.`, 'success')
                           } else if (booking.status === 'Cancelled' && booking.adminStatus === 'Needs Action') {
                             acknowledgeBooking(booking.id)
+                            triggerAdminToast('Cancellation Acknowledged', `Acknowledged cancellation from ${booking.customerName}.`, 'warning')
                           } else {
                             updateBookingStatus(booking.id, 'Confirmed')
+                            triggerAdminToast('Appointment Confirmed!', `Confirmed session "${booking.service}" for ${booking.customerName} on ${booking.date} at ${booking.time}.`, 'success')
                           }
                         }}
                         className="btn btn-primary"

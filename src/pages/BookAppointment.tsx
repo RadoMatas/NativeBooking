@@ -4,6 +4,7 @@ import { useBooking } from '../BookingContext'
 import { currentUserRole, currentUserEmail } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
+import { CalendarIcon, ShieldIcon, ClinicIcon, ArrowRightIcon, ClockIcon } from '../components/ui/Icons'
 
 export default function BookAppointment() {
   const navigate = useNavigate()
@@ -373,7 +374,7 @@ export default function BookAppointment() {
         </div>
       )}
 
-      {/* ─── OAZA-INSPIRED TOP TRUST BAR & DISCLAIMER ─── */}
+      {/* ─── TOP TRUST BAR & DISCLAIMER ─── */}
       <div style={{ width: '100%', maxWidth: '640px', marginBottom: '16px' }}>
         {/* Social Proof Last Booking Bar */}
         <div
@@ -391,9 +392,11 @@ export default function BookAppointment() {
             marginBottom: '12px',
           }}
         >
-          <span>📅 <strong>Last online booking:</strong> Today at 14:45</span>
-          <span style={{ fontSize: '11px', background: '#0284c7', color: 'white', padding: '3px 8px', borderRadius: '9999px', fontWeight: 700 }}>
-            🔒 256-bit SSL
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <CalendarIcon size={14} /> <strong>Last online booking:</strong> Today at 14:45
+          </span>
+          <span style={{ fontSize: '11px', background: '#0284c7', color: 'white', padding: '3px 8px', borderRadius: '9999px', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+            <ShieldIcon size={12} /> 256-bit SSL
           </span>
         </div>
 
@@ -412,7 +415,8 @@ export default function BookAppointment() {
           }}
         >
           <div style={{ fontWeight: 800, color: '#0f172a', marginBottom: '6px', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span>🩺 Important Patient Intake Notice</span>
+            <ClinicIcon size={16} style={{ color: '#0284c7' }} />
+            <span>Important Patient Intake Notice</span>
           </div>
           <p style={{ margin: '0 0 8px 0' }}>
             Please review our intake terms before booking. For urgent acute pain or emergency trauma, do not wait for online slots.
@@ -460,11 +464,11 @@ export default function BookAppointment() {
           }}
         >
           <span style={{ color: 'var(--accent-color)' }}>① Patient Info</span>
-          <span style={{ color: 'var(--text-secondary)' }}>➔</span>
+          <ArrowRightIcon size={12} style={{ color: 'var(--text-secondary)' }} />
           <span style={{ color: artistId && date && time ? 'var(--accent-color)' : 'var(--text-secondary)' }}>
             ② Select Doctor & Slot
           </span>
-          <span style={{ color: 'var(--text-secondary)' }}>➔</span>
+          <ArrowRightIcon size={12} style={{ color: 'var(--text-secondary)' }} />
           <span style={{ color: 'var(--text-secondary)' }}>③ Confirm</span>
         </div>
 
@@ -547,8 +551,8 @@ export default function BookAppointment() {
                       <p style={{ fontWeight: 700, fontSize: '15px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>
                         {srv.name}
                       </p>
-                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                        ⏱️ {srv.durationMin} mins
+                      <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <ClockIcon size={12} /> {srv.durationMin} mins
                       </p>
                     </div>
                     <span
@@ -602,15 +606,16 @@ export default function BookAppointment() {
                   >
                     <div
                       style={{
-                        width: '48px',
-                        height: '48px',
+                        width: '44px',
+                        height: '44px',
                         borderRadius: '50%',
-                        background: isSelected ? 'var(--accent-color)' : 'rgba(255, 255, 255, 0.08)',
-                        color: isSelected ? '#ffffff' : 'var(--text-primary)',
+                        background: isSelected ? 'var(--accent-color)' : 'rgba(14, 165, 233, 0.15)',
+                        color: isSelected ? '#ffffff' : '#0284c7',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '22px',
+                        fontSize: '16px',
+                        fontWeight: 800,
                         marginBottom: '8px',
                         boxShadow: isSelected ? '0 0 12px rgba(16, 185, 129, 0.4)' : 'none',
                       }}
@@ -622,7 +627,7 @@ export default function BookAppointment() {
                           style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                         />
                       ) : (
-                        art.avatarEmoji || '👤'
+                        art.name.charAt(0)
                       )}
                     </div>
                     <span style={{ fontWeight: 700, fontSize: '14px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>
