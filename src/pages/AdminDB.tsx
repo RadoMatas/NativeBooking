@@ -5,7 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import InkTypewriterHeader from '../components/InkTypewriterHeader'
-import { MapPinIcon, LockIcon, StudioIcon, ClockIcon, CalendarIcon, AlertIcon, CheckIcon } from '../components/ui/Icons'
+import { MapPinIcon, LockIcon, StudioIcon, ClockIcon, CalendarIcon, CheckIcon } from '../components/ui/Icons'
 
 const adminBadgeStyle = (adminStatus: string): React.CSSProperties => {
   let bg = 'rgba(255, 255, 255, 0.05)'

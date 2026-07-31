@@ -5,7 +5,7 @@ import { useBooking } from '../BookingContext'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
 import PulseTypewriterHeader from '../components/InkTypewriterHeader'
-import { MapPinIcon, CalendarIcon, ClockIcon, UsersIcon, StudioIcon, CheckIcon, AlertIcon } from '../components/ui/Icons'
+import { MapPinIcon, CalendarIcon, ClockIcon, CheckIcon, AlertIcon } from '../components/ui/Icons'
 
 export default function CustomerDB() {
   const { bookings, cancelBooking, addNotification, clearCustomerNotification } = useBooking()
@@ -465,7 +465,6 @@ export default function CustomerDB() {
                   </h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '240px', overflowY: 'auto', paddingRight: '8px' }}>
                     {sortedActiveBookings.slice(1).map((booking) => {
-                      const matchedArtist = BUSINESS_CONFIG.artists.find((a) => a.id === booking.artistId || a.name === booking.artistName)
                       return (
                         <div
                           key={booking.id}
