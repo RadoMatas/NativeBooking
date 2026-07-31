@@ -213,35 +213,46 @@ export function BookingProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  // ⚡ Live Instant Multi-Tab Broadcast Channel (Real-time sync without page refresh)
+  useEffect(() => {
+    if (typeof BroadcastChannel === 'undefined') return
+
+    const channel = new BroadcastChannel('nativebooking_live_sync')
+    channel.onmessage = (event) => {
+      if (event.data?.type === 'BOOKINGS_UPDATED' && Array.isArray(event.data.payload)) {
+        setBookings(event.data.payload)
+      }
+      if (event.data?.type === 'NOTIFICATIONS_UPDATED' && Array.isArray(event.data.payload)) {
+        setNotifications(event.data.payload)
+      }
+    }
+
+    return () => {
+      channel.close()
+    }
+  }, [])
+
+  const broadcastUpdate = (type: string, payload: any) => {
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        const channel = new BroadcastChannel('nativebooking_live_sync')
+        channel.postMessage({ type, payload })
+        channel.close()
+      } catch (err) {
+        console.warn('BroadcastChannel sync error:', err)
+      }
+    }
+  }
+
   useEffect(() => {
     localStorage.setItem('bookings', JSON.stringify(bookings))
+    broadcastUpdate('BOOKINGS_UPDATED', bookings)
   }, [bookings])
 
   useEffect(() => {
     localStorage.setItem('notifications', JSON.stringify(notifications))
+    broadcastUpdate('NOTIFICATIONS_UPDATED', notifications)
   }, [notifications])
-
-  useEffect(() => {
-    if (isFirebaseEnabled) return
-
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'bookings') {
-        const updatedBookings = event.newValue ? JSON.parse(event.newValue) : []
-        setBookings(updatedBookings)
-      }
-
-      if (event.key === 'notifications') {
-        const updatedNotifications = event.newValue ? JSON.parse(event.newValue) : []
-        setNotifications(updatedNotifications)
-      }
-    }
-
-    window.addEventListener('storage', handleStorageChange)
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-    }
-  }, [])
 
   const addBooking = async (booking: Booking) => {
     const bookingWithId: Booking = {
