@@ -4,7 +4,7 @@ import { useBooking } from '../BookingContext'
 import { currentUserRole, currentUserEmail } from '../auth'
 import { BUSINESS_CONFIG } from '../businessConfig'
 import Logo from '../components/Logo'
-import { ClockIcon } from '../components/ui/Icons'
+import { ClockIcon, GraduationCapIcon, StethoscopeIcon, PaletteIcon, ContractorIcon, UserIcon } from '../components/ui/Icons'
 
 export default function BookAppointment() {
   const navigate = useNavigate()
@@ -560,10 +560,9 @@ export default function BookAppointment() {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        fontSize: '20px',
-                        fontWeight: 800,
                         marginBottom: '8px',
-                        boxShadow: isSelected ? '0 0 12px rgba(5, 150, 105, 0.4)' : 'none',
+                        boxShadow: isSelected ? '0 0 16px rgba(5, 150, 105, 0.5)' : 'none',
+                        transition: 'all 0.2s ease',
                       }}
                     >
                       {art.avatarUrl ? (
@@ -572,8 +571,16 @@ export default function BookAppointment() {
                           alt={art.name}
                           style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                         />
+                      ) : BUSINESS_CONFIG.dbPrefix === 'tattoo' ? (
+                        <PaletteIcon size={24} />
+                      ) : BUSINESS_CONFIG.dbPrefix === 'dental' ? (
+                        <StethoscopeIcon size={24} />
+                      ) : BUSINESS_CONFIG.dbPrefix === 'academic' ? (
+                        <GraduationCapIcon size={24} />
+                      ) : BUSINESS_CONFIG.dbPrefix === 'contractor' ? (
+                        <ContractorIcon size={24} />
                       ) : (
-                        art.name.charAt(0)
+                        <UserIcon size={24} />
                       )}
                     </div>
                     <span style={{ fontWeight: 700, fontSize: '14px', color: isSelected ? '#34d399' : 'var(--text-primary)' }}>
