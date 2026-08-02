@@ -22,6 +22,7 @@ export default function Pricing() {
       >
         {/* Sticky Header */}
         <header
+          className="aave-header"
           style={{
             position: 'sticky',
             top: 0,
@@ -46,12 +47,12 @@ export default function Pricing() {
               alt="NativeBooking Logo"
               style={{ width: '32px', height: '32px', borderRadius: '8px', display: 'block' }}
             />
-            <span style={{ fontSize: '16px', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
+            <span className="aave-header-logo-text" style={{ fontSize: '16px', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
               NATIVEBOOKING
             </span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="aave-header-buttons" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Button variant="secondary" size="sm" onClick={() => navigate('/')}>
               Back to Home
             </Button>
