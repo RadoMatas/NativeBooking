@@ -413,6 +413,7 @@ export default function PortalHome() {
 
       {/* ─── SECTION 3: INTERACTIVE SHOWCASE (EMERALD THEME) ── */}
       <section
+        id="workbench"
         className="aave-section-padding"
         style={{
           position: 'relative',
@@ -443,7 +444,7 @@ export default function PortalHome() {
           </div>
 
           {/* Showcase Component */}
-          <div id="workbench" style={{ position: 'relative', zIndex: 2, width: '100%', boxSizing: 'border-box' }}>
+          <div style={{ position: 'relative', zIndex: 2, width: '100%', boxSizing: 'border-box' }}>
             <InteractiveShowcase />
           </div>
 
