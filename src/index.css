@@ -163,6 +163,13 @@ body {
     width: 100% !important;
   }
 
+  .desktop-table-container {
+    display: none !important;
+  }
+  .mobile-cards-container {
+    display: flex !important;
+  }
+
   .aave-header {
     padding: 12px 14px !important;
   }
@@ -266,6 +273,24 @@ p {
   color: var(--text-primary);
   letter-spacing: 0.03em;
   text-transform: uppercase;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #08080a;
+  color: #f8fafc;
+  font-family: var(--font-family);
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Comparison Container Display Defaults */
+.desktop-table-container {
+  display: block;
+}
+.mobile-cards-container {
+  display: none;
 }
 
 .form-input, .form-select, .form-textarea {

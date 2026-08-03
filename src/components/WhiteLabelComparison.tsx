@@ -108,7 +108,7 @@ export default function WhiteLabelComparison() {
       </div>
 
       {/* Mobile Card Stack View */}
-      <div className="mobile-cards-container" style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
+      <div className="mobile-cards-container" style={{ flexDirection: 'column', gap: '16px', width: '100%' }}>
         {comparisonRows.map((row, index) => (
           <div
             key={index}
