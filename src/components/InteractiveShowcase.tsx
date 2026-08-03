@@ -11,8 +11,6 @@ import {
   ToolboxIcon,
   LockIcon,
   ZapIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
   ArrowRightIcon
 } from './ui/Icons'
 
@@ -22,7 +20,6 @@ type ViewMode = 'customer' | 'admin'
 export default function InteractiveShowcase() {
   const [activeTab, setActiveTab] = useState<TabKey>('studio')
   const [viewMode, setViewMode] = useState<ViewMode>('admin')
-  const [isToolboxOpen, setIsToolboxOpen] = useState<boolean>(false)
 
   const tabs = [
     {
@@ -187,15 +184,15 @@ export default function InteractiveShowcase() {
         boxSizing: 'border-box',
       }}
     >
-      {/* Precision Hardware Tool Chassis Top Bar & Interactive Unfold Latch */}
+      {/* Precision Hardware Tool Chassis Top Status Bar */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          borderBottom: isToolboxOpen ? '1px solid rgba(255, 255, 255, 0.08)' : 'none',
-          paddingBottom: isToolboxOpen ? '14px' : '0',
-          marginBottom: isToolboxOpen ? '24px' : '0',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          paddingBottom: '14px',
+          marginBottom: '24px',
           flexWrap: 'wrap',
           gap: '12px',
         }}
@@ -212,102 +209,18 @@ export default function InteractiveShowcase() {
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><ZapIcon size={13} style={{ color: '#10b981' }} /> 0% COMMISSION</span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><LockIcon size={13} style={{ color: '#38bdf8' }} /> 256-BIT SSL</span>
           </span>
-          <motion.button
-            onClick={() => setIsToolboxOpen(!isToolboxOpen)}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.95 }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 14px',
-              borderRadius: '9999px',
-              background: isToolboxOpen ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.2)',
-              border: isToolboxOpen ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(16, 185, 129, 0.4)',
-              color: isToolboxOpen ? '#fca5a5' : '#34d399',
-              fontSize: '12px',
-              fontWeight: 800,
-              cursor: 'pointer',
-              boxShadow: isToolboxOpen ? 'none' : '0 0 14px rgba(16, 185, 129, 0.3)',
-            }}
-          >
-            {isToolboxOpen ? (
-              <>
-                <ChevronUpIcon size={14} /> Minimize Toolbox
-              </>
-            ) : (
-              <>
-                <ChevronDownIcon size={14} /> Unfold Toolbox Bay
-              </>
-            )}
-          </motion.button>
         </div>
       </div>
 
-      {/* Closed State Banner when Toolbox is Folded */}
-      {!isToolboxOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: 1, y: 0 }}
-          style={{
-            textAlign: 'center',
-            padding: '24px 16px 12px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '12px',
-          }}
-        >
-          <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff' }}>
-            Interactive Dual-View Workbench
-          </h3>
-          <p style={{ fontSize: '13px', color: '#94a3b8', maxWidth: '520px' }}>
-            Tap the button above to unfold the live interactive preview for Creative Studios, Clinics, Academies, and Contractors.
-          </p>
-          <motion.button
-            onClick={() => setIsToolboxOpen(true)}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            style={{
-              padding: '10px 20px',
-              borderRadius: '12px',
-              background: '#10b981',
-              color: '#08080a',
-              fontWeight: 800,
-              fontSize: '13px',
-              border: 'none',
-              cursor: 'pointer',
-              boxShadow: '0 4px 20px rgba(16, 185, 129, 0.4)',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}
-          >
-            <span>Unfold Interactive Toolbox</span>
-            <ArrowRightIcon size={16} />
-          </motion.button>
-        </motion.div>
-      )}
-
-      {/* Open Unfolded Toolbox Bay */}
-      <AnimatePresence>
-        {isToolboxOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            style={{ overflow: 'hidden' }}
-          >
-            {/* Header Info */}
-            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-              <h2 className="aave-section-title" style={{ fontSize: 'clamp(22px, 4vw, 28px)', fontWeight: 800, color: '#ffffff', marginBottom: '8px', letterSpacing: '-0.02em' }}>
-                Experience Customer Booking & Admin Control Side-by-Side
-              </h2>
-              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
-                Select an industry below and toggle between the Customer Booking Portal and Admin Operations Board.
-              </p>
-            </div>
+      {/* Header Info */}
+      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+        <h2 className="aave-section-title" style={{ fontSize: 'clamp(22px, 4vw, 28px)', fontWeight: 800, color: '#ffffff', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+          Experience Customer Booking & Admin Control Side-by-Side
+        </h2>
+        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
+          Select an industry below and toggle between the Customer Booking Portal and Admin Operations Board.
+        </p>
+      </div>
 
             {/* Hardware Tool Rack Buttons */}
             <div
@@ -631,9 +544,6 @@ export default function InteractiveShowcase() {
                 </div>
               </motion.div>
             </AnimatePresence>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   )
 }
