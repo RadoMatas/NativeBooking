@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence } from 'motion/react'
 import emailjs from '@emailjs/browser'
 import { Button } from '../components/ui/Button'
 import { Badge } from '../components/ui/Badge'
 import { PageWrapper } from '../components/ui/PageWrapper'
+import { CheckIcon, ArrowRightIcon } from '../components/ui/Icons'
 import { submitIntroCallRequest, subscribeToIntroCalls, type IntroCallBooking } from '../introCallHelpers'
 
 // Helper to get local date string YYYY-MM-DD in user's timezone (e.g. Krakow / Europe/Warsaw)
@@ -186,8 +188,10 @@ export default function BookIntroCall() {
             ← Back to Home
           </Button>
         </div>
-
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           style={{
             background: 'rgba(20, 22, 28, 0.85)',
             border: '1px solid rgba(255, 255, 255, 0.08)',
@@ -198,8 +202,15 @@ export default function BookIntroCall() {
           }}
         >
           {submitted ? (
-            <div style={{ textAlign: 'center', padding: '30px 0' }}>
-              <div style={{ fontSize: '48px', marginBottom: '16px' }}>🎉</div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              style={{ textAlign: 'center', padding: '30px 0' }}
+            >
+              <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: '#34d399' }}>
+                <CheckIcon size={28} />
+              </div>
               <Badge variant="confirmed" style={{ fontSize: '14px', padding: '6px 16px', marginBottom: '16px' }}>
                 Discovery Call Requested
               </Badge>
@@ -212,7 +223,7 @@ export default function BookIntroCall() {
               <Button variant="primary" size="md" onClick={() => navigate('/')}>
                 Return to NativeBooking Home
               </Button>
-            </div>
+            </motion.div>
           ) : (
             <>
               <div style={{ textAlign: 'center', marginBottom: '28px' }}>
@@ -298,7 +309,31 @@ export default function BookIntroCall() {
 
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>
-                    Your Timezone *
+                    Select Preferred Date *
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    min={todayStr}
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                    style={{
+                      width: '100%',
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      borderRadius: '12px',
+                      padding: '12px 16px',
+                      color: '#ffffff',
+                      fontSize: '14px',
+                      outline: 'none',
+                      colorScheme: 'dark',
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>
+                    Your Timezone
                   </label>
                   <select
                     value={selectedTimezone}
@@ -309,10 +344,10 @@ export default function BookIntroCall() {
                       border: '1px solid rgba(255, 255, 255, 0.1)',
                       borderRadius: '12px',
                       padding: '12px 16px',
-                      color: '#34d399',
-                      fontWeight: 600,
+                      color: '#ffffff',
                       fontSize: '14px',
                       outline: 'none',
+                      marginBottom: '14px',
                     }}
                   >
                     {TIMEZONE_OPTIONS.map((opt) => (
@@ -323,61 +358,39 @@ export default function BookIntroCall() {
                   </select>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>
-                      Preferred Call Date *
-                    </label>
-                    <input
-                      type="date"
-                      required
-                      min={todayStr}
-                      value={formData.date}
-                      onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      style={{
-                        width: '100%',
-                        background: 'rgba(255, 255, 255, 0.04)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '12px',
-                        padding: '12px 16px',
-                        color: '#ffffff',
-                        fontSize: '14px',
-                        outline: 'none',
-                        colorScheme: 'dark',
-                      }}
-                    />
-                  </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>
+                    Select Available Time Slot (CEST / Local) *
+                  </label>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '10px' }}>
+                    {availableSlots.map((slot) => {
+                      const isSelected = formData.time === slot.time
+                      const slotLabel = formatSlotLabel(slot.time)
 
-                  <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, color: '#ffffff', marginBottom: '6px', textTransform: 'uppercase' }}>
-                      Available Time Slot *
-                    </label>
-                    <select
-                      value={formData.time}
-                      onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                      disabled={availableSlots.length === 0}
-                      style={{
-                        width: '100%',
-                        background: '#12141a',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: '12px',
-                        padding: '12px 16px',
-                        color: '#ffffff',
-                        fontSize: '13px',
-                        outline: 'none',
-                        opacity: availableSlots.length === 0 ? 0.5 : 1,
-                      }}
-                    >
-                      {availableSlots.length === 0 ? (
-                        <option value="">No slots available today</option>
-                      ) : (
-                        availableSlots.map((slot) => (
-                          <option key={slot.time} value={slot.time}>
-                            {formatSlotLabel(slot.time)}
-                          </option>
-                        ))
-                      )}
-                    </select>
+                      return (
+                        <motion.button
+                          key={slot.time}
+                          type="button"
+                          onClick={() => setFormData({ ...formData, time: slot.time })}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          style={{
+                            padding: '10px 8px',
+                            borderRadius: '10px',
+                            border: isSelected ? '1.5px solid #10b981' : '1px solid rgba(255, 255, 255, 0.1)',
+                            background: isSelected ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                            color: isSelected ? '#34d399' : '#94a3b8',
+                            fontSize: '11px',
+                            fontWeight: isSelected ? 800 : 500,
+                            cursor: 'pointer',
+                            textAlign: 'center',
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          {slotLabel}
+                        </motion.button>
+                      )
+                    })}
                   </div>
                 </div>
 
@@ -412,13 +425,60 @@ export default function BookIntroCall() {
                   </p>
                 </div>
 
-                <Button variant="primary" size="lg" type="submit" disabled={isSubmitting} style={{ marginTop: '8px' }}>
-                  {isSubmitting ? 'Submitting Request...' : 'Request Discovery Call ➔'}
-                </Button>
+                <motion.button
+                  type="submit"
+                  disabled={isSubmitting}
+                  whileHover={!isSubmitting ? { scale: 1.02, boxShadow: '0 8px 24px rgba(16, 185, 129, 0.4)' } : {}}
+                  whileTap={!isSubmitting ? { scale: 0.98 } : {}}
+                  transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                  style={{
+                    marginTop: '8px',
+                    width: '100%',
+                    padding: '14px 24px',
+                    borderRadius: '12px',
+                    background: isSubmitting ? 'rgba(16, 185, 129, 0.6)' : '#10b981',
+                    color: '#08080a',
+                    fontWeight: 800,
+                    fontSize: '15px',
+                    border: 'none',
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    boxShadow: '0 4px 18px rgba(16, 185, 129, 0.3)',
+                  }}
+                >
+                  <AnimatePresence mode="wait">
+                    {isSubmitting ? (
+                      <motion.div
+                        key="submitting"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                      >
+                        <span style={{ width: '14px', height: '14px', borderRadius: '50%', border: '2px solid #08080a', borderTopColor: 'transparent', animation: 'spin 0.8s linear infinite' }} />
+                        <span>Confirming Slot...</span>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="idle"
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+                      >
+                        <span>Request Discovery Call</span>
+                        <ArrowRightIcon size={16} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
               </form>
             </>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
     </PageWrapper>

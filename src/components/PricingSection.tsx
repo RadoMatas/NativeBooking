@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CheckIcon } from './ui/Icons'
+import { motion, AnimatePresence } from 'motion/react'
+import { CheckIcon, ArrowRightIcon } from './ui/Icons'
 
 interface TierOption {
   id: string
@@ -121,7 +122,7 @@ export default function PricingSection() {
         </span>
         <h1
           style={{
-            fontSize: 'clamp(28px, 5vw, 42px)',
+            fontSize: 'clamp(26px, 4vw, 36px)',
             fontWeight: 800,
             color: '#ffffff',
             letterSpacing: '-0.02em',
@@ -161,24 +162,28 @@ export default function PricingSection() {
           {tiers.map((tier) => {
             const isActive = selectedTier === tier.id
             return (
-              <button
+              <motion.button
                 key={tier.id}
                 type="button"
                 onClick={() => setSelectedTier(tier.id)}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 style={{
                   flex: '1 1 180px',
                   padding: '12px 14px',
                   borderRadius: '12px',
                   fontSize: '13px',
                   fontWeight: 700,
-                  border: isActive ? '1px solid rgba(255, 255, 255, 0.25)' : '1px solid transparent',
-                  background: isActive ? 'rgba(30, 41, 59, 0.95)' : 'transparent',
+                  border: isActive ? `1.5px solid ${tier.accentColor}` : '1px solid transparent',
+                  background: isActive ? `${tier.accentColor}18` : 'transparent',
                   color: isActive ? '#ffffff' : '#a1a1aa',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   gap: '8px',
+                  boxShadow: isActive ? `0 4px 16px ${tier.accentColor}30` : 'none',
+                  transition: 'background 0.2s ease, border-color 0.2s ease',
                 }}
               >
                 <span>{tier.name.split(' ')[0]} {tier.name.split(' ')[1]}</span>
@@ -196,23 +201,29 @@ export default function PricingSection() {
                     Popular
                   </span>
                 )}
-              </button>
+              </motion.button>
             )
           })}
         </div>
       </div>
 
       {/* Main Feature Display Box */}
-      <div
-        style={{
-          background: 'rgba(15, 17, 23, 0.85)',
-          border: `2px solid ${currentTier.accentColor}`,
-          borderRadius: '24px',
-          padding: 'clamp(20px, 4vw, 36px)',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
-          position: 'relative',
-        }}
-      >
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={selectedTier}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+          style={{
+            background: 'rgba(15, 17, 23, 0.85)',
+            border: `2px solid ${currentTier.accentColor}`,
+            borderRadius: '24px',
+            padding: 'clamp(20px, 4vw, 36px)',
+            boxShadow: `0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px ${currentTier.accentColor}15`,
+            position: 'relative',
+          }}
+        >
         <div
           style={{
             display: 'grid',
@@ -355,9 +366,12 @@ export default function PricingSection() {
               </div>
             </div>
 
-            <button
+            <motion.button
               type="button"
               onClick={() => navigate('/book-call')}
+              whileHover={{ scale: 1.03, boxShadow: `0 8px 24px ${currentTier.accentColor}50` }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 20 }}
               style={{
                 width: '100%',
                 padding: '14px 20px',
@@ -368,14 +382,20 @@ export default function PricingSection() {
                 background: currentTier.accentColor,
                 border: 'none',
                 cursor: 'pointer',
-                transition: 'transform 0.15s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: `0 4px 18px ${currentTier.accentColor}40`,
               }}
             >
-              {currentTier.ctaText}
-            </button>
+              <span>{currentTier.ctaText}</span>
+              <ArrowRightIcon size={16} />
+            </motion.button>
           </div>
         </div>
-      </div>
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }
