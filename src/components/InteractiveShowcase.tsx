@@ -7,7 +7,13 @@ import {
   ContractorIcon,
   CheckIcon,
   SettingsIcon,
-  UsersIcon
+  UsersIcon,
+  ToolboxIcon,
+  LockIcon,
+  ZapIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  ArrowRightIcon
 } from './ui/Icons'
 
 type TabKey = 'studio' | 'clinic' | 'academic' | 'contractor'
@@ -195,15 +201,16 @@ export default function InteractiveShowcase() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span style={{ height: '10px', width: '10px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 12px #10b981' }} />
+          <ToolboxIcon size={18} style={{ color: '#10b981' }} />
           <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '0.08em', color: '#34d399', textTransform: 'uppercase' }}>
-            🧰 NATIVEBOOKING ENGINE TOOLBOX
+            NATIVEBOOKING ENGINE TOOLBOX
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-          <span className="showcase-tab-subtitle-desktop" style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>
-            ⚡ 0% COMMISSION · 256-BIT SSL
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+          <span className="showcase-tab-subtitle-desktop" style={{ display: 'inline-flex', alignItems: 'center', gap: '12px', fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><ZapIcon size={13} style={{ color: '#10b981' }} /> 0% COMMISSION</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}><LockIcon size={13} style={{ color: '#38bdf8' }} /> 256-BIT SSL</span>
           </span>
           <motion.button
             onClick={() => setIsToolboxOpen(!isToolboxOpen)}
@@ -224,7 +231,15 @@ export default function InteractiveShowcase() {
               boxShadow: isToolboxOpen ? 'none' : '0 0 14px rgba(16, 185, 129, 0.3)',
             }}
           >
-            {isToolboxOpen ? '▲ Minimize Toolbox' : '▼ Unfold Toolbox Bay'}
+            {isToolboxOpen ? (
+              <>
+                <ChevronUpIcon size={14} /> Minimize Toolbox
+              </>
+            ) : (
+              <>
+                <ChevronDownIcon size={14} /> Unfold Toolbox Bay
+              </>
+            )}
           </motion.button>
         </div>
       </div>
@@ -263,9 +278,13 @@ export default function InteractiveShowcase() {
               border: 'none',
               cursor: 'pointer',
               boxShadow: '0 4px 20px rgba(16, 185, 129, 0.4)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
             }}
           >
-            Unfold Interactive Toolbox ➔
+            <span>Unfold Interactive Toolbox</span>
+            <ArrowRightIcon size={16} />
           </motion.button>
         </motion.div>
       )}
@@ -499,7 +518,8 @@ export default function InteractiveShowcase() {
                       textAlign: 'center',
                     }}
                   >
-                    Launch Live {currentTab.label} Sandbox ➔
+                    <span>Launch Live {currentTab.label} Sandbox</span>
+                    <ArrowRightIcon size={14} />
                   </motion.a>
                 </div>
 
