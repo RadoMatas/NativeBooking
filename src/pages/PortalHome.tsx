@@ -473,9 +473,14 @@ export default function PortalHome() {
               <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff', margin: '0 0 6px 0' }}>Ready to optimize your reservation workflow?</h3>
               <p style={{ fontSize: '14px', color: '#94a3b8', margin: 0 }}>Schedule a 1-on-1 discovery call to explore your business rules, staff schedules, and payout options.</p>
             </div>
-            <Button variant="primary" size="lg" onClick={() => navigate('/book-call')}>
-              Schedule Discovery Meeting
-            </Button>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              <Button variant="primary" size="lg" onClick={() => navigate('/book-call')}>
+                Schedule Discovery Meeting
+              </Button>
+              <Button variant="secondary" size="lg" onClick={() => navigate('/pricing')}>
+                See Pricing
+              </Button>
+            </div>
           </div>
 
           <div

@@ -22,7 +22,7 @@ type ViewMode = 'customer' | 'admin'
 export default function InteractiveShowcase() {
   const [activeTab, setActiveTab] = useState<TabKey>('studio')
   const [viewMode, setViewMode] = useState<ViewMode>('admin')
-  const [isToolboxOpen, setIsToolboxOpen] = useState<boolean>(true)
+  const [isToolboxOpen, setIsToolboxOpen] = useState<boolean>(false)
 
   const tabs = [
     {
