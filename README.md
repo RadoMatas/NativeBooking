@@ -2,7 +2,7 @@
 
 **NativeBooking** is a high-performance, white-label reservation and crew dispatch platform built for service businesses (clinics, studios, field service contractors, academies).
 
-- 🚀 **Live Demo:** [reservation-blueprint.vercel.app](https://reservation-blueprint.vercel.app)
+- 🚀 **Live Demo:** [www.nativebooking.co](https://nativebooking.co)
 - 📱 **Cross-Platform:** Web + Native Android packaging via Capacitor JS
 - 🔒 **Enterprise Security:** Granular Firestore security rules & authentication
 - 🛠️ **Tech Stack:** React 19, TypeScript, Vite, Firebase, Tailwind CSS
