@@ -1,30 +1,31 @@
-# NativeBooking — White-Label Reservation & Operations Platform
+# 📅 NativeBooking — Multi-Tenant Reservation & Dispatch SaaS
 
-NativeBooking is a custom-made, white-label reservation and crew dispatch platform built for service businesses (clinics, studios, field service contractors, academies).
+**NativeBooking** is a high-performance, white-label reservation and crew dispatch platform built for service businesses (clinics, studios, field service contractors, academies).
 
----
-
-## Core Documentation Map
-
-- **[agency_blueprint.md](file:///C:/Users/thean/.gemini/antigravity/scratch/reservation-blueprint/agency_blueprint.md)**: Agency delivery framework, tech stack specs, and pricing tiers.
-- **[brand.md](file:///C:/Users/thean/.gemini/antigravity/scratch/reservation-blueprint/brand.md)**: Brand identity, tone of voice, personality, and communication rules.
-- **[design.md](file:///C:/Users/thean/.gemini/antigravity/scratch/reservation-blueprint/design.md)**: Visual styling guidelines, layout preferences, and hero section standards.
-- **[ux.md](file:///C:/Users/thean/.gemini/antigravity/scratch/reservation-blueprint/ux.md)**: User experience principles, form rules, trust signals, and state handling.
-- **[agent.md](file:///C:/Users/thean/.gemini/antigravity/scratch/reservation-blueprint/agent.md)**: AI design and engineering rules for development.
-- **[client_onboarding_questionnaire.md](file:///C:/Users/thean/.gemini/antigravity/scratch/reservation-blueprint/client_onboarding_questionnaire.md)**: Client intake questionnaire for onboarding.
-- **[sop_client_onboarding_and_deployment.md](file:///C:/Users/thean/.gemini/antigravity/scratch/reservation-blueprint/sop_client_onboarding_and_deployment.md)**: Step-by-step SOP for 7-day client instance deployment.
-- **[sales_and_discovery_script.md](file:///C:/Users/thean/.gemini/antigravity/scratch/reservation-blueprint/sales_and_discovery_script.md)**: Sales call framework and objection handling.
+- 🚀 **Live Demo:** [reservation-blueprint.vercel.app](https://reservation-blueprint.vercel.app)
+- 📱 **Cross-Platform:** Web + Native Android packaging via Capacitor JS
+- 🔒 **Enterprise Security:** Granular Firestore security rules & authentication
+- 🛠️ **Tech Stack:** React 19, TypeScript, Vite, Firebase, Tailwind CSS
 
 ---
 
-## Tech Stack & Commands
+## 📚 Core Architecture & Agency Blueprints
 
-- **Framework**: React 18 + TypeScript + Vite
-- **Mobile**: Capacitor JS
-- **Backend**: Firebase Firestore & Auth
-- **Linter**: Oxlint
+- **[agency_blueprint.md](agency_blueprint.md)**: Agency delivery framework, tech stack specs, and pricing tiers.
+- **[brand.md](brand.md)**: Brand identity, tone of voice, personality, and communication rules.
+- **[design.md](design.md)**: Visual styling guidelines, layout preferences, and hero section standards.
+- **[ux.md](ux.md)**: User experience principles, form rules, trust signals, and state handling.
+- **[agent.md](agent.md)**: AI design and engineering rules for development.
 
-### Commands
+---
+
+## ⚡ Tech Stack & Development Commands
+
+- **Framework:** React 19 + TypeScript + Vite + Tailwind CSS
+- **Mobile:** Capacitor JS (Android native packaging)
+- **Backend:** Firebase Firestore & Auth
+- **Linter:** Oxlint
+
 ```bash
 npm run dev     # Start local development server
 npm run build   # Build production assets
